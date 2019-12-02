@@ -1,0 +1,35 @@
+import("stats")
+importFrom("MKdescr", "CV")
+importFrom("boot", "boot", "boot.ci")
+importFrom("arrangements", "permutations", "npermutations")
+importFrom("nlme", "lme", "anova.lme")
+export(binomCI,
+       binomDiffCI,
+       boot.t.test,
+       cvCI,
+       hsu.t.test,
+       imputeSD,
+       madCI,
+       medianCI,
+       mi.t.test,
+       normCI,
+       meanCI,
+       perm.t.test,
+       sdCI,
+       normDiffCI,
+       meanDiffCI,
+       quantileCI,
+       pairwise.fun,
+       rm.oneway.test)
+
+S3method(hsu.t.test, default)
+S3method(hsu.t.test, formula)
+S3method(boot.t.test, default)
+S3method(boot.t.test, formula)
+S3method(perm.t.test, default)
+S3method(perm.t.test, formula)
+S3method(mi.t.test, default)
+S3method(print, confint)
+S3method(print, boot.htest)
+S3method(print, perm.htest)
+

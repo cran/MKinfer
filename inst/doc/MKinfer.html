@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Matthias Kohl" />
+
+<meta name="date" content="2019-11-27" />
+
+<title>Package MKinfer</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Package MKinfer</h1>
+<h4 class="author">Matthias Kohl</h4>
+<h4 class="date">2019-11-27</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#confidence-intervals">Confidence Intervals</a><ul>
+<li><a href="#binomial-proportion">Binomial Proportion</a></li>
+<li><a href="#difference-of-two-binomial-proportions">Difference of Two Binomial Proportions</a></li>
+<li><a href="#mean-and-sd">Mean and SD</a></li>
+<li><a href="#difference-in-means">Difference in Means</a></li>
+<li><a href="#coefficient-of-variation">Coefficient of Variation</a></li>
+<li><a href="#quantiles-median-and-mad">Quantiles, Median and MAD</a></li>
+</ul></li>
+<li><a href="#hsu-two-sample-t-test">Hsu Two-Sample t-Test</a></li>
+<li><a href="#bootstrap-t-test">Bootstrap t-Test</a></li>
+<li><a href="#permutation-t-test">Permutation t-Test</a></li>
+<li><a href="#multiple-imputation-t-test">Multiple Imputation t-Test</a></li>
+<li><a href="#repeated-measures-one-way-anova">Repeated Measures One-Way ANOVA</a></li>
+<li><a href="#imputation-of-standard-deviations-for-changes-from-baseline">Imputation of Standard Deviations for Changes from Baseline</a></li>
+<li><a href="#pairwise-comparisons">Pairwise Comparisons</a></li>
+<li><a href="#sessioninfo">sessionInfo</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Package MKinfer includes a collection of functions for the computation of various confidence intervals <span class="citation">(Altman et al. 2000; Hedderich and Sachs 2018)</span> including bootstrapped versions <span class="citation">(Davison and Hinkley 1997)</span> as well as Hsu <span class="citation">(Hedderich and Sachs 2018)</span>, permutation <span class="citation">(Janssen 1997)</span>, bootstrap <span class="citation">(Davison and Hinkley 1997)</span> and multiple imputation <span class="citation">(Barnard and Rubin 1999)</span> t-test.</p>
+<p>We first load the package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(MKinfer)</code></pre></div>
+</div>
+<div id="confidence-intervals" class="section level2">
+<h2>Confidence Intervals</h2>
+<div id="binomial-proportion" class="section level3">
+<h3>Binomial Proportion</h3>
+<p>There are several functions for computing confidence intervals. We can compute 12 different confidence intervals for binomial proportions <span class="citation">(DasGupta, Cai, and Brown 2001)</span>; e.g.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## default: &quot;wilson&quot;
+<span class="kw">binomCI</span>(<span class="dt">x =</span> <span class="dv">12</span>, <span class="dt">n =</span> <span class="dv">50</span>)</code></pre></div>
+<pre><code>## 
+##  wilson confidence interval
+## 
+## 95 percent confidence interval:
+##          2.5 %    97.5 %
+## prob 0.1429739 0.3741268
+## 
+## sample estimate:
+## prob 
+## 0.24 
+## 
+## additional information:
+## standard error of prob 
+##             0.05896867</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Clopper-Pearson interval
+<span class="kw">binomCI</span>(<span class="dt">x =</span> <span class="dv">12</span>, <span class="dt">n =</span> <span class="dv">50</span>, <span class="dt">method =</span> <span class="st">&quot;clopper-pearson&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  clopper-pearson confidence interval
+## 
+## 95 percent confidence interval:
+##          2.5 %    97.5 %
+## prob 0.1306099 0.3816907
+## 
+## sample estimate:
+## prob 
+## 0.24</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## identical to 
+<span class="kw">binom.test</span>(<span class="dt">x =</span> <span class="dv">12</span>, <span class="dt">n =</span> <span class="dv">50</span>)<span class="op">$</span>conf.int</code></pre></div>
+<pre><code>## [1] 0.1306099 0.3816907
+## attr(,&quot;conf.level&quot;)
+## [1] 0.95</code></pre>
+<p>For all intervals implemented see the help page of function binomCI. One can also compute bootstrap intervals via function boot.ci of package boot <span class="citation">(Davison and Hinkley 1997)</span> as well as one-sided intervals.</p>
+</div>
+<div id="difference-of-two-binomial-proportions" class="section level3">
+<h3>Difference of Two Binomial Proportions</h3>
+<p>There are several functions for computing confidence intervals. We can compute different confidence intervals for the difference of two binomial proportions (independent <span class="citation">(Newcombe 1998a)</span> and paired case <span class="citation">(Newcombe 1998b)</span>); e.g.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## default: wilson 
+<span class="kw">binomDiffCI</span>(<span class="dt">a =</span> <span class="dv">5</span>, <span class="dt">b =</span> <span class="dv">0</span>, <span class="dt">c =</span> <span class="dv">51</span>, <span class="dt">d =</span> <span class="dv">29</span>)</code></pre></div>
+<pre><code>## [1] &quot;two.sided&quot;</code></pre>
+<pre><code>## 
+##  wilson confidence interval (independent proportions)
+## 
+## 95 percent confidence interval:
+##                                             2.5 %  97.5 %
+## difference of independent proportions -0.03813715 0.19256
+## 
+## sample estimate:
+## difference of proportions 
+##                0.08928571 
+## 
+## additional information:
+## proportion of group 1 proportion of group 2 
+##            0.08928571            0.00000000</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## default: wilson with continuity correction
+<span class="kw">binomDiffCI</span>(<span class="dt">a =</span> <span class="dv">212</span>, <span class="dt">b =</span> <span class="dv">144</span>, <span class="dt">c =</span> <span class="dv">256</span>, <span class="dt">d =</span> <span class="dv">707</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## [1] &quot;two.sided&quot;</code></pre>
+<pre><code>## 
+##  wilson-cc confidence interval (paired data)
+## 
+## 95 percent confidence interval:
+##                                              2.5 %      97.5 %
+## difference of proportions (paired data) -0.1141915 -0.05543347
+## 
+## sample estimate:
+## difference of proportions 
+##               -0.08491281 
+## 
+## additional information:
+## proportion of group 1 proportion of group 2 
+##             0.2699014             0.3548143</code></pre>
+<p>For all intervals implemented see the help page of function binomDiffCI. One can also compute boostrap intervals via function boot.ci of package boot <span class="citation">(Davison and Hinkley 1997)</span> as well as one-sided intervals.</p>
+</div>
+<div id="mean-and-sd" class="section level3">
+<h3>Mean and SD</h3>
+<p>We can compute confidence intervals for mean and SD <span class="citation">(Altman et al. 2000, <span class="citation">Davison and Hinkley (1997)</span>)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">50</span>, <span class="dt">mean =</span> <span class="dv">2</span>, <span class="dt">sd =</span> <span class="dv">3</span>)
+## mean and SD unknown
+<span class="kw">normCI</span>(x)</code></pre></div>
+<pre><code>## 
+##  Exact confidence interval(s)
+## 
+## 95 percent confidence intervals:
+##         2.5 %   97.5 %
+## mean 1.692996 3.515324
+## sd   2.678165 3.995230
+## 
+## sample estimates:
+##     mean       sd 
+## 2.604160 3.206101 
+## 
+## additional information:
+## SE of mean 
+##  0.4534112</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">meanCI</span>(x)</code></pre></div>
+<pre><code>## 
+##  Exact confidence interval(s)
+## 
+##  percent confidence interval:
+##         2.5 %   97.5 %
+## mean 1.692996 3.515324
+## 
+## sample estimates:
+##     mean       sd 
+## 2.604160 3.206101 
+## 
+## additional information:
+## SE of mean 
+##  0.4534112</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sdCI</span>(x)</code></pre></div>
+<pre><code>## 
+##  Exact confidence interval(s)
+## 
+##  percent confidence interval:
+##       2.5 %  97.5 %
+## sd 2.678165 3.99523
+## 
+## sample estimates:
+##     mean       sd 
+## 2.604160 3.206101 
+## 
+## additional information:
+## SE of mean 
+##  0.4534112</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## SD known
+<span class="kw">normCI</span>(x, <span class="dt">sd =</span> <span class="dv">3</span>)</code></pre></div>
+<pre><code>## 
+##  Exact confidence interval(s)
+## 
+## 95 percent confidence interval:
+##         2.5 %   97.5 %
+## mean 1.772617 3.435702
+## 
+## sample estimate:
+##    mean 
+## 2.60416 
+## 
+## additional information:
+## SE of mean 
+##  0.4242641</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## mean known
+<span class="kw">normCI</span>(x, <span class="dt">mean =</span> <span class="dv">2</span>, <span class="dt">alternative =</span> <span class="st">&quot;less&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Exact confidence interval(s)
+## 
+## 95 percent confidence interval:
+##    0 %     95 %
+## sd   0 3.852844
+## 
+## sample estimate:
+##       sd 
+## 3.206101</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## bootstrap
+<span class="kw">meanCI</span>(x, <span class="dt">boot =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  Bootstrap confidence interval(s)
+## 
+## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 9999 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = boot.out, conf = 1 - alpha, type = bootci.type)
+## 
+## Intervals : 
+## Level      Normal              Basic             Studentized     
+## 95%   ( 1.725,  3.485 )   ( 1.727,  3.502 )   ( 1.653,  3.497 )  
+## 
+## Level     Percentile            BCa          
+## 95%   ( 1.706,  3.481 )   ( 1.679,  3.448 )  
+## Calculations and Intervals on Original Scale
+## 
+## sample estimates:
+##     mean       sd 
+## 2.604160 3.206101</code></pre>
+</div>
+<div id="difference-in-means" class="section level3">
+<h3>Difference in Means</h3>
+<p>We can compute confidence interval for the difference of means <span class="citation">(Altman et al. 2000; Hedderich and Sachs 2018; Davison and Hinkley 1997)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">20</span>)
+y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">20</span>, <span class="dt">sd =</span> <span class="dv">2</span>)
+## paired
+<span class="kw">normDiffCI</span>(x, y, <span class="dt">paired =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  Confidence interval (paired)
+## 
+## 95 percent confidence interval:
+##                          2.5 %   97.5 %
+## mean of differences -0.3349223 1.429152
+## 
+## sample estimates:
+## mean of differences   sd of differences 
+##            0.547115            1.884637 
+## 
+## additional information:
+## SE of mean of differences 
+##                 0.4214176</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## compare
+<span class="kw">normCI</span>(x<span class="op">-</span>y)</code></pre></div>
+<pre><code>## 
+##  Exact confidence interval(s)
+## 
+## 95 percent confidence intervals:
+##           2.5 %   97.5 %
+## mean -0.3349223 1.429152
+## sd    1.4332483 2.752647
+## 
+## sample estimates:
+##     mean       sd 
+## 0.547115 1.884637 
+## 
+## additional information:
+## SE of mean 
+##  0.4214176</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## bootstrap
+<span class="kw">normDiffCI</span>(x, y, <span class="dt">paired =</span> <span class="ot">TRUE</span>, <span class="dt">boot =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  Bootstrap confidence interval (paired)
+## 
+## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 9999 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = boot.out, conf = 1 - alpha, type = bootci.type)
+## 
+## Intervals : 
+## Level      Normal              Basic             Studentized     
+## 95%   (-0.2553,  1.3526 )   (-0.2716,  1.3190 )   (-0.2679,  1.5212 )  
+## 
+## Level     Percentile            BCa          
+## 95%   (-0.2248,  1.3658 )   (-0.1854,  1.4173 )  
+## Calculations and Intervals on Original Scale
+## 
+## sample estimates:
+## mean of differences   sd of differences 
+##            0.547115            1.884637</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## unpaired
+y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">10</span>, <span class="dt">mean =</span> <span class="dv">1</span>, <span class="dt">sd =</span> <span class="dv">2</span>)
+## classical
+<span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;classical&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Classical confidence interval (unpaired)
+## 
+## 95 percent confidence interval:
+##                          2.5 %    97.5 %
+## difference in means -0.8591078 0.8039794
+## 
+## sample estimate:
+## difference in means 
+##          -0.0275642 
+## 
+## additional information:
+## SE of difference in means           Cohen's d (SMD) 
+##                0.40594647               -0.02629797 
+## 
+## mean of x   SD of x mean of y   SD of y 
+## 0.3312383 0.5956641 0.3588025 1.6336658</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Welch (default as in case of function t.test)
+<span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;welch&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Welch confidence interval (unpaired)
+## 
+## 95 percent confidence interval:
+##                         2.5 %   97.5 %
+## difference in means -1.212905 1.157777
+## 
+## sample estimate:
+## difference in means 
+##          -0.0275642 
+## 
+## additional information:
+## SE of difference in means           Cohen's d (SMD) 
+##                0.53350462               -0.01585176 
+## 
+## mean of x   SD of x mean of y   SD of y 
+## 0.3312383 0.5956641 0.3588025 1.6336658</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Hsu
+<span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;hsu&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Hsu confidence interval (unpaired)
+## 
+## 95 percent confidence interval:
+##                         2.5 %   97.5 %
+## difference in means -1.234435 1.179307
+## 
+## sample estimate:
+## difference in means 
+##          -0.0275642 
+## 
+## additional information:
+## SE of difference in means           Cohen's d (SMD) 
+##                0.53350462               -0.01585176 
+## 
+## mean of x   SD of x mean of y   SD of y 
+## 0.3312383 0.5956641 0.3588025 1.6336658</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## bootstrap: assuming equal variances
+<span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;classical&quot;</span>, <span class="dt">boot =</span> <span class="ot">TRUE</span>, <span class="dt">bootci.type =</span> <span class="st">&quot;bca&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Bootstrap confidence interval (equal variances, unpaired)
+## 
+## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 9999 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = boot.out, conf = 1 - alpha, type = bootci.type)
+## 
+## Intervals : 
+## Level       BCa          
+## 95%   (-1.0801,  0.9235 )  
+## Calculations and Intervals on Original Scale
+## 
+## sample estimate:
+## difference in means 
+##          -0.0275642 
+## 
+## additional information:
+## SE of difference in means           Cohen's d (SMD) 
+##                0.40594647               -0.02629797 
+## 
+## mean of x   SD of x mean of y   SD of y 
+## 0.3312383 0.5956641 0.3588025 1.6336658</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## bootstrap: assuming unequal variances
+<span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;welch&quot;</span>, <span class="dt">boot =</span> <span class="ot">TRUE</span>, <span class="dt">bootci.type =</span> <span class="st">&quot;bca&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Bootstrap confidence interval (unequal variances, unpaired)
+## 
+## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 9999 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = boot.out, conf = 1 - alpha, type = bootci.type)
+## 
+## Intervals : 
+## Level       BCa          
+## 95%   (-1.1175,  0.8831 )  
+## Calculations and Intervals on Original Scale
+## 
+## sample estimate:
+## difference in means 
+##          -0.0275642 
+## 
+## additional information:
+## SE of difference in means           Cohen's d (SMD) 
+##                0.53350462               -0.01585176 
+## 
+## mean of x   SD of x mean of y   SD of y 
+## 0.3312383 0.5956641 0.3588025 1.6336658</code></pre>
+<p>In case of unequal variances and unequal sample sizes per group the classical confidence interval may have a bad coverage (too long or too short), as is indicated by the small Monte-Carlo simulation study below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">M &lt;-<span class="st"> </span><span class="dv">100</span>
+CIhsu &lt;-<span class="st"> </span>CIwelch &lt;-<span class="st"> </span>CIclass &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>, <span class="dt">nrow =</span> M, <span class="dt">ncol =</span> <span class="dv">2</span>)
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>M){
+  x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">10</span>)
+  y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">30</span>, <span class="dt">sd =</span> <span class="fl">0.1</span>)
+  CIclass[i,] &lt;-<span class="st"> </span><span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;classical&quot;</span>)<span class="op">$</span>conf.int
+  CIwelch[i,] &lt;-<span class="st"> </span><span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;welch&quot;</span>)<span class="op">$</span>conf.int
+  CIhsu[i,] &lt;-<span class="st"> </span><span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;hsu&quot;</span>)<span class="op">$</span>conf.int
+}
+## coverage probabilies
+## classical
+<span class="kw">sum</span>(CIclass[,<span class="dv">1</span>] <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&lt;</span><span class="st"> </span>CIclass[,<span class="dv">2</span>])<span class="op">/</span>M</code></pre></div>
+<pre><code>## [1] 0.71</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Welch
+<span class="kw">sum</span>(CIwelch[,<span class="dv">1</span>] <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&lt;</span><span class="st"> </span>CIwelch[,<span class="dv">2</span>])<span class="op">/</span>M</code></pre></div>
+<pre><code>## [1] 0.93</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Hsu
+<span class="kw">sum</span>(CIhsu[,<span class="dv">1</span>] <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&lt;</span><span class="st"> </span>CIhsu[,<span class="dv">2</span>])<span class="op">/</span>M</code></pre></div>
+<pre><code>## [1] 0.93</code></pre>
+</div>
+<div id="coefficient-of-variation" class="section level3">
+<h3>Coefficient of Variation</h3>
+<p>We provide 12 different confidence intervals for the (classical) coefficient of variation <span class="citation">(Gulhar, Kibria, and Ahmed 2012; Davison and Hinkley 1997)</span>; e.g.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">100</span>, <span class="dt">mean =</span> <span class="dv">10</span>, <span class="dt">sd =</span> <span class="dv">2</span>) <span class="co"># CV = 0.2</span>
+## default: &quot;miller&quot;
+<span class="kw">cvCI</span>(x)</code></pre></div>
+<pre><code>## 
+##  Miller (1991) confidence interval
+## 
+## 95 percent confidence interval:
+##        2.5 %    97.5 %
+## CV 0.1846923 0.2476665
+## 
+## sample estimate:
+##        CV 
+## 0.2161794 
+## 
+## additional information:
+## standard error of CV 
+##           0.01606514</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Gulhar et al. (2012)
+<span class="kw">cvCI</span>(x, <span class="dt">method =</span> <span class="st">&quot;gulhar&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Gulhar et al (2012) confidence interval
+## 
+## 95 percent confidence interval:
+##       2.5 %    97.5 %
+## CV 0.189807 0.2511302
+## 
+## sample estimate:
+##        CV 
+## 0.2161794</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## bootstrap
+<span class="kw">cvCI</span>(x, <span class="dt">method =</span> <span class="st">&quot;boot&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Bootstrap confidence interval
+## 
+## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 9999 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = boot.out, conf = 1 - alpha, type = bootci.type)
+## 
+## Intervals : 
+## Level      Normal              Basic         
+## 95%   ( 0.1794,  0.2566 )   ( 0.1791,  0.2554 )  
+## 
+## Level     Percentile            BCa          
+## 95%   ( 0.1770,  0.2533 )   ( 0.1840,  0.2637 )  
+## Calculations and Intervals on Original Scale
+## 
+## sample estimate:
+##        CV 
+## 0.2161794</code></pre>
+<p>For all intervals implemented see the help page of function cvCI.</p>
+</div>
+<div id="quantiles-median-and-mad" class="section level3">
+<h3>Quantiles, Median and MAD</h3>
+<p>We start with the computation of confidence intervals for quantiles <span class="citation">(Hedderich and Sachs 2018; Davison and Hinkley 1997)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">rexp</span>(<span class="dv">100</span>, <span class="dt">rate =</span> <span class="fl">0.5</span>)
+## exact
+<span class="kw">quantileCI</span>(<span class="dt">x =</span> x, <span class="dt">prob =</span> <span class="fl">0.95</span>)</code></pre></div>
+<pre><code>## 
+##  exact confidence interval
+## 
+## 95.14464 percent confidence interval:
+##                  lower    upper
+## 95 % quantile 4.660437 7.141552
+## 
+## sample estimate:
+## 95 % quantile 
+##       5.62256</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## asymptotic
+<span class="kw">quantileCI</span>(<span class="dt">x =</span> x, <span class="dt">prob =</span> <span class="fl">0.95</span>, <span class="dt">method =</span> <span class="st">&quot;asymptotic&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  asymptotic confidence interval
+## 
+## 95 percent confidence interval:
+##                  2.5 %   97.5 %
+## 95 % quantile 4.660437 11.87458
+## 
+## sample estimate:
+## 95 % quantile 
+##       5.62256</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## boot
+<span class="kw">quantileCI</span>(<span class="dt">x =</span> x, <span class="dt">prob =</span> <span class="fl">0.95</span>, <span class="dt">method =</span> <span class="st">&quot;boot&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  bootstrap confidence interval
+## 
+## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 9999 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = boot.out, conf = 1 - alpha, type = bootci.type)
+## 
+## Intervals : 
+## Level      Normal              Basic         
+## 95%   ( 4.411,  7.075 )   ( 4.679,  6.603 )  
+## 
+## Level     Percentile            BCa          
+## 95%   ( 4.642,  6.566 )   ( 4.661,  7.142 )  
+## Calculations and Intervals on Original Scale
+## 
+## sample estimate:
+## 95 % quantile 
+##       5.62256</code></pre>
+<p>Next, we consider the median.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## exact
+<span class="kw">medianCI</span>(<span class="dt">x =</span> x)</code></pre></div>
+<pre><code>## 
+##  exact confidence interval
+## 
+## 95.23684 percent confidence intervals:
+##            lower    upper
+## median 0.7209527 1.749636
+## median 0.9785538 2.330978
+## 
+## sample estimate:
+##   median 
+## 1.427096</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## asymptotic
+<span class="kw">medianCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;asymptotic&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  asymptotic confidence interval
+## 
+## 95 percent confidence interval:
+##            2.5 %   97.5 %
+## median 0.9479012 1.888709
+## 
+## sample estimate:
+##   median 
+## 1.427096</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## boot
+<span class="kw">medianCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;boot&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  bootstrap confidence interval
+## 
+## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 9999 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = boot.out, conf = 1 - alpha, type = bootci.type)
+## 
+## Intervals : 
+## Level      Normal              Basic         
+## 95%   ( 1.005,  1.920 )   ( 0.965,  1.891 )  
+## 
+## Level     Percentile            BCa          
+## 95%   ( 0.963,  1.889 )   ( 0.963,  1.819 )  
+## Calculations and Intervals on Original Scale
+## 
+## sample estimate:
+##   median 
+## 1.427096</code></pre>
+<p>It often happens that quantile confidence intervals are not unique. Here the minimum length interval might be of interest.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">medianCI</span>(<span class="dt">x =</span> x, <span class="dt">minLength =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  minimum length exact confidence interval
+## 
+## 95.23684 percent confidence interval:
+##            lower    upper
+## median 0.7209527 1.749636
+## 
+## sample estimate:
+##   median 
+## 1.427096</code></pre>
+<p>Finally, we take a look at MAD (median absolute deviation) where by default the standardized MAD is used (see function mad).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## exact
+<span class="kw">madCI</span>(<span class="dt">x =</span> x)</code></pre></div>
+<pre><code>## 
+##  exact confidence interval
+## 
+## 95.23684 percent confidence intervals:
+##        lower    upper
+## MAD 1.338393 1.839259
+## MAD 1.483801 1.891162
+## 
+## sample estimate:
+##      MAD 
+## 1.681009</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## aysymptotic
+<span class="kw">madCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;asymptotic&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  asymptotic confidence interval
+## 
+## 95 percent confidence interval:
+##        2.5 % 97.5 %
+## MAD 1.392319 1.8527
+## 
+## sample estimate:
+##      MAD 
+## 1.681009</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## boot
+<span class="kw">madCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;boot&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  bootstrap confidence interval
+## 
+## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+## Based on 9999 bootstrap replicates
+## 
+## CALL : 
+## boot.ci(boot.out = boot.out, conf = 1 - alpha, type = bootci.type)
+## 
+## Intervals : 
+## Level      Normal              Basic         
+## 95%   ( 1.499,  1.875 )   ( 1.508,  1.914 )  
+## 
+## Level     Percentile            BCa          
+## 95%   ( 1.448,  1.855 )   ( 1.426,  1.846 )  
+## Calculations and Intervals on Original Scale
+## 
+## sample estimate:
+##      MAD 
+## 1.681009</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## unstandardized
+<span class="kw">madCI</span>(<span class="dt">x =</span> x, <span class="dt">constant =</span> <span class="dv">1</span>)</code></pre></div>
+<pre><code>## 
+##  exact confidence interval
+## 
+## 95.23684 percent confidence intervals:
+##        lower    upper
+## MAD 0.902734 1.240563
+## MAD 1.000810 1.275571
+## 
+## sample estimate:
+##      MAD 
+## 1.133825</code></pre>
+</div>
+</div>
+<div id="hsu-two-sample-t-test" class="section level2">
+<h2>Hsu Two-Sample t-Test</h2>
+<p>The Hsu two-sample t-test is an alternative to the Welch two-sample t-test using a different formula for computing the degrees of freedom of the respective t-distribution <span class="citation">(Hedderich and Sachs 2018)</span>. The following code is taken and adapted from the help page of the t.test function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>))      <span class="co"># P = .00001855</span></code></pre></div>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  1:10 and c(7:20)
+## t = -5.4349, df = 21.982, p-value = 1.855e-05
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -11.052802  -4.947198
+## sample estimates:
+## mean of x mean of y 
+##       5.5      13.5</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>)) <span class="co"># P = .1245    -- NOT significant anymore</span></code></pre></div>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  1:10 and c(7:20, 200)
+## t = -1.6329, df = 14.165, p-value = 0.1245
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -47.242900   6.376233
+## sample estimates:
+## mean of x mean of y 
+##   5.50000  25.93333</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hsu.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>))</code></pre></div>
+<pre><code>## 
+##  Hsu Two Sample t-test
+## 
+## data:  1:10 and c(7:20)
+## t = -5.4349, df = 9, p-value = 0.0004137
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -11.329805  -4.670195
+## sample estimates:
+## mean of x mean of y   SD of x   SD of y 
+##   5.50000  13.50000   3.02765   4.18330</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hsu.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>))</code></pre></div>
+<pre><code>## 
+##  Hsu Two Sample t-test
+## 
+## data:  1:10 and c(7:20, 200)
+## t = -1.6329, df = 9, p-value = 0.1369
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -48.740846   7.874179
+## sample estimates:
+## mean of x mean of y   SD of x   SD of y 
+##   5.50000  25.93333   3.02765  48.32253</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Traditional interface
+<span class="kw">with</span>(sleep, <span class="kw">t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</code></pre></div>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  extra[group == 1] and extra[group == 2]
+## t = -1.8608, df = 17.776, p-value = 0.07939
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.3654832  0.2054832
+## sample estimates:
+## mean of x mean of y 
+##      0.75      2.33</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">with</span>(sleep, <span class="kw">hsu.t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</code></pre></div>
+<pre><code>## 
+##  Hsu Two Sample t-test
+## 
+## data:  extra[group == 1] and extra[group == 2]
+## t = -1.8608, df = 9, p-value = 0.09569
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.5007773  0.3407773
+## sample estimates:
+## mean of x mean of y   SD of x   SD of y 
+##  0.750000  2.330000  1.789010  2.002249</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Formula interface
+<span class="kw">t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</code></pre></div>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  extra by group
+## t = -1.8608, df = 17.776, p-value = 0.07939
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.3654832  0.2054832
+## sample estimates:
+## mean in group 1 mean in group 2 
+##            0.75            2.33</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hsu.t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</code></pre></div>
+<pre><code>## 
+##  Hsu Two Sample t-test
+## 
+## data:  extra by group
+## t = -1.8608, df = 9, p-value = 0.09569
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.5007773  0.3407773
+## sample estimates:
+## mean of x mean of y   SD of x   SD of y 
+##  0.750000  2.330000  1.789010  2.002249</code></pre>
+</div>
+<div id="bootstrap-t-test" class="section level2">
+<h2>Bootstrap t-Test</h2>
+<p>One and two sample bootstrap t-tests with equal or unequal variances in the two sample case <span class="citation">(Efron and Tibshirani 1993)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boot.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>)) <span class="co"># without bootstrap: P = .00001855</span></code></pre></div>
+<pre><code>## 
+##  Bootstrapped Welch Two Sample t-test
+## 
+## data:  1:10 and c(7:20)
+## bootstrapped p-value &lt; 2.2e-16 
+## 95 percent bootstrap percentile confidence interval:
+##  -10.75714  -5.20000
+## 
+## Results without bootstrap:
+## t = -5.4349, df = 21.982, p-value = 1.855e-05
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -11.052802  -4.947198
+## sample estimates:
+## mean of x mean of y 
+##       5.5      13.5</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boot.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>)) <span class="co"># without bootstrap: P = .1245</span></code></pre></div>
+<pre><code>## 
+##  Bootstrapped Welch Two Sample t-test
+## 
+## data:  1:10 and c(7:20, 200)
+## bootstrapped p-value = 0.0282 
+## 95 percent bootstrap percentile confidence interval:
+##  -46.566667  -5.933333
+## 
+## Results without bootstrap:
+## t = -1.6329, df = 14.165, p-value = 0.1245
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -47.242900   6.376233
+## sample estimates:
+## mean of x mean of y 
+##   5.50000  25.93333</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Traditional interface
+<span class="kw">with</span>(sleep, <span class="kw">boot.t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</code></pre></div>
+<pre><code>## 
+##  Bootstrapped Welch Two Sample t-test
+## 
+## data:  extra[group == 1] and extra[group == 2]
+## bootstrapped p-value = 0.07541 
+## 95 percent bootstrap percentile confidence interval:
+##  -3.13  0.01
+## 
+## Results without bootstrap:
+## t = -1.8608, df = 17.776, p-value = 0.07939
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.3654832  0.2054832
+## sample estimates:
+## mean of x mean of y 
+##      0.75      2.33</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Formula interface
+<span class="kw">boot.t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</code></pre></div>
+<pre><code>## 
+##  Bootstrapped Welch Two Sample t-test
+## 
+## data:  extra by group
+## bootstrapped p-value = 0.07561 
+## 95 percent bootstrap percentile confidence interval:
+##  -3.12 -0.02
+## 
+## Results without bootstrap:
+## t = -1.8608, df = 17.776, p-value = 0.07939
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.3654832  0.2054832
+## sample estimates:
+## mean in group 1 mean in group 2 
+##            0.75            2.33</code></pre>
+</div>
+<div id="permutation-t-test" class="section level2">
+<h2>Permutation t-Test</h2>
+<p>One and two sample permutation t-tests with equal <span class="citation">(Efron and Tibshirani 1993)</span> or unequal variances <span class="citation">(Janssen 1997)</span> in the two sample case.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">perm.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>)) <span class="co"># without permutation: P = .00001855</span></code></pre></div>
+<pre><code>## 
+##  Permutation Welch Two Sample t-test
+## 
+## data:  1:10 and c(7:20)
+## (Monte-Carlo) permutation p-value &lt; 2.2e-16 
+## 95 percent (Monte-Carlo) permutation percentile confidence interval:
+##  -12.237143  -3.657143
+## 
+## Results without permutation:
+## t = -5.4349, df = 21.982, p-value = 1.855e-05
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -11.052802  -4.947198
+## sample estimates:
+## mean of x mean of y 
+##       5.5      13.5</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## permutation confidence interval sensitive to outlier!
+<span class="kw">perm.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>)) <span class="co"># without permutation: P = .1245</span></code></pre></div>
+<pre><code>## 
+##  Permutation Welch Two Sample t-test
+## 
+## data:  1:10 and c(7:20, 200)
+## (Monte-Carlo) permutation p-value &lt; 2.2e-16 
+## 95 percent (Monte-Carlo) permutation percentile confidence interval:
+##  -36.866667   1.966667
+## 
+## Results without permutation:
+## t = -1.6329, df = 14.165, p-value = 0.1245
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -47.242900   6.376233
+## sample estimates:
+## mean of x mean of y 
+##   5.50000  25.93333</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Traditional interface
+<span class="kw">with</span>(sleep, <span class="kw">perm.t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</code></pre></div>
+<pre><code>## 
+##  Permutation Welch Two Sample t-test
+## 
+## data:  extra[group == 1] and extra[group == 2]
+## (Monte-Carlo) permutation p-value = 0.08001 
+## 95 percent (Monte-Carlo) permutation percentile confidence interval:
+##  -3.34  0.20
+## 
+## Results without permutation:
+## t = -1.8608, df = 17.776, p-value = 0.07939
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.3654832  0.2054832
+## sample estimates:
+## mean of x mean of y 
+##      0.75      2.33</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Formula interface
+<span class="kw">perm.t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</code></pre></div>
+<pre><code>## 
+##  Permutation Welch Two Sample t-test
+## 
+## data:  extra by group
+## (Monte-Carlo) permutation p-value = 0.07581 
+## 95 percent (Monte-Carlo) permutation percentile confidence interval:
+##  -3.320  0.141
+## 
+## Results without permutation:
+## t = -1.8608, df = 17.776, p-value = 0.07939
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.3654832  0.2054832
+## sample estimates:
+## mean in group 1 mean in group 2 
+##            0.75            2.33</code></pre>
+</div>
+<div id="multiple-imputation-t-test" class="section level2">
+<h2>Multiple Imputation t-Test</h2>
+<p>Function mi.t.test can be used to compute a multiple imputation t-test by applying the approch of Rubin <span class="citation">(Rubin 1987)</span> in combination with the adjustment of Barnard and Rubin <span class="citation">(Barnard and Rubin 1999)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Generate some data
+<span class="kw">set.seed</span>(<span class="dv">123</span>)
+x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">25</span>, <span class="dt">mean =</span> <span class="dv">1</span>)
+x[<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">25</span>, <span class="dv">5</span>)] &lt;-<span class="st"> </span><span class="ot">NA</span>
+y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">20</span>, <span class="dt">mean =</span> <span class="dv">-1</span>)
+y[<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">4</span>)] &lt;-<span class="st"> </span><span class="ot">NA</span>
+pair &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rnorm</span>(<span class="dv">25</span>, <span class="dt">mean =</span> <span class="dv">1</span>), <span class="kw">rnorm</span>(<span class="dv">20</span>, <span class="dt">mean =</span> <span class="dv">-1</span>))
+g &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;yes&quot;</span>, <span class="dv">25</span>), <span class="kw">rep</span>(<span class="st">&quot;no&quot;</span>, <span class="dv">20</span>)))
+D &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">ID =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">45</span>, <span class="dt">variable =</span> <span class="kw">c</span>(x, y), <span class="dt">pair =</span> pair, <span class="dt">group =</span> g)
+
+## Use Amelia to impute missing values
+<span class="kw">library</span>(Amelia)</code></pre></div>
+<pre><code>## Loading required package: Rcpp</code></pre>
+<pre><code>## ## 
+## ## Amelia II: Multiple Imputation
+## ## (Version 1.7.5, built: 2018-05-07)
+## ## Copyright (C) 2005-2019 James Honaker, Gary King and Matthew Blackwell
+## ## Refer to http://gking.harvard.edu/amelia/ for more information
+## ##</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">amelia</span>(D, <span class="dt">m =</span> <span class="dv">10</span>, <span class="dt">p2s =</span> <span class="dv">0</span>, <span class="dt">idvars =</span> <span class="st">&quot;ID&quot;</span>, <span class="dt">noms =</span> <span class="st">&quot;group&quot;</span>)
+
+## Per protocol analysis (Welch two-sample t-test)
+<span class="kw">t.test</span>(variable <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> D)</code></pre></div>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  variable by group
+## t = -6.9214, df = 33.69, p-value = 5.903e-08
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -2.628749 -1.435125
+## sample estimates:
+##  mean in group no mean in group yes 
+##        -1.0862469         0.9456901</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Intention to treat analysis (Multiple Imputation Welch two-sample t-test)
+<span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Multiple Imputation Welch Two Sample t-test
+## 
+## data:  Variable variable: group no vs group yes
+## t = -7.3656, df = 34.536, p-value = 1.406e-08
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -2.631841 -1.494106
+## sample estimates:
+##  mean (no)    SD (no) mean (yes)   SD (yes) 
+## -1.1229933  0.8840274  0.9399803  1.0195617</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Per protocol analysis (Two-sample t-test)
+<span class="kw">t.test</span>(variable <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> D, <span class="dt">var.equal =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  Two Sample t-test
+## 
+## data:  variable by group
+## t = -6.8168, df = 34, p-value = 7.643e-08
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -2.637703 -1.426171
+## sample estimates:
+##  mean in group no mean in group yes 
+##        -1.0862469         0.9456901</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Intention to treat analysis (Multiple Imputation two-sample t-test)
+<span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>, <span class="dt">var.equal =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  Multiple Imputation Two Sample t-test
+## 
+## data:  Variable variable: group no vs group yes
+## t = -7.2944, df = 35.611, p-value = 1.444e-08
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -2.636770 -1.489177
+## sample estimates:
+##  mean (no)    SD (no) mean (yes)   SD (yes) 
+## -1.1229933  0.8840274  0.9399803  1.0195617</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## Specifying alternatives
+<span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>, <span class="dt">alternative =</span> <span class="st">&quot;less&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Multiple Imputation Welch Two Sample t-test
+## 
+## data:  Variable variable: group no vs group yes
+## t = -7.3656, df = 34.536, p-value = 7.031e-09
+## alternative hypothesis: true difference in means is less than 0
+## 95 percent confidence interval:
+##       -Inf -1.589584
+## sample estimates:
+##  mean (no)    SD (no) mean (yes)   SD (yes) 
+## -1.1229933  0.8840274  0.9399803  1.0195617</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>, <span class="dt">alternative =</span> <span class="st">&quot;greater&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Multiple Imputation Welch Two Sample t-test
+## 
+## data:  Variable variable: group no vs group yes
+## t = -7.3656, df = 34.536, p-value = 1
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  -2.536363       Inf
+## sample estimates:
+##  mean (no)    SD (no) mean (yes)   SD (yes) 
+## -1.1229933  0.8840274  0.9399803  1.0195617</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## One sample test
+<span class="kw">t.test</span>(D<span class="op">$</span>variable[D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>])</code></pre></div>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  D$variable[D$group == &quot;yes&quot;]
+## t = 4.5054, df = 19, p-value = 0.0002422
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  0.5063618 1.3850184
+## sample estimates:
+## mean of x 
+## 0.9456901</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">subset =</span> D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Multiple Imputation One Sample t-test
+## 
+## data:  Variable variable
+## t = 4.6097, df = 17.543, p-value = 0.0002315
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  0.5107752 1.3691854
+## sample estimates:
+##      mean        SD 
+## 0.9399803 1.0195617</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">mu =</span> <span class="dv">-1</span>, <span class="dt">subset =</span> D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>,
+          <span class="dt">alternative =</span> <span class="st">&quot;less&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Multiple Imputation One Sample t-test
+## 
+## data:  Variable variable
+## t = 9.5138, df = 17.543, p-value = 1
+## alternative hypothesis: true mean is less than -1
+## 95 percent confidence interval:
+##      -Inf 1.294077
+## sample estimates:
+##      mean        SD 
+## 0.9399803 1.0195617</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">mu =</span> <span class="dv">-1</span>, <span class="dt">subset =</span> D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>,
+          <span class="dt">alternative =</span> <span class="st">&quot;greater&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Multiple Imputation One Sample t-test
+## 
+## data:  Variable variable
+## t = 9.5138, df = 17.543, p-value = 1.206e-08
+## alternative hypothesis: true mean is greater than -1
+## 95 percent confidence interval:
+##  0.5858838       Inf
+## sample estimates:
+##      mean        SD 
+## 0.9399803 1.0195617</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## paired test
+<span class="kw">t.test</span>(D<span class="op">$</span>variable, D<span class="op">$</span>pair, <span class="dt">paired =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  D$variable and D$pair
+## t = -1.3532, df = 35, p-value = 0.1847
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.6976921  0.1395993
+## sample estimates:
+## mean of the differences 
+##              -0.2790464</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;pair&quot;</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## 
+##  Multiple Imputation Paired t-test
+## 
+## data:  Variables  variable and pair
+## t = -1.174, df = 36.834, p-value = 0.2479
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.6031569  0.1606663
+## sample estimates:
+## mean of difference   SD of difference 
+##         -0.2212453          1.2642188</code></pre>
+</div>
+<div id="repeated-measures-one-way-anova" class="section level2">
+<h2>Repeated Measures One-Way ANOVA</h2>
+<p>We provide a simple wrapper function that allows to compute a classical repeated measures one-way ANOVA as well as a respective mixed effects model. In addition, the non-parametric Friedman and Quade tests can be computed.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">123</span>)
+outcome &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rnorm</span>(<span class="dv">10</span>), <span class="kw">rnorm</span>(<span class="dv">10</span>, <span class="dt">mean =</span> <span class="fl">1.5</span>), <span class="kw">rnorm</span>(<span class="dv">10</span>, <span class="dt">mean =</span> <span class="dv">1</span>))
+timepoints &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">each =</span> <span class="dv">10</span>))
+patients &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">times =</span> <span class="dv">3</span>))
+<span class="kw">rm.oneway.test</span>(outcome, timepoints, patients)</code></pre></div>
+<pre><code>## 
+##  Repeated measures 1-way ANOVA
+## 
+## data:  outcome , timepoints and patients
+## F = 6.5898, num df = 2, denom df = 18, p-value = 0.007122</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients, <span class="dt">method =</span> <span class="st">&quot;lme&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Mixed-effects 1-way ANOVA
+## 
+## data:  outcome , timepoints and patients
+## F = 7.3674, num df = 2, denom df = 18, p-value = 0.004596</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients, <span class="dt">method =</span> <span class="st">&quot;friedman&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Friedman rank sum test
+## 
+## data:  x, g and id
+## Friedman chi-squared = 12.8, df = 2, p-value = 0.001662</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients, <span class="dt">method =</span> <span class="st">&quot;quade&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Quade test
+## 
+## data:  x, g and id
+## Quade F = 7.2906, num df = 2, denom df = 18, p-value = 0.004795</code></pre>
+</div>
+<div id="imputation-of-standard-deviations-for-changes-from-baseline" class="section level2">
+<h2>Imputation of Standard Deviations for Changes from Baseline</h2>
+<p>The function imputeSD can be used to impute standard deviations for changes from baseline adopting the approach of the Cochrane handbook <span class="citation">(Higgins et al. 2019, Section 6.5.2.8)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SD1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.149</span>, <span class="fl">0.022</span>, <span class="fl">0.036</span>, <span class="fl">0.085</span>, <span class="fl">0.125</span>, <span class="ot">NA</span>, <span class="fl">0.139</span>, <span class="fl">0.124</span>, <span class="fl">0.038</span>)
+SD2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="fl">0.039</span>, <span class="fl">0.038</span>, <span class="fl">0.087</span>, <span class="fl">0.125</span>, <span class="ot">NA</span>, <span class="fl">0.135</span>, <span class="fl">0.126</span>, <span class="fl">0.038</span>)
+SDchange &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="fl">0.026</span>, <span class="fl">0.058</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>)
+<span class="kw">imputeSD</span>(SD1, SD2, SDchange)</code></pre></div>
+<pre><code>##     SD1   SD2 SDchange       Cor SDchange.min SDchange.mean SDchange.max
+## 1 0.149 0.149       NA        NA   0.04491608    0.05829769   0.06913600
+## 2 0.022 0.039       NA        NA   0.01915642    0.02050235   0.02176520
+## 3 0.036 0.038       NA        NA   0.01132754    0.01460887   0.01727787
+## 4 0.085 0.087    0.026 0.9545639   0.02600000    0.03370544   0.03995139
+## 5 0.125 0.125    0.058 0.8923520   0.03768127    0.04890745   0.05800000
+## 6    NA    NA       NA        NA           NA            NA           NA
+## 7 0.139 0.135       NA        NA   0.04148755    0.05374591   0.06368696
+## 8 0.124 0.126       NA        NA   0.03773311    0.04894677   0.05803262
+## 9 0.038 0.038       NA        NA   0.01145511    0.01486787   0.01763200</code></pre>
+</div>
+<div id="pairwise-comparisons" class="section level2">
+<h2>Pairwise Comparisons</h2>
+<p>Function pairwise.fun enables the application of arbitrary functions for pairwise comparisons.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairwise.wilcox.test</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month, 
+                     <span class="dt">p.adjust.method =</span> <span class="st">&quot;none&quot;</span>)</code></pre></div>
+<pre><code>## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties
+
+## Warning in wilcox.test.default(xi, xj, paired = paired, ...): cannot
+## compute exact p-value with ties</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using Wilcoxon rank sum test 
+## 
+## data:  airquality$Ozone and airquality$Month 
+## 
+##   5       6       7       8      
+## 6 0.19250 -       -       -      
+## 7 3e-05   0.01414 -       -      
+## 8 0.00012 0.02591 0.86195 -      
+## 9 0.11859 0.95887 0.00074 0.00325
+## 
+## P value adjustment method: none</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## To avoid the warnings
+<span class="kw">library</span>(exactRankTests)</code></pre></div>
+<pre><code>##  Package 'exactRankTests' is no longer under development.
+##  Please consider using package 'coin' instead.</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairwise.fun</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month, 
+             <span class="dt">fun =</span> <span class="cf">function</span>(x, y) <span class="kw">wilcox.exact</span>(x, y)<span class="op">$</span>p.value)</code></pre></div>
+<pre><code>##       5 vs 6       5 vs 7       5 vs 8       5 vs 9       6 vs 7 
+## 1.897186e-01 1.087205e-05 6.108735e-05 1.171796e-01 1.183753e-02 
+##       6 vs 8       6 vs 9       7 vs 8       7 vs 9       8 vs 9 
+## 2.333564e-02 9.528659e-01 8.595683e-01 5.281796e-04 2.714694e-03</code></pre>
+</div>
+<div id="sessioninfo" class="section level2">
+<h2>sessionInfo</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre></div>
+<pre><code>## R version 3.6.1 Patched (2019-11-20 r77463)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Linux Mint 19.2
+## 
+## Matrix products: default
+## BLAS:   /usr/lib/x86_64-linux-gnu/libf77blas.so.3.10.3
+## LAPACK: /home/kohlm/RTOP/Rbranch/lib/libRlapack.so
+## 
+## locale:
+##  [1] LC_CTYPE=de_DE.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=de_DE.UTF-8        LC_COLLATE=C              
+##  [5] LC_MONETARY=de_DE.UTF-8    LC_MESSAGES=de_DE.UTF-8   
+##  [7] LC_PAPER=de_DE.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=de_DE.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] exactRankTests_0.8-30 Amelia_1.7.5          Rcpp_1.0.2           
+## [4] MKinfer_0.3          
+## 
+## loaded via a namespace (and not attached):
+##  [1] gmp_0.5-13.5       pillar_1.4.2       compiler_3.6.1    
+##  [4] arrangements_1.1.7 tools_3.6.1        boot_1.3-23       
+##  [7] digest_0.6.22      evaluate_0.14      tibble_2.1.3      
+## [10] gtable_0.3.0       nlme_3.1-142       lattice_0.20-38   
+## [13] pkgconfig_2.0.3    rlang_0.4.1        yaml_2.2.0        
+## [16] xfun_0.10          MKdescr_0.5        dplyr_0.8.3       
+## [19] stringr_1.4.0      knitr_1.25         grid_3.6.1        
+## [22] tidyselect_0.2.5   glue_1.3.1         R6_2.4.0          
+## [25] foreign_0.8-72     rmarkdown_1.16     ggplot2_3.2.1     
+## [28] purrr_0.3.3        magrittr_1.5       scales_1.0.0      
+## [31] htmltools_0.4.0    assertthat_0.2.1   colorspace_1.4-1  
+## [34] stringi_1.4.3      lazyeval_0.2.2     munsell_0.5.0     
+## [37] crayon_1.3.4</code></pre>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-Altman2000">
+<p>Altman, Douglas G., David Machin, Trevor N. Bryant, and Martin J. Gardner, eds. 2000. <em>Statistics with Confidence: Confidence Intervals and Statistical Guidelines</em>. BMJ Books.</p>
+</div>
+<div id="ref-Barnard1999">
+<p>Barnard, J, and D B Rubin. 1999. “Miscellanea. Small-Sample Degrees of Freedom with Multiple Imputation.” <em>Biometrika</em> 86 (4). Oxford University Press (OUP): 948–55. doi:<a href="https://doi.org/10.1093/biomet/86.4.948">10.1093/biomet/86.4.948</a>.</p>
+</div>
+<div id="ref-DasGupta2001">
+<p>DasGupta, Anirban, T. Tony Cai, and Lawrence D. Brown. 2001. “Interval Estimation for a Binomial Proportion.” <em>Statistical Science</em> 16 (2). Institute of Mathematical Statistics: 101–33. doi:<a href="https://doi.org/10.1214/ss/1009213286">10.1214/ss/1009213286</a>.</p>
+</div>
+<div id="ref-Davison1997">
+<p>Davison, A. C., and D. V. Hinkley. 1997. <em>Bootstrap Methods and Their Applications</em>. Cambridge: Cambridge University Press. <a href="http://statwww.epfl.ch/davison/BMA/" class="uri">http://statwww.epfl.ch/davison/BMA/</a>.</p>
+</div>
+<div id="ref-Efron1993">
+<p>Efron, Bradley, and Robert J Tibshirani. 1993. <em>An Introduction to the Bootstrap (Chapman &amp; Hall/Crc Monographs on Statistics and Applied Probability)</em>. Chapman; Hall/CRC.</p>
+</div>
+<div id="ref-Gulhar2012">
+<p>Gulhar, Monika, B M Golam Kibria, and Nasar Ahmed. 2012. “A Comparison of Some Confidence Intervals for Estimating the Population Coefficient of Variation: A Simulation Study.” <em>SORT</em> 36 (January): 45–68.</p>
+</div>
+<div id="ref-Hedderich2018">
+<p>Hedderich, Jürgen, and Lothar Sachs. 2018. <em>Angewandte Statistik: Methodensammlung Mit R</em>. Springer Berlin Heidelberg. doi:<a href="https://doi.org/10.1007/978-3-662-56657-2">10.1007/978-3-662-56657-2</a>.</p>
+</div>
+<div id="ref-Cochrane2019">
+<p>Higgins, Julian P.T., James Thomas, Jacqueline Chandler, Miranda Cumpston, Tianjing Li, Matthew J. Page, and Vivian A. Welch, eds. 2019. <em>Cochrane Handbook for Systematic Reviews of Interventions</em>. Wiley. doi:<a href="https://doi.org/10.1002/9781119536604">10.1002/9781119536604</a>.</p>
+</div>
+<div id="ref-Janssen1997">
+<p>Janssen, Arnold. 1997. “Studentized Permutation Tests for Non-I.i.d. Hypotheses and the Generalized Behrens-Fisher Problem.” <em>Statistics &amp; Probability Letters</em> 36 (1). Elsevier BV: 9–21. doi:<a href="https://doi.org/10.1016/s0167-7152(97)00043-6">10.1016/s0167-7152(97)00043-6</a>.</p>
+</div>
+<div id="ref-Newcombe1998a">
+<p>Newcombe, R. G. 1998a. “Interval Estimation for the Difference Between Independent Proportions: Comparison of Eleven Methods.” <em>Statistics in Medicine</em> 17 (8). Wiley: 873–90. doi:<a href="https://doi.org/10.1002/(sici)1097-0258(19980430)17:8&lt;873::aid-sim779&gt;3.0.co;2-i">10.1002/(sici)1097-0258(19980430)17:8&lt;873::aid-sim779&gt;3.0.co;2-i</a>.</p>
+</div>
+<div id="ref-Newcombe1998b">
+<p>———. 1998b. “Improved confidence intervals for the difference between binomial proportions based on paired data.” <em>Stat Med</em> 17 (22): 2635–50.</p>
+</div>
+<div id="ref-Rubin1987">
+<p>Rubin, Donald B. 1987. <em>Multiple Imputation for Nonresponse in Surveys (Wiley Series in Probability and Statistics)</em>. Wiley.</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+###############################################################################
+## NEWS to package MKinfer
+###############################################################################
+
+###########################################################
+## Version 0.3
+###########################################################
+- corrected minor bug for wald-cc in binomCI and binomDiffCI
+- corrected minor bug in case of bootstrap confidence intervals (conf.level 
+  was not passed through)
+- introduced one-sided confidence intervals in all *CI functions
+- added references to description and vignette
+- added function rm.oneway.test to compute parametric and non-parametric
+  one-way ANOVA with repeated measures
+  
+
+###########################################################
+## Version 0.2
+###########################################################
+- Added new function binomDiffCI for computing confidence intervals for
+  the difference of two binomial proportions.
+- Changed import form MKmisc to MKdescr
+- Moved function pairwise.fun from MKmisc/MKdescr to MKinfer
+- Added bootstrap intervals to functions binomCI and binomDiffCI
+- Added bootstrap intervals to function normCI
+- Added functions meanCI and sdCI calling function normCI
+- Added bootstrap intervals to function normDiffCI
+- Added function meanDiffCI calling function normDiffCI
+- Added bootstrap intervals to quantileCI, medianCI and madCI
+- Added bootstrap interval to cvCI
+- Added function boot.t.test to compute bootstrap t-tests
+- Added function perm.t.test to compute permutation t-tests
+
+
+###########################################################
+## Version 0.1
+###########################################################
+- Start of development
+- Copied functions binomCI, cvCI, hsu.t.test, imputeSD,
+  madCI, medianCI, mi.t.test, normCI, normDiffCI, 
+  quantileCI from package MKmisc
