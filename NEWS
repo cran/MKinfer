@@ -3,6 +3,14 @@
 ###############################################################################
 
 ###########################################################
+## Version 0.6
+###########################################################
+- removed an unnecessary print in function binomDiffCI
+- use lgamma instead of gamma to compute variance of SD (inside normCI)
+- modified imputeSD such that correlations < -1 or > 1, which may occur, are 
+  not used for the imputations, but are set to -1 or 1, respectively.
+
+###########################################################
 ## Version 0.5
 ###########################################################
 - corrected bug in wilson method in binomDiffCI (alpha was not passed through)
