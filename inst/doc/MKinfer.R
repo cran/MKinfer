@@ -138,7 +138,11 @@ perm.t.test(1:10, y = c(7:20, 200)) # without permutation: P = .1245
 ## Traditional interface
 with(sleep, perm.t.test(extra[group == 1], extra[group == 2]))
 ## Formula interface
-perm.t.test(extra ~ group, data = sleep)
+res <- perm.t.test(extra ~ group, data = sleep)
+res
+
+## -----------------------------------------------------------------------------
+p2ses(res$p.value)
 
 ## -----------------------------------------------------------------------------
 ## Generate some data
@@ -182,6 +186,13 @@ t.test(D$variable, D$pair, paired = TRUE)
 mi.t.test(res$imputations, x = "variable", y = "pair", paired = TRUE)
 
 ## -----------------------------------------------------------------------------
+library(mice)
+library(miceadds)
+res.mice <- mice(D, m = 10, print = FALSE)
+res.list <- mids2datlist(res.mice)
+mi.t.test(res.list, x = "variable", y = "group")
+
+## -----------------------------------------------------------------------------
 set.seed(123)
 outcome <- c(rnorm(10), rnorm(10, mean = 1.5), rnorm(10, mean = 1))
 timepoints <- factor(rep(1:3, each = 10))
@@ -218,6 +229,10 @@ SD1 <- c(0.149, 0.022, 0.036, 0.085, 0.125, NA, 0.139, 0.124, 0.038)
 SD2 <- c(NA, 0.039, 0.038, 0.087, 0.125, NA, 0.135, 0.126, 0.038)
 SDchange <- c(NA, NA, NA, 0.026, 0.058, NA, NA, NA, NA)
 imputeSD(SD1, SD2, SDchange)
+
+## -----------------------------------------------------------------------------
+SDchange2 <- rep(NA, 9)
+imputeSD(SD1, SD2, SDchange2, corr = c(0.85, 0.9, 0.95))
 
 ## -----------------------------------------------------------------------------
 pairwise.wilcox.test(airquality$Ozone, airquality$Month, 
