@@ -12,7 +12,7 @@
 
 <meta name="author" content="Matthias Kohl" />
 
-<meta name="date" content="2022-09-06" />
+<meta name="date" content="2022-11-06" />
 
 <title>Package MKinfer</title>
 
@@ -107,13 +107,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -319,7 +326,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Package MKinfer</h1>
 <h4 class="author">Matthias Kohl</h4>
-<h4 class="date">2022-09-06</h4>
+<h4 class="date">2022-11-06</h4>
 
 
 <div id="TOC">
@@ -348,7 +355,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>Package MKinfer includes a collection of functions for the computation of various confidence intervals <span class="citation">(Altman et al. 2000; Hedderich and Sachs 2018)</span> including bootstrapped versions <span class="citation">(Davison and Hinkley 1997)</span> as well as Hsu <span class="citation">(Hedderich and Sachs 2018)</span>, permutation <span class="citation">(Janssen 1997)</span>, bootstrap <span class="citation">(Davison and Hinkley 1997)</span> and multiple imputation <span class="citation">(Barnard and Rubin 1999)</span> t-test.</p>
+<p>Package MKinfer includes a collection of functions for the computation of various confidence intervals <span class="citation">(Altman et al. 2000; Hedderich and Sachs 2018)</span> including bootstrapped versions <span class="citation">(Davison and Hinkley 1997)</span> as well as Hsu <span class="citation">(Hedderich and Sachs 2018)</span>, permutation <span class="citation">(Janssen 1997)</span>, bootstrap <span class="citation">(Davison and Hinkley 1997)</span> and multiple imputation <span class="citation">(Barnard and Rubin 1999)</span> t-test. Graphical visualization by volcano plots.</p>
 <p>We first load the package.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(MKinfer)</a></code></pre></div>
 </div>
@@ -439,47 +446,47 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##  Exact confidence interval(s)
 ## 
 ## 95 percent confidence intervals:
-##         2.5 %   97.5 %
-## mean 1.013980 2.601463
-## sd   2.333029 3.480362
+##          2.5 %   97.5 %
+## mean 0.6142506 2.197656
+## sd   2.3270361 3.471423
 ## 
 ## sample estimates:
 ##     mean       sd 
-## 1.807722 2.792929 
+## 1.405954 2.785755 
 ## 
 ## additional information:
 ## SE of mean 
-##  0.3949798</code></pre>
+##  0.3939653</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">meanCI</span>(x)</a></code></pre></div>
 <pre><code>## 
 ##  Exact confidence interval(s)
 ## 
 ## 95 percent confidence interval:
-##        2.5 %   97.5 %
-## mean 1.01398 2.601463
+##          2.5 %   97.5 %
+## mean 0.6142506 2.197656
 ## 
 ## sample estimates:
 ##     mean       sd 
-## 1.807722 2.792929 
+## 1.405954 2.785755 
 ## 
 ## additional information:
 ## SE of mean 
-##  0.3949798</code></pre>
+##  0.3939653</code></pre>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="kw">sdCI</span>(x)</a></code></pre></div>
 <pre><code>## 
 ##  Exact confidence interval(s)
 ## 
 ## 95 percent confidence interval:
 ##       2.5 %   97.5 %
-## sd 2.333029 3.480362
+## sd 2.327036 3.471423
 ## 
 ## sample estimates:
 ##     mean       sd 
-## 1.807722 2.792929 
+## 1.405954 2.785755 
 ## 
 ## additional information:
 ## SE of mean 
-##  0.3949798</code></pre>
+##  0.3939653</code></pre>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="co">## SD known</span></a>
 <a class="sourceLine" id="cb18-2" title="2"><span class="kw">normCI</span>(x, <span class="dt">sd =</span> <span class="dv">3</span>)</a></code></pre></div>
 <pre><code>## 
@@ -487,11 +494,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## 95 percent confidence interval:
 ##          2.5 %   97.5 %
-## mean 0.9761795 2.639264
+## mean 0.5744112 2.237496
 ## 
 ## sample estimate:
 ##     mean 
-## 1.807722 
+## 1.405954 
 ## 
 ## additional information:
 ## SE of mean 
@@ -503,11 +510,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## 95 percent confidence interval:
 ##    0 %     95 %
-## sd   0 3.356325
+## sd   0 3.347705
 ## 
 ## sample estimate:
 ##       sd 
-## 2.792929</code></pre>
+## 2.785755</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" title="1"><span class="co">## bootstrap</span></a>
 <a class="sourceLine" id="cb22-2" title="2"><span class="kw">meanCI</span>(x, <span class="dt">boot =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## 
@@ -521,15 +528,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Intervals : 
 ## Level      Normal              Basic             Studentized     
-## 95%   ( 1.043,  2.578 )   ( 1.034,  2.565 )   ( 1.030,  2.607 )  
+## 95%   ( 0.642,  2.170 )   ( 0.630,  2.147 )   ( 0.671,  2.250 )  
 ## 
 ## Level     Percentile            BCa          
-## 95%   ( 1.050,  2.582 )   ( 1.056,  2.586 )  
+## 95%   ( 0.665,  2.182 )   ( 0.708,  2.222 )  
 ## Calculations and Intervals on Original Scale
 ## 
 ## sample estimates:
 ##     mean       sd 
-## 1.807722 2.792929</code></pre>
+## 1.405954 2.785755</code></pre>
 </div>
 <div id="difference-in-means" class="section level3">
 <h3>Difference in Means</h3>
@@ -543,15 +550,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## 95 percent confidence interval:
 ##                          2.5 %   97.5 %
-## mean of differences -0.9182056 1.000461
+## mean of differences -0.5355617 1.068628
 ## 
 ## sample estimates:
 ## mean of differences   sd of differences 
-##           0.0411276           2.0497941 
+##           0.2665334           1.7138255 
 ## 
 ## additional information:
 ## SE of mean of differences 
-##                 0.4583479</code></pre>
+##                  0.383223</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1"><span class="co">## compare</span></a>
 <a class="sourceLine" id="cb26-2" title="2"><span class="kw">normCI</span>(x<span class="op">-</span>y)</a></code></pre></div>
 <pre><code>## 
@@ -559,16 +566,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## 95 percent confidence intervals:
 ##           2.5 %   97.5 %
-## mean -0.9182056 1.000461
-## sd    1.5588488 2.993871
+## mean -0.5355617 1.068628
+## sd    1.3033479 2.503165
 ## 
 ## sample estimates:
 ##      mean        sd 
-## 0.0411276 2.0497941 
+## 0.2665334 1.7138255 
 ## 
 ## additional information:
 ## SE of mean 
-##  0.4583479</code></pre>
+##   0.383223</code></pre>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" title="1"><span class="co">## bootstrap</span></a>
 <a class="sourceLine" id="cb28-2" title="2"><span class="kw">normDiffCI</span>(x, y, <span class="dt">paired =</span> <span class="ot">TRUE</span>, <span class="dt">boot =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## 
@@ -582,15 +589,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Intervals : 
 ## Level      Normal              Basic             Studentized     
-## 95%   (-0.8325,  0.9082 )   (-0.8388,  0.8927 )   (-0.9203,  0.9866 )  
+## 95%   (-0.4752,  0.9910 )   (-0.4668,  0.9820 )   (-0.5608,  1.0459 )  
 ## 
 ## Level     Percentile            BCa          
-## 95%   (-0.8105,  0.9211 )   (-0.8068,  0.9230 )  
+## 95%   (-0.4489,  0.9999 )   (-0.4798,  0.9651 )  
 ## Calculations and Intervals on Original Scale
 ## 
 ## sample estimates:
 ## mean of differences   sd of differences 
-##           0.0411276           2.0497941</code></pre>
+##           0.2665334           1.7138255</code></pre>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1"><span class="co">## unpaired</span></a>
 <a class="sourceLine" id="cb30-2" title="2">y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">10</span>, <span class="dt">mean =</span> <span class="dv">1</span>, <span class="dt">sd =</span> <span class="dv">2</span>)</a>
 <a class="sourceLine" id="cb30-3" title="3"><span class="co">## classical</span></a>
@@ -599,57 +606,57 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##  Classical confidence interval (unpaired)
 ## 
 ## 95 percent confidence interval:
-##                         2.5 %      97.5 %
-## difference in means -2.723246 0.008406416
+##                         2.5 %     97.5 %
+## difference in means -2.177039 -0.7918416
 ## 
 ## sample estimate:
 ## difference in means 
-##            -1.35742 
+##            -1.48444 
 ## 
 ## additional information:
 ## SE of difference in means           Cohen&#39;s d (SMD) 
-##                 0.6667748                -0.7884618 
+##                 0.3381157                -1.7003682 
 ## 
 ## mean of x   SD of x mean of y   SD of y 
-## 0.4030681 1.1849233 1.7604879 2.5014008</code></pre>
+## 0.2440483 0.6059235 1.7284886 1.2633479</code></pre>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1"><span class="co">## Welch (default as in case of function t.test)</span></a>
 <a class="sourceLine" id="cb32-2" title="2"><span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;welch&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Welch confidence interval (unpaired)
 ## 
 ## 95 percent confidence interval:
-##                         2.5 %    97.5 %
-## difference in means -3.192146 0.4773068
+##                        2.5 %     97.5 %
+## difference in means -2.41172 -0.5571606
 ## 
 ## sample estimate:
 ## difference in means 
-##            -1.35742 
+##            -1.48444 
 ## 
 ## additional information:
 ## SE of difference in means           Cohen&#39;s d (SMD) 
-##                 0.8342079                -0.4904221 
+##                 0.4218554                -1.0594524 
 ## 
 ## mean of x   SD of x mean of y   SD of y 
-## 0.4030681 1.1849233 1.7604879 2.5014008</code></pre>
+## 0.2440483 0.6059235 1.7284886 1.2633479</code></pre>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="co">## Hsu</span></a>
 <a class="sourceLine" id="cb34-2" title="2"><span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;hsu&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Hsu confidence interval (unpaired)
 ## 
 ## 95 percent confidence interval:
-##                         2.5 %    97.5 %
-## difference in means -3.244529 0.5296895
+##                         2.5 %     97.5 %
+## difference in means -2.438744 -0.5301371
 ## 
 ## sample estimate:
 ## difference in means 
-##            -1.35742 
+##            -1.48444 
 ## 
 ## additional information:
 ## SE of difference in means           Cohen&#39;s d (SMD) 
-##                 0.8342079                -0.4904221 
+##                 0.4218554                -1.0594524 
 ## 
 ## mean of x   SD of x mean of y   SD of y 
-## 0.4030681 1.1849233 1.7604879 2.5014008</code></pre>
+## 0.2440483 0.6059235 1.7284886 1.2633479</code></pre>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1"><span class="co">## bootstrap: assuming equal variances</span></a>
 <a class="sourceLine" id="cb36-2" title="2"><span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;classical&quot;</span>, <span class="dt">boot =</span> <span class="ot">TRUE</span>, <span class="dt">bootci.type =</span> <span class="st">&quot;bca&quot;</span>)</a></code></pre></div>
 <pre><code>## 
@@ -663,19 +670,19 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Intervals : 
 ## Level       BCa          
-## 95%   (-3.015,  0.106 )  
+## 95%   (-2.339, -0.779 )  
 ## Calculations and Intervals on Original Scale
 ## 
 ## sample estimate:
 ## difference in means 
-##            -1.35742 
+##            -1.48444 
 ## 
 ## additional information:
 ## SE of difference in means           Cohen&#39;s d (SMD) 
-##                 0.6667748                -0.7884618 
+##                 0.3381157                -1.7003682 
 ## 
 ## mean of x   SD of x mean of y   SD of y 
-## 0.4030681 1.1849233 1.7604879 2.5014008</code></pre>
+## 0.2440483 0.6059235 1.7284886 1.2633479</code></pre>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1"><span class="co">## bootstrap: assuming unequal variances</span></a>
 <a class="sourceLine" id="cb38-2" title="2"><span class="kw">normDiffCI</span>(x, y, <span class="dt">method =</span> <span class="st">&quot;welch&quot;</span>, <span class="dt">boot =</span> <span class="ot">TRUE</span>, <span class="dt">bootci.type =</span> <span class="st">&quot;bca&quot;</span>)</a></code></pre></div>
 <pre><code>## 
@@ -689,19 +696,19 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Intervals : 
 ## Level       BCa          
-## 95%   (-2.999,  0.089 )  
+## 95%   (-2.341, -0.780 )  
 ## Calculations and Intervals on Original Scale
 ## 
 ## sample estimate:
 ## difference in means 
-##            -1.35742 
+##            -1.48444 
 ## 
 ## additional information:
 ## SE of difference in means           Cohen&#39;s d (SMD) 
-##                 0.8342079                -0.4904221 
+##                 0.4218554                -1.0594524 
 ## 
 ## mean of x   SD of x mean of y   SD of y 
-## 0.4030681 1.1849233 1.7604879 2.5014008</code></pre>
+## 0.2440483 0.6059235 1.7284886 1.2633479</code></pre>
 <p>In case of unequal variances and unequal sample sizes per group the classical confidence interval may have a bad coverage (too long or too short), as is indicated by the small Monte-Carlo simulation study below.</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1">M &lt;-<span class="st"> </span><span class="dv">100</span></a>
 <a class="sourceLine" id="cb40-2" title="2">CIhsu &lt;-<span class="st"> </span>CIwelch &lt;-<span class="st"> </span>CIclass &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="ot">NA</span>, <span class="dt">nrow =</span> M, <span class="dt">ncol =</span> <span class="dv">2</span>)</a>
@@ -715,7 +722,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb40-10" title="10"><span class="co">## coverage probabilies</span></a>
 <a class="sourceLine" id="cb40-11" title="11"><span class="co">## classical</span></a>
 <a class="sourceLine" id="cb40-12" title="12"><span class="kw">sum</span>(CIclass[,<span class="dv">1</span>] <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&lt;</span><span class="st"> </span>CIclass[,<span class="dv">2</span>])<span class="op">/</span>M</a></code></pre></div>
-<pre><code>## [1] 0.68</code></pre>
+<pre><code>## [1] 0.74</code></pre>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" title="1"><span class="co">## Welch</span></a>
 <a class="sourceLine" id="cb42-2" title="2"><span class="kw">sum</span>(CIwelch[,<span class="dv">1</span>] <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&lt;</span><span class="st"> </span>CIwelch[,<span class="dv">2</span>])<span class="op">/</span>M</a></code></pre></div>
 <pre><code>## [1] 0.94</code></pre>
@@ -733,28 +740,28 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ##  Miller (1991) confidence interval
 ## 
 ## 95 percent confidence interval:
-##        2.5 %    97.5 %
-## CV 0.1784019 0.2390245
+##        2.5 %   97.5 %
+## CV 0.1857014 0.249055
 ## 
 ## sample estimate:
 ##        CV 
-## 0.2087132 
+## 0.2173782 
 ## 
 ## additional information:
 ## standard error of CV 
-##           0.01546524</code></pre>
+##           0.01616191</code></pre>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1"><span class="co">## Gulhar et al. (2012)</span></a>
 <a class="sourceLine" id="cb48-2" title="2"><span class="kw">cvCI</span>(x, <span class="dt">method =</span> <span class="st">&quot;gulhar&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Gulhar et al (2012) confidence interval
 ## 
 ## 95 percent confidence interval:
-##        2.5 %   97.5 %
-## CV 0.1832516 0.242457
+##        2.5 %    97.5 %
+## CV 0.1908595 0.2525229
 ## 
 ## sample estimate:
 ##        CV 
-## 0.2087132</code></pre>
+## 0.2173782</code></pre>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" title="1"><span class="co">## bootstrap</span></a>
 <a class="sourceLine" id="cb50-2" title="2"><span class="kw">cvCI</span>(x, <span class="dt">method =</span> <span class="st">&quot;boot&quot;</span>)</a></code></pre></div>
 <pre><code>## 
@@ -768,15 +775,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Intervals : 
 ## Level      Normal              Basic         
-## 95%   ( 0.1710,  0.2507 )   ( 0.1696,  0.2498 )  
+## 95%   ( 0.1868,  0.2513 )   ( 0.1864,  0.2509 )  
 ## 
 ## Level     Percentile            BCa          
-## 95%   ( 0.1676,  0.2479 )   ( 0.1753,  0.2586 )  
+## 95%   ( 0.1839,  0.2483 )   ( 0.1897,  0.2548 )  
 ## Calculations and Intervals on Original Scale
 ## 
 ## sample estimate:
 ##        CV 
-## 0.2087132</code></pre>
+## 0.2173782</code></pre>
 <p>For all intervals implemented see the help page of function cvCI.</p>
 </div>
 <div id="quantiles-median-and-mad" class="section level3">
@@ -788,25 +795,25 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <pre><code>## 
 ##  exact confidence interval
 ## 
-## 95.14464 percent confidence interval:
-##                 lower    upper
-## 95 % quantile 5.53907 8.231155
+## 95 percent confidence interval:
+##                  2.5 %   97.5 %
+## 95 % quantile 4.482028 13.63474
 ## 
 ## sample estimate:
 ## 95 % quantile 
-##       7.33884</code></pre>
+##      5.816223</code></pre>
 <div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" title="1"><span class="co">## asymptotic</span></a>
 <a class="sourceLine" id="cb54-2" title="2"><span class="kw">quantileCI</span>(<span class="dt">x =</span> x, <span class="dt">prob =</span> <span class="fl">0.95</span>, <span class="dt">method =</span> <span class="st">&quot;asymptotic&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  asymptotic confidence interval
 ## 
 ## 95 percent confidence interval:
-##                 2.5 %   97.5 %
-## 95 % quantile 5.53907 8.550966
+##                  2.5 %   97.5 %
+## 95 % quantile 4.367345 13.63474
 ## 
 ## sample estimate:
 ## 95 % quantile 
-##       7.33884</code></pre>
+##      5.816223</code></pre>
 <div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" title="1"><span class="co">## boot</span></a>
 <a class="sourceLine" id="cb56-2" title="2"><span class="kw">quantileCI</span>(<span class="dt">x =</span> x, <span class="dt">prob =</span> <span class="fl">0.95</span>, <span class="dt">method =</span> <span class="st">&quot;boot&quot;</span>)</a></code></pre></div>
 <pre><code>## 
@@ -820,41 +827,40 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Intervals : 
 ## Level      Normal              Basic         
-## 95%   ( 5.960,  9.557 )   ( 6.526,  9.312 )  
+## 95%   ( 3.404,  7.669 )   ( 3.588,  7.265 )  
 ## 
 ## Level     Percentile            BCa          
-## 95%   ( 5.366,  8.152 )   ( 5.543,  8.231 )  
+## 95%   ( 4.367,  8.044 )   ( 4.381,  8.465 )  
 ## Calculations and Intervals on Original Scale
 ## 
 ## sample estimate:
 ## 95 % quantile 
-##       7.33884</code></pre>
+##      5.816223</code></pre>
 <p>Next, we consider the median.</p>
 <div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" title="1"><span class="co">## exact</span></a>
 <a class="sourceLine" id="cb58-2" title="2"><span class="kw">medianCI</span>(<span class="dt">x =</span> x)</a></code></pre></div>
 <pre><code>## 
 ##  exact confidence interval
 ## 
-## 95.23684 percent confidence intervals:
-##           lower    upper
-## median 1.067520 2.505523
-## median 1.351246 2.674241
+## 95 percent confidence interval:
+##           2.5 %   97.5 %
+## median 1.039744 1.825282
 ## 
 ## sample estimate:
 ##   median 
-## 1.800282</code></pre>
+## 1.315255</code></pre>
 <div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" title="1"><span class="co">## asymptotic</span></a>
 <a class="sourceLine" id="cb60-2" title="2"><span class="kw">medianCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;asymptotic&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  asymptotic confidence interval
 ## 
 ## 95 percent confidence interval:
-##          2.5 %   97.5 %
-## median 1.33018 2.548754
+##           2.5 %   97.5 %
+## median 1.039744 1.766238
 ## 
 ## sample estimate:
 ##   median 
-## 1.800282</code></pre>
+## 1.315255</code></pre>
 <div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" title="1"><span class="co">## boot</span></a>
 <a class="sourceLine" id="cb62-2" title="2"><span class="kw">medianCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;boot&quot;</span>)</a></code></pre></div>
 <pre><code>## 
@@ -868,55 +874,42 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Intervals : 
 ## Level      Normal              Basic         
-## 95%   ( 1.038,  2.438 )   ( 1.052,  2.260 )  
+## 95%   ( 0.983,  1.592 )   ( 0.907,  1.573 )  
 ## 
 ## Level     Percentile            BCa          
-## 95%   ( 1.341,  2.549 )   ( 1.333,  2.534 )  
+## 95%   ( 1.058,  1.723 )   ( 1.058,  1.694 )  
 ## Calculations and Intervals on Original Scale
 ## 
 ## sample estimate:
 ##   median 
-## 1.800282</code></pre>
-<p>It often happens that quantile confidence intervals are not unique. Here the minimum length interval might be of interest.</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" title="1"><span class="kw">medianCI</span>(<span class="dt">x =</span> x, <span class="dt">minLength =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-<pre><code>## 
-##  minimum length exact confidence interval
-## 
-## 95.23684 percent confidence interval:
-##           lower    upper
-## median 1.351246 2.674241
-## 
-## sample estimate:
-##   median 
-## 1.800282</code></pre>
+## 1.315255</code></pre>
 <p>Finally, we take a look at MAD (median absolute deviation) where by default the standardized MAD is used (see function mad).</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1"><span class="co">## exact</span></a>
-<a class="sourceLine" id="cb66-2" title="2"><span class="kw">madCI</span>(<span class="dt">x =</span> x)</a></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" title="1"><span class="co">## exact</span></a>
+<a class="sourceLine" id="cb64-2" title="2"><span class="kw">madCI</span>(<span class="dt">x =</span> x)</a></code></pre></div>
 <pre><code>## 
 ##  exact confidence interval
 ## 
-## 95.23684 percent confidence intervals:
-##        lower    upper
-## MAD 1.565245 2.240502
-## MAD 1.658633 2.427747
+## 95 percent confidence interval:
+##        2.5 %   97.5 %
+## MAD 0.923026 1.578682
 ## 
 ## sample estimate:
 ##      MAD 
-## 1.907953</code></pre>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb68-1" title="1"><span class="co">## aysymptotic</span></a>
-<a class="sourceLine" id="cb68-2" title="2"><span class="kw">madCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;asymptotic&quot;</span>)</a></code></pre></div>
+## 1.376396</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1"><span class="co">## aysymptotic</span></a>
+<a class="sourceLine" id="cb66-2" title="2"><span class="kw">madCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;asymptotic&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  asymptotic confidence interval
 ## 
 ## 95 percent confidence interval:
 ##        2.5 %   97.5 %
-## MAD 1.612338 2.280246
+## MAD 0.923026 1.562443
 ## 
 ## sample estimate:
 ##      MAD 
-## 1.907953</code></pre>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" title="1"><span class="co">## boot</span></a>
-<a class="sourceLine" id="cb70-2" title="2"><span class="kw">madCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;boot&quot;</span>)</a></code></pre></div>
+## 1.376396</code></pre>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb68-1" title="1"><span class="co">## boot</span></a>
+<a class="sourceLine" id="cb68-2" title="2"><span class="kw">madCI</span>(<span class="dt">x =</span> x, <span class="dt">method =</span> <span class="st">&quot;boot&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  bootstrap confidence interval
 ## 
@@ -928,34 +921,33 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Intervals : 
 ## Level      Normal              Basic         
-## 95%   ( 1.576,  2.203 )   ( 1.536,  2.182 )  
+## 95%   ( 1.087,  1.707 )   ( 1.190,  1.793 )  
 ## 
 ## Level     Percentile            BCa          
-## 95%   ( 1.634,  2.280 )   ( 1.623,  2.269 )  
+## 95%   ( 0.960,  1.562 )   ( 0.923,  1.552 )  
 ## Calculations and Intervals on Original Scale
 ## 
 ## sample estimate:
 ##      MAD 
-## 1.907953</code></pre>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" title="1"><span class="co">## unstandardized</span></a>
-<a class="sourceLine" id="cb72-2" title="2"><span class="kw">madCI</span>(<span class="dt">x =</span> x, <span class="dt">constant =</span> <span class="dv">1</span>)</a></code></pre></div>
+## 1.376396</code></pre>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" title="1"><span class="co">## unstandardized</span></a>
+<a class="sourceLine" id="cb70-2" title="2"><span class="kw">madCI</span>(<span class="dt">x =</span> x, <span class="dt">constant =</span> <span class="dv">1</span>)</a></code></pre></div>
 <pre><code>## 
 ##  exact confidence interval
 ## 
-## 95.23684 percent confidence intervals:
-##        lower    upper
-## MAD 1.055743 1.511198
-## MAD 1.118733 1.637493
+## 95 percent confidence interval:
+##         2.5 %   97.5 %
+## MAD 0.6225725 1.064806
 ## 
 ## sample estimate:
-##      MAD 
-## 1.286897</code></pre>
+##       MAD 
+## 0.9283664</code></pre>
 </div>
 </div>
 <div id="hsu-two-sample-t-test" class="section level2">
 <h2>Hsu Two-Sample t-Test</h2>
 <p>The Hsu two-sample t-test is an alternative to the Welch two-sample t-test using a different formula for computing the degrees of freedom of the respective t-distribution <span class="citation">(Hedderich and Sachs 2018)</span>. The following code is taken and adapted from the help page of the t.test function.</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb74-1" title="1"><span class="kw">t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>))      <span class="co"># P = .00001855</span></a></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" title="1"><span class="kw">t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>))      <span class="co"># P = .00001855</span></a></code></pre></div>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
@@ -967,7 +959,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y 
 ##       5.5      13.5</code></pre>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" title="1"><span class="kw">t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>)) <span class="co"># P = .1245    -- NOT significant anymore</span></a></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb74-1" title="1"><span class="kw">t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>)) <span class="co"># P = .1245    -- NOT significant anymore</span></a></code></pre></div>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
@@ -979,7 +971,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y 
 ##   5.50000  25.93333</code></pre>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" title="1"><span class="kw">hsu.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" title="1"><span class="kw">hsu.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>))</a></code></pre></div>
 <pre><code>## 
 ##  Hsu Two Sample t-test
 ## 
@@ -991,7 +983,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y   SD of x   SD of y 
 ##   5.50000  13.50000   3.02765   4.18330</code></pre>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" title="1"><span class="kw">hsu.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" title="1"><span class="kw">hsu.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>))</a></code></pre></div>
 <pre><code>## 
 ##  Hsu Two Sample t-test
 ## 
@@ -1003,8 +995,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y   SD of x   SD of y 
 ##   5.50000  25.93333   3.02765  48.32253</code></pre>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" title="1"><span class="co">## Traditional interface</span></a>
-<a class="sourceLine" id="cb82-2" title="2"><span class="kw">with</span>(sleep, <span class="kw">t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</a></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" title="1"><span class="co">## Traditional interface</span></a>
+<a class="sourceLine" id="cb80-2" title="2"><span class="kw">with</span>(sleep, <span class="kw">t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</a></code></pre></div>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
@@ -1016,7 +1008,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y 
 ##      0.75      2.33</code></pre>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb84-1" title="1"><span class="kw">with</span>(sleep, <span class="kw">hsu.t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</a></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" title="1"><span class="kw">with</span>(sleep, <span class="kw">hsu.t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</a></code></pre></div>
 <pre><code>## 
 ##  Hsu Two Sample t-test
 ## 
@@ -1028,8 +1020,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y   SD of x   SD of y 
 ##  0.750000  2.330000  1.789010  2.002249</code></pre>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb86-1" title="1"><span class="co">## Formula interface</span></a>
-<a class="sourceLine" id="cb86-2" title="2"><span class="kw">t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</a></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb84-1" title="1"><span class="co">## Formula interface</span></a>
+<a class="sourceLine" id="cb84-2" title="2"><span class="kw">t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</a></code></pre></div>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
@@ -1041,7 +1033,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean in group 1 mean in group 2 
 ##            0.75            2.33</code></pre>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb88-1" title="1"><span class="kw">hsu.t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</a></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb86-1" title="1"><span class="kw">hsu.t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</a></code></pre></div>
 <pre><code>## 
 ##  Hsu Two Sample t-test
 ## 
@@ -1057,14 +1049,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="bootstrap-t-test" class="section level2">
 <h2>Bootstrap t-Test</h2>
 <p>One and two sample bootstrap t-tests with equal or unequal variances in the two sample case <span class="citation">(Efron and Tibshirani 1993)</span>.</p>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb90-1" title="1"><span class="kw">boot.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>)) <span class="co"># without bootstrap: P = .00001855</span></a></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb88-1" title="1"><span class="kw">boot.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>)) <span class="co"># without bootstrap: P = .00001855</span></a></code></pre></div>
 <pre><code>## 
-##  Bootstrapped Welch Two Sample t-test
+##  Bootstrap Welch Two Sample t-test
 ## 
 ## data:  1:10 and c(7:20)
-## bootstrapped p-value = 2e-04 
+## bootstrap p-value = 2e-04 
+## bootstrap difference of means (SE) = -7.990838 (1.400572) 
 ## 95 percent bootstrap percentile confidence interval:
-##  -10.742857  -5.270714
+##  -10.771429  -5.157143
 ## 
 ## Results without bootstrap:
 ## t = -5.4349, df = 21.982, p-value = 1.855e-05
@@ -1074,14 +1067,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y 
 ##       5.5      13.5</code></pre>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb92-1" title="1"><span class="kw">boot.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>)) <span class="co"># without bootstrap: P = .1245</span></a></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb90-1" title="1"><span class="kw">boot.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>)) <span class="co"># without bootstrap: P = .1245</span></a></code></pre></div>
 <pre><code>## 
-##  Bootstrapped Welch Two Sample t-test
+##  Bootstrap Welch Two Sample t-test
 ## 
 ## data:  1:10 and c(7:20, 200)
-## bootstrapped p-value = 0.0234 
+## bootstrap p-value = 0.0228 
+## bootstrap difference of means (SE) = -20.53419 (10.02048) 
 ## 95 percent bootstrap percentile confidence interval:
-##  -46.635000  -5.966667
+##  -46.500000  -6.033333
 ## 
 ## Results without bootstrap:
 ## t = -1.6329, df = 14.165, p-value = 0.1245
@@ -1091,15 +1085,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y 
 ##   5.50000  25.93333</code></pre>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb94-1" title="1"><span class="co">## Traditional interface</span></a>
-<a class="sourceLine" id="cb94-2" title="2"><span class="kw">with</span>(sleep, <span class="kw">boot.t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</a></code></pre></div>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb92-1" title="1"><span class="co">## Traditional interface</span></a>
+<a class="sourceLine" id="cb92-2" title="2"><span class="kw">with</span>(sleep, <span class="kw">boot.t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</a></code></pre></div>
 <pre><code>## 
-##  Bootstrapped Welch Two Sample t-test
+##  Bootstrap Welch Two Sample t-test
 ## 
 ## data:  extra[group == 1] and extra[group == 2]
-## bootstrapped p-value = 0.08541 
+## bootstrap p-value = 0.08101 
+## bootstrap difference of means (SE) = -1.579285 (0.8001628) 
 ## 95 percent bootstrap percentile confidence interval:
-##  -3.17  0.01
+##  -3.14  0.00
 ## 
 ## Results without bootstrap:
 ## t = -1.8608, df = 17.776, p-value = 0.07939
@@ -1109,15 +1104,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y 
 ##      0.75      2.33</code></pre>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb96-1" title="1"><span class="co">## Formula interface</span></a>
-<a class="sourceLine" id="cb96-2" title="2"><span class="kw">boot.t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</a></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb94-1" title="1"><span class="co">## Formula interface</span></a>
+<a class="sourceLine" id="cb94-2" title="2"><span class="kw">boot.t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</a></code></pre></div>
 <pre><code>## 
-##  Bootstrapped Welch Two Sample t-test
+##  Bootstrap Welch Two Sample t-test
 ## 
 ## data:  extra by group
-## bootstrapped p-value = 0.07861 
+## bootstrap p-value = 0.08121 
+## bootstrap difference of means (SE) = -1.584528 (0.7997105) 
 ## 95 percent bootstrap percentile confidence interval:
-##  -3.1605  0.0300
+##  -3.13  0.02
 ## 
 ## Results without bootstrap:
 ## t = -1.8608, df = 17.776, p-value = 0.07939
@@ -1131,14 +1127,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="permutation-t-test" class="section level2">
 <h2>Permutation t-Test</h2>
 <p>One and two sample permutation t-tests with equal <span class="citation">(Efron and Tibshirani 1993)</span> or unequal variances <span class="citation">(Janssen 1997)</span> in the two sample case.</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb98-1" title="1"><span class="kw">perm.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>)) <span class="co"># without permutation: P = .00001855</span></a></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb96-1" title="1"><span class="kw">perm.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>)) <span class="co"># without permutation: P = .00001855</span></a></code></pre></div>
 <pre><code>## 
 ##  Permutation Welch Two Sample t-test
 ## 
 ## data:  1:10 and c(7:20)
 ## (Monte-Carlo) permutation p-value = 1e-04 
+## permutation difference of means (SE) = -7.984364 (2.253374) 
 ## 95 percent (Monte-Carlo) permutation percentile confidence interval:
-##  -12.400000  -3.657143
+##  -12.400000  -3.485714
 ## 
 ## Results without permutation:
 ## t = -5.4349, df = 21.982, p-value = 1.855e-05
@@ -1148,13 +1145,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y 
 ##       5.5      13.5</code></pre>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" title="1"><span class="co">## permutation confidence interval sensitive to outlier!</span></a>
-<a class="sourceLine" id="cb100-2" title="2"><span class="kw">perm.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>)) <span class="co"># without permutation: P = .1245</span></a></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb98-1" title="1"><span class="co">## permutation confidence interval sensitive to outlier!</span></a>
+<a class="sourceLine" id="cb98-2" title="2"><span class="kw">perm.t.test</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">y =</span> <span class="kw">c</span>(<span class="dv">7</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">200</span>)) <span class="co"># without permutation: P = .1245</span></a></code></pre></div>
 <pre><code>## 
 ##  Permutation Welch Two Sample t-test
 ## 
 ## data:  1:10 and c(7:20, 200)
 ## (Monte-Carlo) permutation p-value &lt; 2.2e-16 
+## permutation difference of means (SE) = -20.36192 (15.36166) 
 ## 95 percent (Monte-Carlo) permutation percentile confidence interval:
 ##  -36.700000   1.966667
 ## 
@@ -1166,15 +1164,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y 
 ##   5.50000  25.93333</code></pre>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" title="1"><span class="co">## Traditional interface</span></a>
-<a class="sourceLine" id="cb102-2" title="2"><span class="kw">with</span>(sleep, <span class="kw">perm.t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</a></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" title="1"><span class="co">## Traditional interface</span></a>
+<a class="sourceLine" id="cb100-2" title="2"><span class="kw">with</span>(sleep, <span class="kw">perm.t.test</span>(extra[group <span class="op">==</span><span class="st"> </span><span class="dv">1</span>], extra[group <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]))</a></code></pre></div>
 <pre><code>## 
 ##  Permutation Welch Two Sample t-test
 ## 
 ## data:  extra[group == 1] and extra[group == 2]
-## (Monte-Carlo) permutation p-value = 0.07961 
+## (Monte-Carlo) permutation p-value = 0.07591 
+## permutation difference of means (SE) = -1.578286 (0.9018275) 
 ## 95 percent (Monte-Carlo) permutation percentile confidence interval:
-##  -3.36  0.16
+##  -3.34  0.18
 ## 
 ## Results without permutation:
 ## t = -1.8608, df = 17.776, p-value = 0.07939
@@ -1184,16 +1183,17 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x mean of y 
 ##      0.75      2.33</code></pre>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" title="1"><span class="co">## Formula interface</span></a>
-<a class="sourceLine" id="cb104-2" title="2">res &lt;-<span class="st"> </span><span class="kw">perm.t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</a>
-<a class="sourceLine" id="cb104-3" title="3">res</a></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" title="1"><span class="co">## Formula interface</span></a>
+<a class="sourceLine" id="cb102-2" title="2">res &lt;-<span class="st"> </span><span class="kw">perm.t.test</span>(extra <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> sleep)</a>
+<a class="sourceLine" id="cb102-3" title="3">res</a></code></pre></div>
 <pre><code>## 
 ##  Permutation Welch Two Sample t-test
 ## 
 ## data:  extra by group
-## (Monte-Carlo) permutation p-value = 0.07551 
+## (Monte-Carlo) permutation p-value = 0.07441 
+## permutation difference of means (SE) = -1.571103 (0.9024304) 
 ## 95 percent (Monte-Carlo) permutation percentile confidence interval:
-##  -3.34  0.16
+##  -3.30  0.16
 ## 
 ## Results without permutation:
 ## t = -1.8608, df = 17.776, p-value = 0.07939
@@ -1204,24 +1204,24 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## mean in group 1 mean in group 2 
 ##            0.75            2.33</code></pre>
 <p>In case of skewed distributions, one may use function p2ses to compute an alternative standardized effect size (SES) as proposed by Botta-Dukat <span class="citation">(Botta-Dukát 2018)</span>.</p>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb106-1" title="1"><span class="kw">p2ses</span>(res<span class="op">$</span>p.value)</a></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" title="1"><span class="kw">p2ses</span>(res<span class="op">$</span>p.value)</a></code></pre></div>
 <pre><code>## [1] 1.754212</code></pre>
 </div>
 <div id="multiple-imputation-t-test" class="section level2">
 <h2>Multiple Imputation t-Test</h2>
 <p>Function mi.t.test can be used to compute a multiple imputation t-test by applying the approch of Rubin <span class="citation">(Rubin 1987)</span> in combination with the adjustment of Barnard and Rubin <span class="citation">(Barnard and Rubin 1999)</span>.</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb108-1" title="1"><span class="co">## Generate some data</span></a>
-<a class="sourceLine" id="cb108-2" title="2"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
-<a class="sourceLine" id="cb108-3" title="3">x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">25</span>, <span class="dt">mean =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb108-4" title="4">x[<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">25</span>, <span class="dv">5</span>)] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
-<a class="sourceLine" id="cb108-5" title="5">y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">20</span>, <span class="dt">mean =</span> <span class="dv">-1</span>)</a>
-<a class="sourceLine" id="cb108-6" title="6">y[<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">4</span>)] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
-<a class="sourceLine" id="cb108-7" title="7">pair &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rnorm</span>(<span class="dv">25</span>, <span class="dt">mean =</span> <span class="dv">1</span>), <span class="kw">rnorm</span>(<span class="dv">20</span>, <span class="dt">mean =</span> <span class="dv">-1</span>))</a>
-<a class="sourceLine" id="cb108-8" title="8">g &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;yes&quot;</span>, <span class="dv">25</span>), <span class="kw">rep</span>(<span class="st">&quot;no&quot;</span>, <span class="dv">20</span>)))</a>
-<a class="sourceLine" id="cb108-9" title="9">D &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">ID =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">45</span>, <span class="dt">variable =</span> <span class="kw">c</span>(x, y), <span class="dt">pair =</span> pair, <span class="dt">group =</span> g)</a>
-<a class="sourceLine" id="cb108-10" title="10"></a>
-<a class="sourceLine" id="cb108-11" title="11"><span class="co">## Use Amelia to impute missing values</span></a>
-<a class="sourceLine" id="cb108-12" title="12"><span class="kw">library</span>(Amelia)</a></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb106-1" title="1"><span class="co">## Generate some data</span></a>
+<a class="sourceLine" id="cb106-2" title="2"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
+<a class="sourceLine" id="cb106-3" title="3">x &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">25</span>, <span class="dt">mean =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb106-4" title="4">x[<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">25</span>, <span class="dv">5</span>)] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb106-5" title="5">y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">20</span>, <span class="dt">mean =</span> <span class="dv">-1</span>)</a>
+<a class="sourceLine" id="cb106-6" title="6">y[<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">4</span>)] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb106-7" title="7">pair &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rnorm</span>(<span class="dv">25</span>, <span class="dt">mean =</span> <span class="dv">1</span>), <span class="kw">rnorm</span>(<span class="dv">20</span>, <span class="dt">mean =</span> <span class="dv">-1</span>))</a>
+<a class="sourceLine" id="cb106-8" title="8">g &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;yes&quot;</span>, <span class="dv">25</span>), <span class="kw">rep</span>(<span class="st">&quot;no&quot;</span>, <span class="dv">20</span>)))</a>
+<a class="sourceLine" id="cb106-9" title="9">D &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">ID =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">45</span>, <span class="dt">variable =</span> <span class="kw">c</span>(x, y), <span class="dt">pair =</span> pair, <span class="dt">group =</span> g)</a>
+<a class="sourceLine" id="cb106-10" title="10"></a>
+<a class="sourceLine" id="cb106-11" title="11"><span class="co">## Use Amelia to impute missing values</span></a>
+<a class="sourceLine" id="cb106-12" title="12"><span class="kw">library</span>(Amelia)</a></code></pre></div>
 <pre><code>## Lade nötiges Paket: Rcpp</code></pre>
 <pre><code>## ## 
 ## ## Amelia II: Multiple Imputation
@@ -1229,10 +1229,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## ## Copyright (C) 2005-2022 James Honaker, Gary King and Matthew Blackwell
 ## ## Refer to http://gking.harvard.edu/amelia/ for more information
 ## ##</code></pre>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb111-1" title="1">res &lt;-<span class="st"> </span><span class="kw">amelia</span>(D, <span class="dt">m =</span> <span class="dv">10</span>, <span class="dt">p2s =</span> <span class="dv">0</span>, <span class="dt">idvars =</span> <span class="st">&quot;ID&quot;</span>, <span class="dt">noms =</span> <span class="st">&quot;group&quot;</span>)</a>
-<a class="sourceLine" id="cb111-2" title="2"></a>
-<a class="sourceLine" id="cb111-3" title="3"><span class="co">## Per protocol analysis (Welch two-sample t-test)</span></a>
-<a class="sourceLine" id="cb111-4" title="4"><span class="kw">t.test</span>(variable <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> D)</a></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb109-1" title="1">res &lt;-<span class="st"> </span><span class="kw">amelia</span>(D, <span class="dt">m =</span> <span class="dv">10</span>, <span class="dt">p2s =</span> <span class="dv">0</span>, <span class="dt">idvars =</span> <span class="st">&quot;ID&quot;</span>, <span class="dt">noms =</span> <span class="st">&quot;group&quot;</span>)</a>
+<a class="sourceLine" id="cb109-2" title="2"></a>
+<a class="sourceLine" id="cb109-3" title="3"><span class="co">## Per protocol analysis (Welch two-sample t-test)</span></a>
+<a class="sourceLine" id="cb109-4" title="4"><span class="kw">t.test</span>(variable <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> D)</a></code></pre></div>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
@@ -1244,8 +1244,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ##  mean in group no mean in group yes 
 ##        -1.0862469         0.9456901</code></pre>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb113-1" title="1"><span class="co">## Intention to treat analysis (Multiple Imputation Welch two-sample t-test)</span></a>
-<a class="sourceLine" id="cb113-2" title="2"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb111-1" title="1"><span class="co">## Intention to treat analysis (Multiple Imputation Welch two-sample t-test)</span></a>
+<a class="sourceLine" id="cb111-2" title="2"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Multiple Imputation Welch Two Sample t-test
 ## 
@@ -1257,8 +1257,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ##  mean (no)    SD (no) mean (yes)   SD (yes) 
 ## -1.0809584  0.9379070  0.9559786  1.0203219</code></pre>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb115-1" title="1"><span class="co">## Per protocol analysis (Two-sample t-test)</span></a>
-<a class="sourceLine" id="cb115-2" title="2"><span class="kw">t.test</span>(variable <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> D, <span class="dt">var.equal =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb113-1" title="1"><span class="co">## Per protocol analysis (Two-sample t-test)</span></a>
+<a class="sourceLine" id="cb113-2" title="2"><span class="kw">t.test</span>(variable <span class="op">~</span><span class="st"> </span>group, <span class="dt">data =</span> D, <span class="dt">var.equal =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Two Sample t-test
 ## 
@@ -1270,8 +1270,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ##  mean in group no mean in group yes 
 ##        -1.0862469         0.9456901</code></pre>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb117-1" title="1"><span class="co">## Intention to treat analysis (Multiple Imputation two-sample t-test)</span></a>
-<a class="sourceLine" id="cb117-2" title="2"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>, <span class="dt">var.equal =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb115-1" title="1"><span class="co">## Intention to treat analysis (Multiple Imputation two-sample t-test)</span></a>
+<a class="sourceLine" id="cb115-2" title="2"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>, <span class="dt">var.equal =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Multiple Imputation Two Sample t-test
 ## 
@@ -1283,8 +1283,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ##  mean (no)    SD (no) mean (yes)   SD (yes) 
 ## -1.0809584  0.9379070  0.9559786  1.0203219</code></pre>
-<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb119-1" title="1"><span class="co">## Specifying alternatives</span></a>
-<a class="sourceLine" id="cb119-2" title="2"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>, <span class="dt">alternative =</span> <span class="st">&quot;less&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb117-1" title="1"><span class="co">## Specifying alternatives</span></a>
+<a class="sourceLine" id="cb117-2" title="2"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>, <span class="dt">alternative =</span> <span class="st">&quot;less&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Multiple Imputation Welch Two Sample t-test
 ## 
@@ -1296,7 +1296,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ##  mean (no)    SD (no) mean (yes)   SD (yes) 
 ## -1.0809584  0.9379070  0.9559786  1.0203219</code></pre>
-<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb121-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>, <span class="dt">alternative =</span> <span class="st">&quot;greater&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb119-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>, <span class="dt">alternative =</span> <span class="st">&quot;greater&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Multiple Imputation Welch Two Sample t-test
 ## 
@@ -1308,8 +1308,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ##  mean (no)    SD (no) mean (yes)   SD (yes) 
 ## -1.0809584  0.9379070  0.9559786  1.0203219</code></pre>
-<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb123-1" title="1"><span class="co">## One sample test</span></a>
-<a class="sourceLine" id="cb123-2" title="2"><span class="kw">t.test</span>(D<span class="op">$</span>variable[D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>])</a></code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb121-1" title="1"><span class="co">## One sample test</span></a>
+<a class="sourceLine" id="cb121-2" title="2"><span class="kw">t.test</span>(D<span class="op">$</span>variable[D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>])</a></code></pre></div>
 <pre><code>## 
 ##  One Sample t-test
 ## 
@@ -1321,7 +1321,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean of x 
 ## 0.9456901</code></pre>
-<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb125-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">subset =</span> D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb123-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">subset =</span> D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Multiple Imputation One Sample t-test
 ## 
@@ -1333,8 +1333,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ##      mean        SD 
 ## 0.9559786 1.0203219</code></pre>
-<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb127-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">mu =</span> <span class="dv">-1</span>, <span class="dt">subset =</span> D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>,</a>
-<a class="sourceLine" id="cb127-2" title="2">          <span class="dt">alternative =</span> <span class="st">&quot;less&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb125-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">mu =</span> <span class="dv">-1</span>, <span class="dt">subset =</span> D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>,</a>
+<a class="sourceLine" id="cb125-2" title="2">          <span class="dt">alternative =</span> <span class="st">&quot;less&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Multiple Imputation One Sample t-test
 ## 
@@ -1346,8 +1346,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ##      mean        SD 
 ## 0.9559786 1.0203219</code></pre>
-<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb129-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">mu =</span> <span class="dv">-1</span>, <span class="dt">subset =</span> D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>,</a>
-<a class="sourceLine" id="cb129-2" title="2">          <span class="dt">alternative =</span> <span class="st">&quot;greater&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb127-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">mu =</span> <span class="dv">-1</span>, <span class="dt">subset =</span> D<span class="op">$</span>group <span class="op">==</span><span class="st"> &quot;yes&quot;</span>,</a>
+<a class="sourceLine" id="cb127-2" title="2">          <span class="dt">alternative =</span> <span class="st">&quot;greater&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Multiple Imputation One Sample t-test
 ## 
@@ -1359,8 +1359,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ##      mean        SD 
 ## 0.9559786 1.0203219</code></pre>
-<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb131-1" title="1"><span class="co">## paired test</span></a>
-<a class="sourceLine" id="cb131-2" title="2"><span class="kw">t.test</span>(D<span class="op">$</span>variable, D<span class="op">$</span>pair, <span class="dt">paired =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb129-1" title="1"><span class="co">## paired test</span></a>
+<a class="sourceLine" id="cb129-2" title="2"><span class="kw">t.test</span>(D<span class="op">$</span>variable, D<span class="op">$</span>pair, <span class="dt">paired =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Paired t-test
 ## 
@@ -1372,7 +1372,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sample estimates:
 ## mean difference 
 ##      -0.2790464</code></pre>
-<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb133-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;pair&quot;</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb131-1" title="1"><span class="kw">mi.t.test</span>(res<span class="op">$</span>imputations, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;pair&quot;</span>, <span class="dt">paired =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Multiple Imputation Paired t-test
 ## 
@@ -1385,7 +1385,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## mean of difference   SD of difference 
 ##         -0.1936752          1.2426515</code></pre>
 <p>Function mi.t.test also works with package mice by applying function mids2datlist of package miceadds.</p>
-<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb135-1" title="1"><span class="kw">library</span>(mice)</a></code></pre></div>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb133-1" title="1"><span class="kw">library</span>(mice)</a></code></pre></div>
 <pre><code>## 
 ## Attache Paket: &#39;mice&#39;</code></pre>
 <pre><code>## Das folgende Objekt ist maskiert &#39;package:stats&#39;:
@@ -1394,11 +1394,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <pre><code>## Die folgenden Objekte sind maskiert von &#39;package:base&#39;:
 ## 
 ##     cbind, rbind</code></pre>
-<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb139-1" title="1"><span class="kw">library</span>(miceadds)</a></code></pre></div>
-<pre><code>## * miceadds 3.13-12 (2022-05-30 15:14:07)</code></pre>
-<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb141-1" title="1">res.mice &lt;-<span class="st"> </span><span class="kw">mice</span>(D, <span class="dt">m =</span> <span class="dv">10</span>, <span class="dt">print =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb141-2" title="2">res.list &lt;-<span class="st"> </span><span class="kw">mids2datlist</span>(res.mice)</a>
-<a class="sourceLine" id="cb141-3" title="3"><span class="kw">mi.t.test</span>(res.list, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb137-1" title="1"><span class="kw">library</span>(miceadds)</a></code></pre></div>
+<pre><code>## * miceadds 3.15-21 (2022-09-22 09:41:02)</code></pre>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb139-1" title="1">res.mice &lt;-<span class="st"> </span><span class="kw">mice</span>(D, <span class="dt">m =</span> <span class="dv">10</span>, <span class="dt">print =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb139-2" title="2">res.list &lt;-<span class="st"> </span><span class="kw">mids2datlist</span>(res.mice)</a>
+<a class="sourceLine" id="cb139-3" title="3"><span class="kw">mi.t.test</span>(res.list, <span class="dt">x =</span> <span class="st">&quot;variable&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;group&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Multiple Imputation Welch Two Sample t-test
 ## 
@@ -1414,29 +1414,29 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="repeated-measures-one-way-anova" class="section level2">
 <h2>Repeated Measures One-Way ANOVA</h2>
 <p>We provide a simple wrapper function that allows to compute a classical repeated measures one-way ANOVA as well as a respective mixed effects model. In addition, the non-parametric Friedman and Quade tests can be computed.</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb143-1" title="1"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
-<a class="sourceLine" id="cb143-2" title="2">outcome &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rnorm</span>(<span class="dv">10</span>), <span class="kw">rnorm</span>(<span class="dv">10</span>, <span class="dt">mean =</span> <span class="fl">1.5</span>), <span class="kw">rnorm</span>(<span class="dv">10</span>, <span class="dt">mean =</span> <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb143-3" title="3">timepoints &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">each =</span> <span class="dv">10</span>))</a>
-<a class="sourceLine" id="cb143-4" title="4">patients &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">times =</span> <span class="dv">3</span>))</a>
-<a class="sourceLine" id="cb143-5" title="5"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients)</a></code></pre></div>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb141-1" title="1"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
+<a class="sourceLine" id="cb141-2" title="2">outcome &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rnorm</span>(<span class="dv">10</span>), <span class="kw">rnorm</span>(<span class="dv">10</span>, <span class="dt">mean =</span> <span class="fl">1.5</span>), <span class="kw">rnorm</span>(<span class="dv">10</span>, <span class="dt">mean =</span> <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb141-3" title="3">timepoints &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">each =</span> <span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb141-4" title="4">patients &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dt">times =</span> <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb141-5" title="5"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients)</a></code></pre></div>
 <pre><code>## 
 ##  Repeated measures 1-way ANOVA
 ## 
 ## data:  outcome , timepoints and patients
 ## F = 6.5898, num df = 2, denom df = 18, p-value = 0.007122</code></pre>
-<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb145-1" title="1"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients, <span class="dt">method =</span> <span class="st">&quot;lme&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb143-1" title="1"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients, <span class="dt">method =</span> <span class="st">&quot;lme&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Mixed-effects 1-way ANOVA
 ## 
 ## data:  outcome , timepoints and patients
 ## F = 7.3674, num df = 2, denom df = 18, p-value = 0.004596</code></pre>
-<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb147-1" title="1"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients, <span class="dt">method =</span> <span class="st">&quot;friedman&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb145-1" title="1"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients, <span class="dt">method =</span> <span class="st">&quot;friedman&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Friedman rank sum test
 ## 
 ## data:  x, g and id
 ## Friedman chi-squared = 12.8, df = 2, p-value = 0.001662</code></pre>
-<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb149-1" title="1"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients, <span class="dt">method =</span> <span class="st">&quot;quade&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb147-1" title="1"><span class="kw">rm.oneway.test</span>(outcome, timepoints, patients, <span class="dt">method =</span> <span class="st">&quot;quade&quot;</span>)</a></code></pre></div>
 <pre><code>## 
 ##  Quade test
 ## 
@@ -1446,35 +1446,35 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="volcano-plots" class="section level2">
 <h2>Volcano Plots</h2>
 <p>Volcano plots can be used to visualize the results when many tests have been applied. They show a measure of effect size in combination with (adjusted) p values.</p>
-<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb151-1" title="1"><span class="co">## Generate some data</span></a>
-<a class="sourceLine" id="cb151-2" title="2">x &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">1000</span>, <span class="dt">mean =</span> <span class="dv">10</span>), <span class="dt">nrow =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb151-3" title="3">g1 &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="st">&quot;control&quot;</span>, <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb151-4" title="4">y1 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">500</span>, <span class="dt">mean =</span> <span class="fl">11.75</span>), <span class="dt">nrow =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb151-5" title="5">y2 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">500</span>, <span class="dt">mean =</span> <span class="fl">9.75</span>, <span class="dt">sd =</span> <span class="dv">3</span>), <span class="dt">nrow =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb151-6" title="6">g2 &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="st">&quot;treatment&quot;</span>, <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb151-7" title="7">group &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(g1, g2))</a>
-<a class="sourceLine" id="cb151-8" title="8">Data &lt;-<span class="st"> </span><span class="kw">rbind</span>(x, <span class="kw">cbind</span>(y1, y2))</a>
-<a class="sourceLine" id="cb151-9" title="9"><span class="co">## compute Hsu t-test</span></a>
-<a class="sourceLine" id="cb151-10" title="10">pvals &lt;-<span class="st"> </span><span class="kw">apply</span>(Data, <span class="dv">2</span>, <span class="cf">function</span>(x, group) <span class="kw">hsu.t.test</span>(x <span class="op">~</span><span class="st"> </span>group)<span class="op">$</span>p.value,</a>
-<a class="sourceLine" id="cb151-11" title="11">               <span class="dt">group =</span> group)</a>
-<a class="sourceLine" id="cb151-12" title="12"><span class="co">## compute log-fold change</span></a>
-<a class="sourceLine" id="cb151-13" title="13">logfc &lt;-<span class="st"> </span><span class="cf">function</span>(x, group){</a>
-<a class="sourceLine" id="cb151-14" title="14">  res &lt;-<span class="st"> </span><span class="kw">tapply</span>(x, group, mean)</a>
-<a class="sourceLine" id="cb151-15" title="15">  <span class="kw">log2</span>(res[<span class="dv">1</span>]<span class="op">/</span>res[<span class="dv">2</span>])</a>
-<a class="sourceLine" id="cb151-16" title="16">}</a>
-<a class="sourceLine" id="cb151-17" title="17">lfcs &lt;-<span class="st"> </span><span class="kw">apply</span>(Data, <span class="dv">2</span>, logfc, <span class="dt">group =</span> group)</a>
-<a class="sourceLine" id="cb151-18" title="18"><span class="kw">volcano</span>(lfcs, <span class="kw">p.adjust</span>(pvals, <span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>), </a>
-<a class="sourceLine" id="cb151-19" title="19">        <span class="dt">effect.low =</span> <span class="fl">-0.25</span>, <span class="dt">effect.high =</span> <span class="fl">0.25</span>, </a>
-<a class="sourceLine" id="cb151-20" title="20">        <span class="dt">xlab =</span> <span class="st">&quot;log-fold change&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;-log10(adj. p value)&quot;</span>)</a></code></pre></div>
-<p><img src="data:image/png;base64,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xo0bSUlJliO///57aXeye/duq5Gff/7ZaiQpKWnt2rUHDhwwmUzSyLlz51566aXU1FQhxPXr1994440//vijtFMDAJwHPxfrRHx9fa1GKlWqVNqdFBQUWI2YW1wyd+7cyZMnS8tt27bdtm2bEGLHjh1W99q6dWvz5s1LOzsAwElwBO9E3N3dBw0aZDkydOjQ0u4kNjbWaqR79+7m5YsXL5rbXQixf//+WbNmCSFUKpXVvQqPAADKEQreucyYMaNly5Zubm7R0dFz584dNmxYafcQEhKyYsWKsLAwIYS/v/+XX34ZExNjvvX48eNW20vvAnTs2NFq3PLPAgBAucMpeufi6uratGlT08WM2RPXlXknHTt2PHTokF6v9/T0tLopICDAaqR69epCiIiIiOXLl3/00UdJSUkhISETJkxo0qRJmQMAAGRHwStW4XYXQrRs2bJ58+aWF9C9/vrr0kLnzp07d+6cl5fn6urqoIgAALuh4J8uLi4uq1at+sc//nH06NGAgIAxY8bUr18/LS3NvAHtDgDKQME/dby9vceNGyct63Q6ecMAAOyEi+wAAFAgCh4AAAWi4AEAUCAKHgAABaLgAQBQIAoeAAAF4mNyynfkyJHNmze7uLj06tUrMjJS7jgAAEeg4JXsxo0bH3zwwaZNm6TVGTNm/PDDD126dJE3FQDAAThFr1hnzpxp1KiRud0lkyZNkisPAMCRKHjFmj59euHBs2fPWv08PABAkThFrzQGg2H69On//ve/79y5U/jW+vXr80PvAPA0oOCVZtasWbNnz37UrZ988okjwwAA5MIpeqVZv359kePt27c/ePBgXFycg/MAAGTBEbzS5OTkWI0MHz48Pj6+bdu2suQBAMiCI3il6dy5s+Vq/fr1p06dSrsDwNOGgleaCRMm9OzZU1pu3Ljxt99+K28eAIAsOEVfjh06dGj58uVZWVnPPPNM//791Wq1EMLT0/O7777LzMzMzc318/Mr256vXbs2f/781NTUhg0bvvrqq15eXjYNDgCwOwq+vNqxY0f//v2l5XXr1h05cmTGjBnmW729vb29vcu25+vXr8fHx1+9elUIsWnTpp9++mnz5s2urq5PnhkA4DCcoi+vvvrqK8vVf/3rX/fu3bPJnpcuXSq1u+TEiRPbt2+3yZ4BAA5DwZdXlh0suX79uk32fO3atWJHAABO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bPTo0atXr7579+7du3dXr149evToadOmGf+PY1ICAGBbx5PubT9607x69OK9XcdvPWb7x7hw4cLYsWM3bdqUkpKi1+unTJkSFxe3f/9+IcTBgwfT09Nv3ryZlJQkhKhXr55NwpdEMafoP/jgg/T09L59+1oOPvvss9JCWFhYcnKyvaIBAGA3yTezrEaSbmZ1LNOuNmzY0K9fvzp16gghxo8fP3jw4C+++GLevHlGozElJaVXr14HDx7MzMx85plnnjh1KRRT8Js2bXrMrW5ubjYNAwCAg/hV0BUaKWOp3bhxIzg4WFoOCQm5ceNG+/btX3755VOnTtWvX79t27a//fbbgwcP4uLinihxKRVT8K1atXJMDpQXer3+73//+759+ypXrvzyyy+3a9dO7kQAUBYt61QOruKZekcvrVap4PZM44Cy7SogIODKlSvS8rVr1wICAipUqBAWFvavf/2rVatWbdu2XbVqVUZGxltvvWWb6CVT/Bfd4CmXmJj4/fffZ2ZmxsTEJCQkDB06dOfOndJNmzZtWrVqlYP/JgUAm3DVqqe81HjTwWspt7ICK7nHtwqq4OlStl3Fx8fHxsaOGTMmNDT0888/79WrlxAiLi5u3rx5P/74Y4MGDRITEz09PcPDw236CIpBweNxDh48GB8fLy2vXLly27Zt5naXLFq0iIIHUE556rT9O4Q++X4iIyNnzJjRrVu3hw8fduzYccKECUKIZ555ZubMmS1bttRoNA0bNqxevfqTT1QqFDweZ+7cuZar69evt9rg9u3bDowDAE4kKirqwIED0vKLL7744osvWt7arVu3goICaXnbtm2ODsePzeDxUlNTH79By5YtHZMEAFAqpS74b775pkWLFvaIAidUv359q5E5c+aYl5s1a/bee+85NhEAoERKfYre3d2dX5N7enz44YeHDh0yXx06Y8aMwYMHd+nS5ejRoxUrVoyKilKrOQkEAM6o1AX/0ksvvfTSS3ZIAmcUHBy8d+/eX3755f79+9HR0REREUKIKlWqdOnSRe5oAIDHKbrg9+3bFxQUFBYWtm/fvkfd083NrVGjRq6urnbLBqfg4eHRu3dvuVMAAEqn6IKPjY196623vvjii9jY2CI3MJlMRqOxc+fOW7dutWM6AABQJkUXfH5+vtVCYX/88UeLFi0ePnxo/jFZAADgJIou+O3btz/+bh07dmzevPm2bds4RQ8AgBMquuD/8pe/mJf1er3JZBJCaDQao9Ho4eFRs2bNkydPCiE6dizb7+4AAAD7KvozTpn/54cffqhevfr69ev1en1OTs6uXbuCgoI+++wzB6cEAAClUsyHmCdMmDB37txevXp5eHhotdoOHTrMmjVr4sSJDskGAADKqJiCv3z5sp+fn+VIxYoVzV97AgAAnFMxBd+qVatJkyZlZmZKq5mZmZ999hk/Eg8AgJMr5pvs/vGPf7Rv3z40NFT6TZHff//d3d199+7dDskGAADE4cOHR44caf7luhIqpuBr1ap18eLF5cuXnz59WqPRJCQkDBo0iA++AwCUITEx8fTp0zVr1oyKinLAdHl5eQ77eHnxvxTi4eExbNiw2bNnz5w585VXXtHr9fxCKABAAd59993WrVu/8sorcXFxL7zwgvnn20vo+PHjcXFxvXv3rl69elxc3LFjx6Tx5cuXR0REBAUFDR06VK/XCyEOHz4cHx8/ZsyYHj16HD9+vGXLlu3bt69atWq3bt3Wrl0bFRUVHh6+atUq6e6ff/55aGhopUqV4uLibt68WeZHV0zBSzmqWAgNDZXiAgBQfu3du3f+/Pnm1Q0bNqxYsaK0O9m1a1dCQkJqamqjRo1mzpwphLhw4cLYsWM3bdqUkpKi1+unTJkibbljx4569ept2bJFCHHo0KEpU6akpKQkJydPmzbtwIEDM2fOlLY8f/781KlT9+zZc/PmTX9//8WLF5f5ARZT8KNHj/bw8Jg1a5bBYJg5c+acOXOqVKmyZs2aMs8HAIAzOHLkiNXI4cOHS7sTLy+vhIQElUrVo0eP+/fvCyE2bNjQr1+/OnXquLi4jB8/ft26ddKWlSpVGjFihEajEUKEh4e3a9fOw8OjVatWgwcPdnV17dixo/QJtRo1aqSkpISGhmZkZKhUqgcPHpT5ARbzHvyRI0c2btwYGxu7fv16Pz+/Hj166HS6CRMmmM8kAABQHgUGBhY7UiypyIUQUnMLIW7cuBEcHCwth4SE3LhxQ1oOCgoy36tixYrSgkajkT6Lbr67EOKzzz5bvXp19erVNRpNWFhYaSOZFXME7+7uLr0nUadOncTERCFEy5Ytd+zYUeb5AABwBs8++2xERIR5NTg4ePDgwaXdiUqlshoJCAi4evWqtHzt2rWAgABpWa0u/qI3IcSKFSv++OOPkydPHjhw4LnnnittHkvFzNe6devJkycnJyc3btz4P//5T0ZGxi+//MIPzAAAyjsvL68tW7aMGjWqY8eOw4cP//nnn8twBF9YfHz8qlWrLl26ZDAYPv/88169epXq7mlpaVWqVPHx8UlLS1uyZMljftO1WMUU/KxZs27evLlmzZpevXrl5eX5+/sPHz585MiRZZ4PAAAnUaVKlSlTpqxdu/bLL78MDQ21yT4jIyNnzJjRrVu3sLAwFxeXCRMmlOruQ4YMcXV1rVOnzoABA0aPHr18+fIyXBkgUUm/FPd4JpNJpVJlZWXt3LmzcuXKbdu2LdtkJZeWlmbvKUrFzc1NCJGbm+uAub7fcfnIxYzZrzZ2wFw6nc7Ly8vZnm2b8PHxeZKLU5xWp06dmjVrNn36dLmD2JhGo9HpdMr7hI5Wq/X19c3IyDAYDPaeqyAzM/357t7jPnbr2MXecwkhPD09c3JyjEajvSey+rr0MjB/GeuT8Pb2fvKdOFjRF9mlpaVZPqfSewxeXl49e/Z8zGYAAMBJFH2KvmvXrn/729/Onj37qLvt27evb9++o0aNslswAABQdkUfwR84cGDGjBmxsbGRkZExMTH16tWrXLmy0Wi8c+fO8ePHd+zYodfrP/jgg5deesmxaQEAQIkUXfCurq4ffvjhO++8s2HDhq1bt/788883b97UarXVqlVr06bN9OnTO3fuXPizAQAAwEk87otu3NzcEhISEhISHJYGAADYxOMKXq/XHz169ObNm3fu3PH19Q0MDGzZsqWHh4fDwgEAgLIpuuDz8/PHjx+/cOHC+/fve3h4eHt7Z2ZmZmdne3t7Dx8+fPr06ZZfqgcAAJxN0VfRjxs3bvny5d988016erper79586Zer79///6SJUvWrVv33nvvOTglAAAolaILfuXKlQsWLBg4cKD5C/GFED4+Pr17916xYsV//vMfR8UDAABlUXTBa7XaR33/rcFg4Pw8AABOruiC/+tf/zp8+PAFCxZcvXpV+jW5goKCGzduLF26NCEhYdCgQY4NCQAASqfoi+wmTpzo4uLyySefjBgxQqVSeXh4ZGdnm0ymqlWrvvbaa5988omDUwIAgFIpuuDVavWECRPef//9c+fO3bhx4+7du76+vgEBAQ0bNtRqH/fJOgAA4Awe93Oxrq6uDRs27NKly8CBA7t37960aVPaHQAAyfHjx9u0aWM1uG/fvri4uJJvbz8UNgDg6WW4dtWQkqQJDHKpGW6THTZs2PDrr7+2ya6eUNFH8FlZWXcf6zF7PH369KhRo4YMGbJw4ULpAr3C9u/f/6ir9AEAcIwH8/9xa2Dvu+Pfvv3SgHtTJgqTqbR7MBgMo0ePrlWrVlxc3LFjx4QQZ86cMf/U6pIlS8LCwurWrfvWW2+9+OKLRW5vP0UX/JQpU/we61G7MxqNX3755fDhw+fPn3/hwoU9e/YU3ubatWtfffUVBQ8AkFHeiWOZP/zLvJr9y08Pt/1S2p388ccfbdu2vXDhQr169WbPnm1506VLlz7++OP9+/fv2bNn48aNxW5vc0UX/LRp03799Vc3N7cxY8b8UZRH7e748eN+fn6NGjXS6XQ9e/bctWuX1QZffPHFm2++mZ2dbcPHAABAaeUlnrIeOX2ytDvx9vbu06ePSqXq0aPHgwcPLG9as2ZNv379qlWrVqVKlSFDhhS7vc098j346OjoHj16BAcHR0VFlXx3t2/fDg4OlpaDg4Pv3LljtcH7778vhOjbt2/powIAYDPqSpWsRypajxSrbt26Li4uQojCXwF37dq10NBQablatWrnzp17/PY297iL7EaMGOHp6Vmq3WVmZrq7u0vL7u7uJf/z5M6dO8OGDZOW+/TpM3jw4FLNa28qlUoI4Zhf0tPpbmk0GssvCbYf6XE5Zi4HU6vVinxcKpXKYS8PR1KpVCqVytXVVe4gNib9L+bj42Mq/Zu7pWXUaNKF8PT09HbIy0OtVru5uTngcdmPe3T7zKDqhmtXpVVNVX+P7vGl3Yla/cgPo1WtWvXmzZvSsnnhMdvb3OMKvkuXLqXdnZeX161bt6Tlhw8fenl5lfCOOp2uU6dO0nKtWrXy8vJKO7VdSX9qGY1GB8xlNBpNJpNjngGtVqtWq53t2bYJV1dXRT4uIURBQYHyHppKpXrMN2SXX1IL5ufnP+qKYxsqyM8XQhgMBse8PFxcXAwGQ5EFf+3atalTp546dSokJOTdd99t1KjRk0xkPmi0OZWnl9/ceZnL/pWfdFFbLcj7haGaqv423H/Pnj179uz59ttvu7i4fP/9982bN7fhzkuimI/J6fV6qxGVSuXu7i79WVqYv7+/+cK669ev+/uX9Mny9vY2X3YohEhLSyvhHR3Dzc1NCJGbm+uAuaR/Cwo/8/ag0+lcXFwcM5eDaTQaRT4uk8lkMpmU99A0Go1Op1Pe49JqtW5ubg8fPjQYDPaeq0CvF9I/Uw55Gj09PXNycgof9mRmZnbr1u3SpUtCiEOHDq1evfrAgQO1atUq80T2K3ghhKaqv+9b79tp5w0bNnznnXeaNWtWrVq1nj173r9/304TPUox5wq8CvH09NRqtREREVOnTi1ceI0bN75x40ZSUlJBQcGWLVvat28vjZ8/f/7hw4d2eQQAAKexc+dOqd3NVq5cKVcYe2vcuPGBAwek5a5du65du1YI0apVq507dwohjh8/fuvWratXrx48ePDq1asxMTFFbm8/xRT8jz/+WLly5S+++GLXrl179uyZOXNmeHj4ihUrPvroo2XLlk2cONFqe41GM27cuLlz577++uuhoaHmb/N5//33U1JS7JAfAOBECl9bXXjkKVGvXr3s7OzWrVs3b968WrVqjr+2rJhT9FOnTv3nP//Zr18/abVdu3ahoaHz5s3btm1b06ZN+/TpM23aNKu7REZGzp0712rQ6u+UH3/88cliAwCcUYsWLaxGWrduLUsS2bm4uHz55ZcyBijmCD4pKSksLMxypEaNGocPHxZCVK1a9fr16/ZLBgAodxo1avThhx+aVxMSEsyHiHCwYo7g4+LiPv3006VLl1auXFkIkZ6ePnHixPbt22dnZ8+cOfMJr40EACjPm2++2a9fvzNnzoSEhERERMgd5+lVTMHPnz8/Pj4+KCgoPDxcCHHp0qWGDRtu3Ljx+++/X7x48aZNmxwSEgBQnlSrVq1atWpyp3jaFVPwVapUOXjw4J49e06ePJmfn1+vXr3OnTurVKo+ffr89a9/teunFwAAQJkV/3Ox0udupV+CN3/P1GN+bwYAAOfh7e0tdwR5FFPwaWlp3bt3P3r0aGhoqFqtTklJadq06ebNm6W35AEAgHMq5ir6MWPGaDSapKSkS5cuXbhwISkpSaPRjB071jHhAABA2RRzBL99+/aVK1eGhIRIq8HBwTNmzEhISLB/MAAAUHZl+Vmbcv3zQQAAPA2KKfiOHTu+//77qamp0mpqauq7775r/tk3AADgnIop+Llz5xYUFNSoUSMiIiIiIqJmzZoGg2HOnDmOCQcAAMqmmPfg/fz8Dh48uHv37sTERCFE3bp1Y2NjH/VbsYCDGQyGH3/88dixY4GBgS+++GKlSpXkTgQAzqLogj948KDlqru7e1RUlLT8+++/CyFatWpl72TA45lMphdffHHbtm3S6pIlSzZv3uzv7y9vKgBwEkUXfLE//sN1dpDdb7/9Zm53IURqauqCBQsmTJggYyQAcB5FF7zBYHBwDqC0kpOTrUaSkpJkSQIATqjoi+w0hVy8eFGlUplXHZwSKKx27dpWI3Xr1pUlCQA4oZJ+Dj4yMjIzM9OuUYBSad68+YABA8yrtWvXHjFihIx5AMCpFP9jM4DT+vrrr59//vmjR49Wq1btL3/5i06nkzsRADgLCh7lW1xcXFxcnNwpAMDplPQU/Y8//ujh4WHXKAAAwFZKegTfp08fu+YAAAA2VJYfmwEAAE6OggcAQIEoeAAAFIiCBwBAgSh4AAAUiIIHAECBKHgAABSIggcAQIEoeAAAFIiCBwBAgSh4AAAUiIIHAECBKHgAABSIggcAQIEoeAAAFIiCBwBAgSh4AAAUiIIHAECBKHgAABSIggcAQIEoeAAAFIiCBwBAgSh4AAAUiIIHAECBKHgAABSIggcAQIEoeAAAFEgrdwCgLO7evfvtt99euXIlMjJy2LBhHh4ecicCAOdCwaP8uXv3bpcuXa5cuSKtrlu3bvPmzW5ubvKmAgCnwil6lD/Lli0zt7sQ4uTJk1u2bJExDwA4IQoe5c/Vq1etRiz7HgAgKHiUR/Xr17caadiwoSxJAMBpUfAofwYNGtS2bVvzakJCQmxsrHxxAMAZcZEdyh9XV9e1a9du3749JSWlfv36lmUPAJBQ8CiX1Gp1586d5U4BAM6LU/QAACgQBQ8AgAJR8AAAKBAFDwCAAlHwAAAoEAUPAIACUfAAACgQBQ8AgAJR8AAAKBAFDwCAAlHwAAAoEAUPAIACUfAAACgQBQ8AgAJR8AAAKBAFDwCAAlHwAAAoEAUPAIACUfAAACgQBf+0OHLkyIABA1q3bj1kyJAzZ87IHQcAYF9auQPAEZKTk7t27SotX7p06eTJk5s3b/b395c3FQDAfjiCfyqsX7/ecjU1NXXz5s1yhQEAOAAF/1TIyMiwGrl//74sSQAAjkHBPxWio6OLHQEAKAkF/1To3Lnzm2++aV795JNPmjdvLmMeAIC9cZHd0+LDDz8cMWJEcnJyrVq1KlasKHccAIB9UfBPET8/Pz8/P7lTAAAcgVP0AAAoEAUPAIACUfAAACgQBQ8AgAJxkZ38CgoKVq9effjw4apVq77wwgtyxwEAKAEFL78RI0asW7dOWl66dOmrny6TNw8AQAE4RS+zU6dOmdtdCHHt2rXjx4/LmAcAoAwUvMySk5OtRviWeADAk6PgZVa7dm2rkUqVKsmSBACgJBS8zOrUqfPqq6+aV2vUqNGkSRMZ8wAAlIGL7OQ3ZcqU7t27Hzp0qGrVqr1791792x0hcuUOBQAo3yh4pxATExMTEyN3CgCAcnCKHgAABaLgAQBQIAoeAAAFouABAFAgCh4AAAWi4AEAUCAKHgAABaLgAQBQIL7oBgDsKCMjY9u2bSqV8Sov8AAAH6JJREFUqnXr1m5ubnLHwVOEggcAe9m/f//f/va31NRUIUSNGjX+/e9/h4eHyx0KTwtO0QOAvYwcOVJqdyFEcnLy+PHj5c2DpwoFDwB2cfv27eTkZMuRY8eOyRUGTyEKHgDswtfX12qkUqVKsiTB04mCBwC7cHV1/dvf/mY5MmLECLnC4CnERXYAYC+TJk1q2LDh6tWrXVxcEhISnnvuObkT4SlCwQOAvWi12tdff33QoEEGg0HuLHjqcIoeAAAFctIjeG9vb7kj/IlarRZCuLq6OmAuV1dXtVrtmGdAo9EI53u2bUKr1SrycalUKoe9PBxJpVJpNBrpfzQlkR6Rh4eHyWSy91xGkyldCJ1O5+WQl4dWq9VoNA54XCgzJy34zMxMuSP8ifT9U7m5uQ6YKy8vr6CgwDHPgE6n8/LycrZn2yZ8fHwU+bhMJpPDXh6OpNFodDqdXq+XO4iNabVaX1/f7OxsB5yiL8jKEkLk5OSYHPLy8PT0zMnJMRqN9p6Ir/8rM6X9vQwAAAQFDwCAIlHwAAAoEAUPAIACUfAAACgQBQ8AgAJR8AAAKBAFDwCAAlHwAAAoEAUPAIACUfAAACgQBQ8AgAJR8AAAKBAFDwCAAlHwAAAoEAUPAIACUfAAACgQBQ8AgAJR8AAAKBAFDwCAAlHwAAAoEAUPAIACUfAAACgQBQ8AgAJR8ABQ/qSnp7/33nsxMTHx8fEbNmyQOw6ckVbuAACA0ikoKHjhhRcOHTokrR48eHDx4sXPduggbyo4G47gAaCcOX/+vLndJcuWLZMrDJwWBQ8A5UxGRobVyP3792VJAmdGwQNAOdOgQYOgoCDLkejoaLnCwGlR8ABQznh5ec2cOdPc8R07dnz77bfljQQnxEV2AFD+dOrUaf/+/WfOnKlcuXJYWJgQoiAzU+5QcC4UPACUSx4eHlFRUXKngPPiFD0AAApEwQMAoEAUPAAACkTBAwCgQBQ8FCI7OzsrK0vuFADgLCh4lHt3794dPHhwaGhojRo1+vfvf+vWLbkTAYD8KHiUe++8887WrVul5R07dowZM0bePADgDCh4lG9Go3HTpk2WI9u3b8/NzZUrDwA4CQoe5ZtKpapcubLVoFrNCxvA045/B1G+qdXqLl26WI707t3bxcVFrjwA4CT4qlqUe1OnTtVoND///LMQokuXLpMnT5Y7EQDIj4JH6ZhMpr179164cKFOnToxMTFyxxFCCC8vr9mzZ8+ePVvuIChPLl68uH//fh8fny5dunh4eMgdB7A9Ch6lUFBQ8OKLL5ovWY+Pj1+0aBFveKPcWbp0qfn3VUNCQtatWxccHCxvJMDm+KcZpbB+/XpzuwshNm3aJJ0YB8oRvV5v+evpV65cmTRpkox5ADuh4FEKp06dsho5ceKELEmAMjt//rzVyMmTJ2VJAtgVBY9SCAoKshoJCQmRJQlQZoXPxvMyhiJR8CiFvn37hoeHm1cjIiJ69+4tYx6gDPz8/IYMGWI58uabb8oVBrAfLrJDKfj4+GzevPnbb7+9dOlSRETEsGHDPD09HTb7nTt31q9fr9frY2NjGzdu7LB5oTzTp09v3rz53r17vb29X3jhhQYNGjxqywcPHqxbt+7u3butW7du06aNI0MCT4iCR+lUrFjxvffec/y8iYmJAwcOvH79uhBi8uTJ06ZNGzZsmONjQBnUavWAAQMGDBjw+M2uX78eHx+fmpoqrY4ePXrChAn2TwfYBqfoUT5MnjxZanfJ+PHjHz58KGMePA1mzZplbnchxFdffXXlyhUZ8wClQsGjfDh79qzVSFJSkixJ8PQo/Ko7d+6cLEmAMqDgUT7UrFnTaiQ0NFSWJHh61KhRw2rE8iJTwMlR8Cgf3n//fcvVd99918vLS64weEpYXV0/ePDgwn9oAk6Li+xQPrRo0eLgwYMrV67Mzs6OjY3t2LGj3ImgfOHh4SdOnFi+fHlaWlrbtm3j4+PlTgSUAgWPcqNmzZrjx4+XOwWeLoGBgZbfawuUI5yiBwBAgSh4AAAUiIIHAECBKHgAABSIi+xgR6dPnz579mx4eHiTJk3kzgKUzoMHD/bt2yeEiI6O9vHxsbwpOzv7+++/T05OjoiIGDx4sE6nkykj8DgUPOzlnXfeWbJkibT8/PPPz5s3T6VSyRsJKKGjR4++/PLLV69eFUJUr1594cKFUVFR0k3Z2dndunU7c+aMtLp8+fKff/7Zzc1NtqzAI3CKHnaxY8cOc7sLIdasWbNu3ToZ8wCl8s4770jtLoS4evWq5SflVq1aZW53IcSJEyfWr1/v6HxACVDwsIujR49ajRw5ckSWJEBp5eXlnThxwnLk9OnTOTk50nJycrLV9oVHAGdAwcMuAgICrEYCAwNlSQKUlqurq7+/v+WIv7+/+Y32yMhIq+3r1q3roGRAaVDwsIv4+HjLb+0ODg5OSEiQMQ9QKiNGjLBcHT58uHm5T5//1969hzVx5f8Dn4QEEohcBMRwkYUoCkVFkYu6ItCuWBCVi/VeKkqtRbp21VWr7oNPlUfd7RaVLrLgWq22KpdqWUTbcpGCUthHBQREEEEU5CJaLnJPfn/Mr/NNEwhUyCQM79dfZ845mfOZTJJPZjKZE+Ds7EwtLly40MfHh77IAIYMF9mBUujp6SUnJx8/fvzBgwcikSg0NNTY2FjVQQEM1datW01NTZOTkwmC8PX19ff3p5o0NTWvXLmSkpJSUVExdepUb29vNhtHSqCOkOBBWSZMmHDw4EFVRwHwOlgsVkBAQEBAQL+tHA5n2bJlNIcE8HvhiycAAAADIcEDAAAwEBI8AAAAA+E3eFAjEokkMTExPj6+t7d38eLFGzZs4HDwEgUAeB349AQ1EhcX98knn5DlrKysR48eRUREqDYkAIBRCqfoQY3ExcVJL8bGxnZ3d6sqGACAUQ0JHtTIixcvZGp++eUXlUQCNOvq6srLy7t9+zbNX+l6enru3LmTn59P3YkWgDGQ4EGNyMwqKxKJcHucsaCkpGT+/Pnu7u5eXl7u7u6VlZX0jFtTU+Pp6blo0SJvb+8//vGPBQUF9IwLQA8keFAjR44cEYlEZNnc3Pz48eOqjQeGo6ampqqqSiwWy9R3d3enpqaeP3/+/v37ZE1YWBiV1MvLy6WnblOqv/71r1QM1dXVoaGh9IwLQA9cZAdqxMrKKisrKz8/v6enx9HRcdy4caqOCF5HY2Pjxo0bb926RRCEra1tXFycjY0N2fTixYtly5ZR063u378/KChIZuq27Ozsvr4+DQ0NZccpM8NhWVlZc3Pz+PHjlT0uAD2Q4EG9aGpqzp8/X9VRwLDs2bOHzO4EQZSWlm7ZsiUtLY1c/Pzzz6UnU//0009bW1tlHj5hwgQasjtBEAKBoLm5WaaGhnEB6IFT9MAoOTk5kZGRX3/9dXt7u3R9d3d3aWlpfX29/EPq6+sPHz588ODBu3fv0hUmw+Xk5EgvFhYWUnm0qKhIpvPFixdlalxdXZUXm7SgoCDpxQ0bNmhqatIzNAANcAQPzLFv376YmBiyfPz48eTkZPIavfT09O3btz958oQgCD8/v6ioKOpzPCkpKTQ0tLe3lyCIY8eO7d+//6OPPlJR+MxBTZ1OoW5YZG5uLtNUV1cnU7N+/XolBSZj69atenp6iYmJPT09b7/99gcffEDPuAD0wBE8MER5eTmV3QmCePjwYWRkJEEQLS0tVHYnCOLbb7+Niooiyz09PR9//DGZ3Un9njGG32vGjBkyNampqWRhy5Ytih9rZ2c3d+5cpYQlh81mBwUFfffdd6mpqR999BEO34FhkOCBIcrKyvqtKSgooLI7KSsriyxUVFS8evVK5lEVFRVKi3GsmDx5skwNdbG6nZ3dzZs3AwMD5R81ZcqUoKCgS5cuaWlpKT1EgDEAp+iBIf7whz/I1FhZWRH9XTZFXZzf7xVVXC535IMbY6j/OlKsra2p8pQpU/75z38mJCTI9ElOTjY0NFR6cABjBo7ggSHs7e39/Pyka8LCwsh6e3t76fpVq1aRBQsLC/mTyR4eHmfOnFFmpMzn7+8v/Zzb2dnJHLLz+XwvLy/pGh6Pp62tTVN8AGMDEjwwx8mTJ6Ojozdu3Lh79+7Hjx9PmjSJIAgul/v111+vWLHC3NzcwcEhOjrax8eHekh8fPzy5ctlfnzdsWNHQ0MD3dEzCI/Hu3r1akRERHBw8KFDh1JTU/l8vkyff/3rX9KLnZ2d4eHh9IUIMAbgFD2MVq9evTp9+vT9+/dFItGGDRv09PTYbHZgYCB5sKirq9vS0kL2FAqFMumEMn78+NjYWF9f39zcXOn6e/fueXp6KnsTGIzP54eEhCjoQP0qT8nPz1dmRABjDhI8jEqdnZ3e3t7FxcXk4oULF65fv66np/d6a5s4caJMjVAoHFZ8MBgTExOZGjMzM5VEAsBUOEUPo1JycjKV3QmCePjw4YULF157be+//770oqen57Rp014/OBgCS0vLJUuWSNeQ10wAwEjBETyMSo8fP5apqa6ufu21OTk5ff/997Gxsc3Nza6urps3b2axWMMLEAYXExMTGxubnZ2tp6e3adOmhQsXytx/EACGAwkeRiU7OzuZGplL5X+vWbNmDfQ7PSiJpqZmaGgoOYcbPTefBxhTcIoeRqXFixdLXww/f/78FStWqDAeAAB1gyN4GJVYLNbp06czMzPv379vZWW1aNEiNhvfVgEA/g8SPIxWLBbLw8PDw8ND1YGMdRUVFTt27MjJyWGz2Xw+f/HixQ0NDT/99JO5ufmWLVtkLmAEANogwQMMTiwWX7p0KS0tTUdHZ82aNc7OzqqOSF10dXWtX7+evIG/WCxub29PTEwkm548ebJ3714DAwP8egKgEkjwAIPbv3//v//9b7J8/vz5r776SiAQpKen8/n8wMBA8qb3iv3www/Z2dn6+vorV640NTVVcrzD0tHRceLEiRs3bujo6AQFBUlf6yCvsLBQ8fQ8ly9fRoIHUAkkeIBBtLe3U9mdtGfPHmqGuqNHj/73v/91cXFRsIbw8PAvvviCLEdERGRlZdna2iop2uHbsmVLSkoKWc7IyIiJifH39x+oc1dXl+K19fT0jGRwADBkuC4JYBC1tbUyNTLzz0ZERCh4eENDA5XdSUePHh2p2EZcfX09ld1J//nPfxT0d3BwsLCwUNBh0aJFIxMZAPxOOIIHGIT8RLQyHj58KFPT09Nz8uTJs2fPtra2yt+TVb6/srW1tUVFRf38889GRkbvv/++k5MTWV9UVBQVFXX37t3e3t7Jkyd7enpmZ2fLPLapqUnBmgUCQUxMTHBw8LNnz+RbN2/eHBwcPFJbAQC/CxI8wCC4XG5cXNymTZvIRXNzc5kj+KlTp8o8ZOfOnefPnyfLz58/l2mV769UfX1969aty8nJIRcvX75M/qZQUlIiPaHO48eP09PT5R8+6C3inZycCgoK/P39qSEsLS3PnTtnbW0tM00fANAJCR5gcMuWLXN0dMzJydHW1vb09Pzmm2/27NlDte7bt0+6c1tbG5Xd5Zmamu7atUuJscopKSmhUi/p1KlTLi4uQ5z2ftBf2QmCYLPZCQkJ8fHxBQUF5ubm69at09fXf81wAWCEIMEDDIm5ufnKlSvJ8qZNm2bPnp2RkcHj8fz8/GSuiu/3nPa0adOWLl2qq6sbGBhoaGhIR8S/qq+v77dGvr5fzc3NQ+nG4XBWr169evXq3xseACgJEjzA65g9e/bs2bP7bZo0aZJQKKyrq5OufPPNN3fu3Cnfuba2NiEhobW11c3NbcGCBcoIdfr06TI15P/4HR0dZa6n6xf1gz0AjC64ih5ghLHZ7GPHjkmfo54+ffr27dvlexYXF8+cOfPTTz+NjIz09/dX0tX1JiYmkZGR1KKTk9O2bdsIgti8ebPMfQB1dHRkHmtra7t//35lRAUAyoYjeICR5+HhkZeX9+OPPz5+/Hju3Lmurq793ir/8OHD0ot///vfQ0JCDAwMRjyetWvXenp63r1718jIaM6cOeRkuJqampcuXbpz587Dhw/7+vqEQqGLi0t5eXl1dfXEiROfP38uEAicnZ05HHxKAIxKeOsCKMVQbtEqfw+4yspKR0dHZcQjFAqFQqF8/axZs2bNmkUt2tvbD3PiXQBQEzhFD6AyU6ZMkakRiUQqiQQAmAcJHkBlpP9rRxDErl278O8yABgpOEUPoDK2trZFRUUJCQktLS3u7u7z5s1TdUQAwBxI8ACqNHHixK1bt1KLvb29z58/p+5u293d3dLSYmRkpGAN9fX1hoaGuBQOAGQo6xT9zZs3+51Fqri4OCwsLCgoKC4uTiwWK2l0gNEoMjJSKBTa29vPnj07NTV1+/btZmZmtra2bm5uhYWF8v1TU1MdHBzs7e2FQmFUVBT9AQOAOlNKgn/69Onx48flE3xfX99nn30WEhISExNTXl6elZWljNEBRqOUlJRDhw6R5Zqamnfffffs2bPkYmlpaXBw8J49e1xcXMrKyu7du9fb2/v48eN333336dOnZJ8DBw5cv35dNaEDgFoa+QR/5MiRbdu2vXr1Sr6poKDAyMhoxowZPB7P19c3MzNzxEcHGKV++OEHBa3V1dVxcXGVlZWdnZ35+fkbN26Un/ZN8RoAYKwZ+QS/a9eu+Pj4fmeRamhooKaOtrCwaGxsHPHRAUYpLpc79M5Xr159+fLlcNYAAIxH64U5ra2tfD6fLPP5/JaWFqqpubmZmpJr0aJFPj4+dAY2KPI2ZDwej4axtLS02Gy2np4eDWOR20XPWDTT0NAYXdu1evXqL7/8klo0MDB48eKFgv42NjYWFhY1NTVUzZo1a0bXJsvQ0NBg3qWC5E0DBQKBRCJR9lh9LFYzQWhrawtoeRkwcn8xDK27RyAQUBNYdXR0CAQCqonNZuvq6pJlLS0tdbv+jnyX0hMV+UFAz1h0bhfNNDQ0Rtd2LVy48PTp04cOHaqoqHB1dT169GhmZubJkydra2tdXV1zc3Nl+i9YsODcuXM7duzIz8+3sbHZt2/fvHnzRtcmS2OxWBKJZPTGPxDyO7RYLKYhwZPPnlgspudpZLPZEomEhu2C10ZrgjcxMaEurKutraX+C0QQhL6+vvR9ufudcFOFtLS0iKFNjD183d3dYrG4tbWVhrF4PJ5AIKBnLJrp6uqOuu1asmTJkiVLqEVbW9stW7aQ5a1bt168eJFqOnDggJaWlp2d3dWrV6nKUbe90jQ0NHg8Xnt7u6oDGWEcDkdfX//Vq1e9vb3KHkvc1kYQRGdnp4SWV4KOjk5nZ2dfX5+yByI/fuE10HQnuwcPHnR0dMycObOurq6yslIsFl+7ds3NzY2e0QFGu6ioqCtXrqxbt87IyMjPz+/DDz9UdUQAoO5oSvC7du2qqqrS0NDYvXv3sWPHPvzwQ0tLS5mpKgFAgXnz5n3++edmZma4nS0ADIWyTtEnJCRIL3777bdkYdq0aceOHVPSoAAAAEDCZDMAAAAMhAQPAADAQEjwAAAADIQEDwAAwEBI8AAAAAyEBA8AAMBASPAAAAAMhAQPAADAQEjwAAAADIQEDwAAwEBI8AAAAAyEBA8AAMBASPAAAAAMhAQPAADAQEjwAAAADIQEDwAAwEBI8AAAAAyEBA8AAMBASPAAAAAMhAQPAADAQEjwAAAADMRRdQD9MzIyUnUI/Rg3bhwNo7jPJqZaGtPzDBQVFWVmZoaGhrLZDPyqp56vomFyd3e3sLBg5KYRBMHn81Udwgh79uzZiRMnVq5cOWHCBGWPJdEdp/HRdoGTsxZdLw/m7S+GYeDH+mg3a7KRt8skesYqKys7c+YMPWPBiGhoaOjo6FB1FDBUjY2NZ86caWpqomEslqaW4YYQLevJNIwFowISPAAAAAMhwQMAADAQSyKRqDoGUJn29vaXL1+amZmpOhAYqoaGBi6Xa2BgoOpAYEi6u7sbGxuNjY01NTVVHQuMOUjwAAAADIRT9AAAAAykpn+TA+UpLi4+efJkS0vLggULgoODZf4gl5ube/78+ebmZpFIFBYWZmxsrKo4QfGeUtwKKoE3F6gVfCiMLX19fZ999llISEhMTEx5eXlWVpZ0a0NDQ2RkZFhY2KlTp0xMTKKjo1UVJyjeU4pbQSXw5gJ1gwQ/thQUFBgZGc2YMYPH4/n6+mZmZkq3lpSUzJgxw8bGhsfjLVu2rKysTEVhwiB7SnErqATeXKBucIp+bGloaLCwsCDLFhYWjY2N0q2urq5z5swhyw8fPhSJRHTHB79SvKcUt4JK4M0F6gZH8GNLa2srdXdJPp/f0tIi3crj8QQCAUEQP/300+nTp9esWaOCEIEgiMH2lOJWUAm8uUDd4Aie+a5fv37lyhWCIEJCQgQCQX19PVnf0dFBfuJIa21tPXbsWFNT04EDBywtLemOFX6leE8Nuh+BfnhzgbpBgmc+Ly8vLy8vsnz79m3q2p/a2loTExPpnj09PX/729+mT5++d+9eFotFd6AgxcTERMGeUtwKKqF4p+DNBfTDKfqxZebMmXV1dZWVlWKx+Nq1a25ubmT9gwcPOjo6bt26xefzg4OD8QGkcor31ECtoEJ4c4G6wZ3sxpz79+9HR0d3dXU5Oztv2LCB/Ljx8/OLiIi4devW5cuXqZ66urrnzp1TXaRjnYI9ZWtr228rqBbeXKBWkOABAAAYCKfoAQAAGAgJHgAAgIGQ4AEAABgICR4AAICBkOABAAAYCAkeAACAgZDgAQiCIPr6+lgs1s8//zz8Vd25c8fZ2dnd3f01xho3blxaWtpQRuFyuTk5Oa8dJAAwHhI8wAg7ceKEmZlZfHy8qgMBgDENCR5ghNXV1Tk4OBgbG6s6EAAY05DgAWQ9f/58/fr1QqHQ1NR03bp1TU1NZH1TU1NAQMD48ePnzJmTlJTEYrHa29tlHuvh4XHt2rXw8PC5c+cqWBWloqJi8eLF+vr6s2bN+u677/qNp7GxcdWqVcbGxiKR6JNPPunr6yPrnz175uPjo6+vLxKJqBMGFRUVy5cvNzEx0dXVdXd3LygoIOu5XO7ly5ft7e21tbUnT56cmJioeKNaWlo++OADS0tLPT09X1/fJ0+eDPNZBQC6SQBAIunt7SUIIjc3VywWOzk5OTs7Z2RkZGRkODs7Ozk5kX1cXFzefvvt3NzcCxcuGBoaEgTR1tYmv6rFixeHh4dLJJKBVkWN1d7ebmpq+tZbb924cSMxMdHCwoLNZv/444/Sa+vr63NwcPDy8srJyTl37pyJiclf/vIXiUTC4XDMzMwSEhJKSko2btzI5/O7urokEomtra2Hh0daWlp6erqbmxsVPNk/Pj7+3r17q1at4vF4HR0dCjbK09PT3d39xo0beXl5a9assbOze/HihfKefwAYcUjwABKJVNLNyMjQ0NCorq4m66uqqjQ0NG7cuJGVlaWlpdXU1ETWHzlyZNAEP9CqqLFiY2MNDAx++eUXsgM5GYlMgk9JSdHR0WlubiYXv/zyy+DgYIlEwuFwIiIiyMpHjx4RBFFVVSUWi//xj39UVlaS9WfPnjUyMiLL0v3LysoIgqioqBhoo3Jzc7lcLpXRe3t7TUxM4uLiXv/5BQDa4RQ9wG+UlpZaWVlNmjSJXLS0tLS0tCwtLS0sLBSJROQxLkEQLi4uZCExMZH1KzJxDroqqkNxcbGzs7Ouri65+NZbb8nHU1RUZG9vb2BgQC4GBQWdOnWKLDs5OZEFPp9PFlgsVmhoaH5+/r59+wIDA//85z9Lr8rR0ZEsUFsx0EaVlpb29PQYGxtzuVwul8vj8err62tra4fw/AGAuuCoOgAA9SKRm1+RzWb39vb29PRIT8nKZv//L8dLly59+fIlWR43btxQVkUtamhoSLdqaWnJ1BAE0dPTI19JovI6pa2tbcGCBRwO55133nnvvfd8fX137NghvX75lfe7UXp6ehMnTqyrq+t3XAAYFXAED/Abtra2VVVV1DVlNTU1VVVVb7zxhp2dXUVFRXNzM1mfl5dHFrhcrt6vqASpeFXSHfLy8lpbW8nFmzdvUhfQUezs7O7du0f1iY2NdXZ2Hij4jIyMkpKS77//fufOnUuWLOFwBvkGP9BGvfHGG/X19dTJhqdPn7q6uhYWFipeGwCoFSR4gN9wd3d3cHB45513cnJysrOzV65c6eDgsHDhwj/96U/Tp09/7733bt++nZSUFB0dTRCE9OHv0FdFdVi9ejWPxwsMDLx58+bVq1dDQkK0tbVlVrJ06VKhULh27dr//e9/Fy9ePHDggJub20AjGhoadnd3JyUl1dTUJCUl7d2799WrV/KX7lMG2igbGxs/P7/ly5dfu3YtPT197dq1bW1t0l9NAED9IcED/AaLxUpNTbWysgoICFixYoW1tXVqair5E3tycjJBEJ6enl988UVERASbzZY/ST6UVVEdtLW1s7KyCILw9vbevXv34cOHra2tZVbC4XDS0tI4HI6Xl9fHH3+8YsWKgwcPDjTivHnzDh06tG/fPgcHh2+++eb69euWlpbe3t4KIhxoo7766qs333wzJCQkICDAwMAgJSVloF8KAEA9seR/JgQAeU1NTYmJievXrycPss+cOXPw4MHy8nJVxzUsjNwoACBphIeHqzoGgFGAxWL5+Pi8fPly5syZjx492rZtW1BQ0IIFC1Qd17AwcqMAgIRT9ABDwufzk5OTs7Ozra2tly9fvnTp0u3bt6s6qOFi5EYBAAmn6AEAABgIR/AAAAAMhAQPAADAQEjwAAAADIQEDwAAwEBI8AAAAAyEBA8AAMBASPAAAAAM9P8AIZdClWSPWFsAAAAASUVORK5CYII=" /><!-- --></p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb149-1" title="1"><span class="co">## Generate some data</span></a>
+<a class="sourceLine" id="cb149-2" title="2">x &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">1000</span>, <span class="dt">mean =</span> <span class="dv">10</span>), <span class="dt">nrow =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb149-3" title="3">g1 &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="st">&quot;control&quot;</span>, <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb149-4" title="4">y1 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">500</span>, <span class="dt">mean =</span> <span class="fl">11.75</span>), <span class="dt">nrow =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb149-5" title="5">y2 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">500</span>, <span class="dt">mean =</span> <span class="fl">9.75</span>, <span class="dt">sd =</span> <span class="dv">3</span>), <span class="dt">nrow =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb149-6" title="6">g2 &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="st">&quot;treatment&quot;</span>, <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb149-7" title="7">group &lt;-<span class="st"> </span><span class="kw">factor</span>(<span class="kw">c</span>(g1, g2))</a>
+<a class="sourceLine" id="cb149-8" title="8">Data &lt;-<span class="st"> </span><span class="kw">rbind</span>(x, <span class="kw">cbind</span>(y1, y2))</a>
+<a class="sourceLine" id="cb149-9" title="9"><span class="co">## compute Hsu t-test</span></a>
+<a class="sourceLine" id="cb149-10" title="10">pvals &lt;-<span class="st"> </span><span class="kw">apply</span>(Data, <span class="dv">2</span>, <span class="cf">function</span>(x, group) <span class="kw">hsu.t.test</span>(x <span class="op">~</span><span class="st"> </span>group)<span class="op">$</span>p.value,</a>
+<a class="sourceLine" id="cb149-11" title="11">               <span class="dt">group =</span> group)</a>
+<a class="sourceLine" id="cb149-12" title="12"><span class="co">## compute log-fold change</span></a>
+<a class="sourceLine" id="cb149-13" title="13">logfc &lt;-<span class="st"> </span><span class="cf">function</span>(x, group){</a>
+<a class="sourceLine" id="cb149-14" title="14">  res &lt;-<span class="st"> </span><span class="kw">tapply</span>(x, group, mean)</a>
+<a class="sourceLine" id="cb149-15" title="15">  <span class="kw">log2</span>(res[<span class="dv">1</span>]<span class="op">/</span>res[<span class="dv">2</span>])</a>
+<a class="sourceLine" id="cb149-16" title="16">}</a>
+<a class="sourceLine" id="cb149-17" title="17">lfcs &lt;-<span class="st"> </span><span class="kw">apply</span>(Data, <span class="dv">2</span>, logfc, <span class="dt">group =</span> group)</a>
+<a class="sourceLine" id="cb149-18" title="18"><span class="kw">volcano</span>(lfcs, <span class="kw">p.adjust</span>(pvals, <span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>), </a>
+<a class="sourceLine" id="cb149-19" title="19">        <span class="dt">effect.low =</span> <span class="fl">-0.25</span>, <span class="dt">effect.high =</span> <span class="fl">0.25</span>, </a>
+<a class="sourceLine" id="cb149-20" title="20">        <span class="dt">xlab =</span> <span class="st">&quot;log-fold change&quot;</span>, <span class="dt">ylab =</span> <span class="st">&quot;-log10(adj. p value)&quot;</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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CgXvRC5fvpyUlGQ98ueff5Z1JTt27LAZ+fnnn21GkpKS1q5du2fPHrPZLI38/fffTz/9dGpqqhDi0qVLL7744l9//VXWTQMAnAe3i3Uivr6+NiNVqlQp60pMJpPNiKXFJfPnz585c6Y03aFDhy1btgghtm3bZvOszZs3t2rVqqxbBwA4CfbgnYi7u/vQoUOtR0aOHFnWlURHR9uM9O7d2zJ95swZS7sLIXbv3j137lwhhEajsXlW0REAQAVCwTuXOXPmtGnTxs3NLTIycv78+aNHjy7rGoKCglauXBkSEiKE8Pf3//jjj6OioiyPHj582GZ56VuArl272oxb/7cAAFDhcIjeubi6uj700EPmMxnzpq8r90q6du26b9++7OxsT09Pm4cCAgJsRmrXri2ECAsLW7FixVtvvZWUlBQUFDRt2rQWLVqUOwAAQHEUvGoVbXchRJs2bVq1amV9At0LL7wgTXTv3r179+75+fmurq4yRQQAOAwF/2BxcXGJi4v797//ffDgwYCAgAkTJjRu3DgtLc2yAO0OAOpAwT9wvL29J02aJE0bDAZlwwAAHIST7AAAUCEKHgAAFaLgAQBQIQoeAAAVouABAFAhCh4AABXiZ3Lqd+DAgU2bNrm4uPTr1y88PFzpOAAAOVDwanb58uUpU6Zs3LhRmp0zZ853333Xo0cPZVMBAGTAIXrVOnHiRLNmzSztLpkxY4ZSeQAAcqLgVevDDz8sOnjy5Emb28MDAFSJQ/RqYzQaP/zww++///769etFH23cuDE3egeABwEFrzZz586dN2/e3R59++235QwDAFAKh+jVJj4+vtjxTp067d27t0uXLjLnAQAogj14tcnNzbUZGTNmTExMTIcOHRTJAwBQBHvwatO9e3fr2caNG8+ePZt2B4AHDQWvNtOmTevbt6803bx586+//lrZPAAARXCIvgLbt2/fihUrsrKyHn744UGDBmm1WiGEp6fnN998k5mZmZeX5+fnV741X7x4ccGCBampqU2bNn322We9vLzsGhwA4HAUfEW1bdu2QYMGSdPr1q07cODAnDlzLI96e3t7e3uXb82XLl2KiYm5cOGCEGLjxo0//fTTpk2bXF1d7z8zAEA2HKKvqD799FPr2f/85z83b960y5qXLVsmtbvkyJEjW7dutcuaAQCyoeArKusOlly6dMkua7548WKJIwAAJ0fBV1TNmjWzGQkLC3PQmps3b26XNQMAZEPBV1TTp08PCgqyzH755Zf2+pp8xIgRkZGRltnRo0e3bt3aLmsGAMiGk+wqqqCgoJ07d27dujU7OzsyMjIwMNBea3Z1dV2zZk1CQoJ0Fn2LFi3stWYAgGwo+ArMw8PD8pN3+9JqtdHR0Y5YMwBAHhyiBwBAhSh4AABUiIIHAECFKHgAAFSIggcAQIUoeAAAVIiCBwBAhSh4AABUiIIHAECFKHgAAFSIggcAQIUoeAAAVIiCBwBAhSh4J1VQUJCRkaF0CgBARUXBOx2z2Xzjxo2aNWuGhYV17tz58OHDDtpQWlraqVOnCgoKHLR+AICCKHinc/To0du3b0vTiYmJzzzzzJ07d+y7iby8vNGjRzds2DAiIiI8PHzPnj32XT8AQHEUvNM5d+6czezRo0ftu4m5c+fGx8dL00lJSS+++KLd/w8BAFAWBe90tFrbPxS9Xm/fTezYscN6NjU19dixY/bdBABAWRS806lbt671bP369Zs0aWLfTXh6etqMeHl52XcTAABlUfBOp2HDhpUrV/b39xdCREdHL1261NXV1b6biI2NtZ5t0aJF/fr17bsJAICy7HzsF3bh6+vr0GPmgwcPzsvLW7Ro0a1btx5++OFJkybpdDrHbQ4AID8K/gE1YsSIESNGGAwGLy+vtLQ0peMAAOyMQ/QAAKgQBQ8AgApR8AAAqBAFDwCAClHwAACoEAUPAIAKUfAAAKgQBQ8AgApR8AAAqBAFDwCACjnppWqd7dLo0i1c5Uml1Wo1Go1s2xL3/boKCwvXrFlz9OjRoKCgoUOHenh42CndfZHtPVSE+l6aTqdT5R+Z9Iq0Wq0ML00j47bk3BDKzUkL3t3dXekI/yB9juX5NEv/0snzDkiv6H62ZTKZ+vfvv3nzZml28eLFv/32m6+vr33y3QedTudsnyK70Gg0Wq1WfS9Nanf1vS7p/9AGg8FkMjl6WyajUQjh6uoq278ebm5uZrNZhm2hfJy04LOyspSO8A9ubm5CiLy8PBm2VVBQYDKZ5HkHDAaDi4vL/Wxr+/btlnYXQvz999+ff/75yy+/bI9098XHx8fZPkV2YTabZft4yEmn0xkMhuzsbKWD2Jler3d1dc3JyTEajY7elikrSwiRm5trluXj4enpmZubW1hY6OgNGQwGR29CrfgOHvflzJkzJY4AAORHweO+1KtXz2akfv36iiQBAFij4HFfoqOje/ToYZlt0KDByJEjFcwDAJA46XfwqCg0Gs233367fv36Y8eOBQUFxcbGqu88KQCoiCh43C+tVvvYY4899thjSgcBAPx/HKIHAECFKHgAAFSIggcAQIUoeAAAVIiCBwBAhSh4AABUiIIHAECFKHgAAFSIggcAQFxllGMAACAASURBVIUoeAAAVIiCBwBAhSh4AABUiIIHAECFKHgVKiwsvHz5stFoLM3CZrP58uXLBQUFjk4FAJBTCQV/5syZL7/8cvTo0X369Hn00Ueff/75ZcuWXb58WZ5wKIdVq1Y1b968WbNmNWrUWLx48b0X/umnn4KDg5s1a1azZs158+bJkxAAIIO7FvymTZu6dOnStm3bDRs2VK5cuWPHjm3atHFzc/vmm2/Cw8MHDhy4f/9+OYOiNBITE8eNG3f16lVpdtKkSXv27LnbwqmpqYMHD05NTZVmZ8+evXHjRjlSAgAcT1/s6MCBA8+fPz9x4sTY2Fi93naZ7OzsJUuWDBs2LDY2dsaMGY4PidLavn27zcjWrVvbt29f7MK7du2yGdmyZUtMTIxDkgEA5FV8wU+cODEyMvJuz/H09Bw3btwLL7ywd+9ehwVDebi5udmMuLq6ln7hoiMAgAqq+EP01u2ekZGxePHimTNnCiGOHDlSWFj4v2dqtXfbNYRSunfvbjNyjz3yjh07BgUFWY88+uijDokFAJBdCSfZpaamRkZGTp06ddq0aUKIZ599tnnz5ufOnZMlG8osODh43bp1LVq0EEI0btx4xYoVjRo1utvCfn5+y5Yti4qKEkKEhYUtXLiwQ4cO8mUFADhS8YfoLZ5//vmHHnpo6dKlBoNBCLF69ephw4ZNnDhxzZo1ssRDmUVGRv73v/8t5cIRERE7d+5MS0tzaCQAgPxKKPiEhIStW7fqdDpptlatWtOmTRs4cKDjgwEAgPIr4RB9pUqVcnNzrUfy8/O9vb0dGQkAANyvEgr+kUceefvttzMyMqTZEydOTJgwoV+/fo4PBud17ty50aNHR0RE9OnTp/RfBwAA5FRCwX/44YdCiOrVqxuNxho1ajRu3Lhp06bSIB5M2dnZgwYNio+PP3/+/J9//jl06NB7XEsHAKCUEr6Dr1Sp0rZt2/bu3XvixIlKlSo1adIkLCxMnmRwTn/88cfZs2etR1atWsUPJgHA2ZRQ8Ldu3RJChIeHh4eHW49UqlTJ0cngnDIzM0scAQAoroSC9/X1LXbcbDY7IAwqgNatW9uMdOrUSZEkAIB7KOE7+JNWjh49unz58qCgoAULFsgTDk6oVq1aCxcurFGjhjT71FNPDR8+XNlIAICiStiDb9CggfVskyZNAgICevXqNWTIEH4s98Dq379/z549k5KS/P39q1WrpnQcAEAxSij4ogICAkwm0z1uYYIHgYeHR5MmTZROAQC4qxIK/vjx49azGRkZ7733XoMGDbjtGAAAzqyEgi+6l1a9evVly5Y5LA8AALCDEgo+KyvLZsTT09NhYQAAgH0UX/B79+6999Patm3rgDAAAMA+ii/4du3a3ftp/A4eAABnVnzBG41GmXMAAAA7Kv5CN7q7u3nzJhceBwDAyZVwkt3hw4fHjBmTnJxsGcnJyQkJCXFsKAAAcH809/42vXPnzhqN5plnnnnppZc++eQTvV4/derUX3/91eYKd/YVHx//zTffOG795aDT6YQQhYWFMmzr3LWcjKyC5nXluJ2PTqfT6/V5eXkybEtmLi4uBQUFSqewv4SEBF9f32bNmikdxM40Go1Op1Pfl4NarVb6KJpMJodvzGjM371TH95IW93f4dsSQq/XFxYWynA+1qJFi7hiZvmUsAd/4MCBDRs2REdHx8fH+/n59enTx2AwTJs2LS4uznGZcnNzpXvWOQ+tViuEkOOvqBB3su/k3zHK8wZotVqdTqfKItTpdPL8h0xmhYWF+fn5zvYXxC5U+Uem0Wj0er3RaJShCM1GY0FhoT47WyvLx0O2Py95/uFVpRIK3t3dXXpzGzRokJiY2KdPnzZt2owdO9ahmQYNGtS1a1eHbqKspCv3ybOn++22cwfOZMx7trkM2zIYDF5eXmlpaTJsS2Y+Pj63b99WOoX9devWrWXLlh9++KHSQexMp9MZDIbs7Gylg9iZXq/39fXNyMiQ4eCEKTMz/fHe3pMmu3Xt4ehtCSE8PT1zc3Nl6Hg/Pz9Hb0KtSribXLt27WbOnJmcnNy8efMffvghIyPj119/5UL0AABVKiws1Gg0JV4MpkIooeDnzp175cqVNWvW9OvXLz8/39/ff8yYMePGjZMnHAAAKJ8SDtEHBwcnJiaazWaNRvP7779v3769atWqHTp0kCccAAAonxL24GvWrDlhwoSDBw8KIby8vPr27Uu7AwAqluvXrw8ePLhatWqhoaFTpkyRTh24cePG8OHDa9SoUbNmzSeffFJ9ZyOVUPDvvPPO4cOHW7du3aRJkzlz5ly6dEmeWAAA2IXJZOrRo0dGRkZ8fPy77777zTffvPHGG2azuXfv3qdOnfr+++9XrFhx+vTpRx55ROmkdlbCIfoXXnjhhRdeuHLlyurVq+Pi4qZOnfrwww8/9dRTQ4cOlScfAAD345dffjl9+vS2bdsqV67coUMHo9GYkJCwY8eOAwcOJCUlBQUFCSHi4uJCQ0MTEhIiIyOVzms3JezBSwICAl588cWtW7cuWbJk//79w4YNc3QsAADs4ujRo02aNKlcubI0O2LEiMWLF584caJOnTpSuwshgoODg4ODT5w4oVxM+ythD14IcefOnf/+979r165dv359bm5unz59Bg0aJEMyAADuX0FBgXQ1UmtFLz2k1WpVdi3FEvbgBw4cWK1atUGDBt2+ffuLL764fv16XFzcgAED5AkHAMB9atSo0bFjxzIzM6XZr7/+uk2bNg0bNkxJSblw4YI0mJqampKS0rhxY+Vi2l8Je/BGo3HhwoV9+/b19vaWJxAAAHbUr1+/GjVqDBs27F//+tfZs2ffeeedwYMHR0dHt2jR4oknnpgzZ47ZbH7jjTdatGjRuXNnNV0Zt4SCX7dunTw5AABwBL1ev3Xr1vHjx/fs2dPNzW3QoEEzZ87UaDSbNm2aMGHCgAEDNBpN165dP/nkE41Go3RYeyr5O3gAACq0WrVqrVmzxmbQz8/vu+++sxnU6XQy3BlIHqU6ix4AAFQsFDwAACpU8iH627dvL126NDEx0Wg0NmrUaOTIkb6+vjIkAwAA5VbCHnxiYmLdunVnzpx55cqVmzdvzpkzJzQ09Pjx4/KEAwAA5VPCHvy4cePatWv3ww8/uLu7CyFyc3MHDRo0fvz4bdu2yRIPAACURwkFv2/fvk2bNkntLoQwGAyTJk3q1auX44MBAIDyK+EQvZeX19WrV61Hrl69WqdOHUdGAgAA96uEPfh33333pZdeEkJER0cLIX777beJEycuWLBAupmuEKLoBX4BAIDiSij4KVOmpKenDxw40HrQctPckJCQ5ORkR0UDAADlVULBb9y48R6Purm52TUMAAB2ZrnNzP2oiDdkKaHg27ZtK08OVBTZ2dmff/75rl27qlatOmrUqI4dOyqdCABQDK5FjxIkJiZ+++23mZmZUVFRsbGxI0eO3L59u/TQxo0b4+LiunTpomxCAEBRFDzuZe/evTExMdL0qlWrtmzZYml3yeLFiyl4AHBCXIse9zJ//nzr2fj4eJsFrl27JmMcAEBpUfC4l9TU1Hsv0KZNG3mSAADKpMwF/+WXX7Zu3doRUeCEGjdubDPyySefWKZbtmz5xhtvyJsIAFAqZS54d3d37ib34Jg6dWpQUJBlds6cOcOGDUtMTPzuu+9+/vnnTZs2+fj4KBgPABS0f//+9u3bK53irsp8kt3TTz/99NNPOyAJnFFgYODOnTt//fXXW7duRUZGhoWFCSGqVavWo0cPpaMBwP06fy17xfaUc9eyAyobBnUOCQ9U1R5L8QW/a9euWrVqhYSE7Nq1627PdHNza9asmaurq8OywSl4eHj0799f6RQAYGcZ2fmzVx67fitPCHEtI/dI8qH5z7eq7edRvrWtWLHi7bffzsnJ6dGjx+effx4VFTVv3rzo6OhJkyatWrVKuuprQEDAtm3bGjVqZM+XcXfFF3x0dPQrr7zywQcfSJegL8psNhcWFnbv3n3z5s0OTAcAgGMcOJ0utbvFruPXB3UOLseqTp8+PXHixISEhLp16w4bNmzWrFldunTZvXt3dHT03r1709PTr1y5kpOTI4SQrd3F3Qq+oKDAZqKov/76q3Xr1nfu3LHcTBYAgIoiO9doM5KVe9fKu7f169c/8cQTDRo0EEJMnjx52LBhH3zwwVdffVVYWJiSktKvX7+9e/dmZmY+/PDD9xu6LIov+K1bt977aV27dm3VqtWWLVs4RA8AqIiahNieMN6sTuXyrery5cuBgYHSdFBQ0OXLlzt16jRq1Khjx441bty4Q4cOf/zxx+3bt2W+LFjxBf/YY49ZprOzs81msxBCp9MVFhZ6eHjUrVv36NGjQoiuXbvKkxIAAPuqE+A1qmfoN7+elWYfjwxsXb9q+VYVEBBw/vx5afrixYsBAQGVKlUKCQn5z3/+07Zt2w4dOsTFxWVkZLzyyiv2iV46xf9MLvP/fPfdd7Vr146Pj8/Ozs7Nzf3tt99q1ar17rvvyhkRAABH6NOm1rLXO3zwzENLXm0/7OE65V5PTExMXFzc2bNnjUbj+++/369fPyFEly5dFi9e3LZt2yZNmiQmJt66dSs0NNR+2UtWwu/gp02bNn/+/H79+nl4eOj1+s6dO8+dO3f69OmyZAMAwLE8Dfp6Nb19PFzuZyXh4eFz5szp1atXSEiIi4vLtGnThBAPP/xwVlZWmzZtdDpd06ZNO3XqZKfIpVXC7+DPnTvn5+dnPVK5cmXLgQgAAB5YERERe/bskaaHDx8+fPhw60d79eplMpmk6S1btsgdrsQ9+LZt286YMSMzM1OazczMfPfdd7lJPAAATq6EPfh///vfnTp1Cg4Olu4p8ueff7q7u+/YsUOWbAAAoJxKKPh69eqdOXNmxYoVx48f1+l0sbGxQ4cO5YfvAAA4uZKvRe/h4TF69GjLbFpaWufOnf/8809HpgIAAPelhII/fPjwmDFjpIvoSnJyckJCQhwbCgAA3J8STrJ76aWXPDw85s6dazQaP/roo08++aRatWpr1qyRJxwAACifEvbgDxw4sGHDhujo6Pj4eD8/vz59+hgMhmnTpsXFxcmTDwAAlEMJe/Du7u7Sz/gaNGiQmJgohGjTps22bdvkiAYAAMqrhIJv167dzJkzk5OTmzdv/sMPP2RkZPz666/cYAYAACdXQsHPnTv3ypUra9as6devX35+vr+//5gxY8aNGydPOAAAUD4l/w4+MTHRbDZrNJrff/99+/btVatW7dChgzzhAABA+RRf8GlpadaXoNdoNEIILy+vvn373mMxAADgJIo/RN+zZ8/nnnvu5MmTd3varl27Bg4cOH78eIcFAwAA5Vf8HvyePXvmzJkTHR0dHh4eFRXVqFGjqlWrFhYWXr9+/fDhw9u2bcvOzp4yZcrTTz8tb1oAAB44+/fvHzdunOXOdaVUfMG7urpOnTr1tddeW79+/ebNm3/++ecrV67o9fqaNWu2b9/+ww8/7N69u3TcHgCACurs2bOzZs1KTEysU6fOm2++2aJFC0dvMT8/X7Zfot3rLHo3N7fY2Nivv/76wIEDly5dOn/+/B9//DFv3rwePXrQ7gCACu3GjRuPPfbYjz/+mJiY+NNPP3Xq1Ons2bNlWsPhw4e7dOnSv3//2rVrd+nS5dChQ9L4ihUrwsLCatWqNXLkyOzsbCHE/v37Y2JiJkyY0KdPn8OHD7dp06ZTp07Vq1fv1avX2rVrIyIiQkNDLVeQe//994ODg6tUqdKlS5crV66U+wXeq+Czs7N///33H3/88csvv/z+++9/++23nJyccm8JAADn8csvv5w7d856pBwXaf3tt99iY2NTU1ObNWv20UcfCSFOnz49ceLEjRs3pqSkZGdnz5o1S1py27ZtjRo1+uWXX4QQ+/btmzVrVkpKSnJy8nvvvbdnz56PPvpIWvLUqVOzZ89OSEi4cuWKv7//kiVLyv0Ciy/4goKC1157rVatWh07dhwxYsQ777wzevToLl26BAQEvPrqq4WFheXeHgAAziA9Pb3EkRJ5eXnFxsZqNJo+ffrcunVLCLF+/fonnniiQYMGLi4ukydPXrdunbRklSpVxo4dq9PphBChoaEdO3b08PBo27btsGHDXF1du3btev78eSFEnTp1UlJSgoODMzIyNBrN7du3y/0Ciy/4SZMmrVix4ssvv0xPT8/Ozr5y5Up2dvatW7eWLl26bt26N954o9zbAwDAGRS9pktUVFRZVyIVuRBCam4hxOXLlwMDA6XpoKCgy5cvS9O1atWyPKty5crShE6nk35tbnm6EOLdd98NDAx89NFHU1NTy5rHWvEFv2rVqoULFw4ZMsQSQgjh4+PTv3//lStX/vDDD/ezSQAAFBcRETF9+nTL7HPPPffoo4+WdSVFz0gLCAi4cOGCNH3x4sWAgABpWqst4dKxkpUrV/71119Hjx7ds2dPOfJYK357er2+oKCg2IeMRqP1fzQAAKigXnnllTNnzmzatCkxMfHDDz+0yzpjYmLi4uLOnj1rNBrff//9fv36lenpaWlp1apV8/HxSUtLW7p06d26uDSKL/innnpqzJgxCxcuvHDhgnQ3OZPJdPny5WXLlsXGxg4dOrTc2wMAwHlUr149MjKydu3a9lpheHj4nDlzevXqFRIS4uLiMm3atDI9fcSIEa6urg0aNBg8ePBLL720YsWK/fv3ly+Jxmw2Fx01mUyzZs364osvrly5otFoPDw8cnJyzGZz9erVn3/++bffftvRP5NLS0tz6PrLys3NTQiRl5cnw7a+3XbuwJmMec82l2FbBoPBy8vL2d5tu/Dx8bmfk1OcVrdu3Vq2bGmvXQ3nodPpDAaD9IMiNdHr9b6+vhkZGUaj0dHbMmVmpj/e23vSv9y69nD0toQQnp6eubm5Mpxzff8XRM/MzLz/GN7e3ve/EpkVf6EbrVY7bdq0N9988++//758+fKNGzd8fX0DAgKaNm2q15dwfxoAAKC4e7W1q6tr06ZNmzZtKlsaAABgF6U6qQ8AAFQsxe/BZ2Vl3fv75qpVq97toePHj3/11Ve3b9/u2LHjqFGjiv1hwO7du1u3bi39dhAAANhd8Xvws2bN8runu62usLDw448/HjNmzIIFC06fPp2QkFB0mYsXL3766af3c+o/AAC4t+L34N97772YmJiuXbs+99xzw4cPL/3qDh8+7Ofn16xZMyFE3759t2zZEh0dbb3ABx988Ndff8lzOjoAAA+su55kFxkZ2adPn8DAwIiIiNKv7tq1a5ZL9AUGBl6/ft1mgTfffFMIMXDgwLJHBQCgzCriL9zs4l5n0Y8dO9bT07NMq8vMzHR3d5em3d3dS/9D5OvXr48ePVqaHjBgwLBhw8q0XUeTfvfv4eEhw7YMhqs6nc76IsGOI70uebYlM61Wq8rXpdFoZPt4yEmj0Wg0Gtnuky0b6a+Yj49PsVccsa9CnS5dCE9PT29ZPh5ardbNzU2G14Vyu1fB9+hR5qsleHl5Xb16VZq+c+eOl5dXKZ9oMBi6desmTderVy8/P7+sm3Yo6eq88txGr7Cw0Gw2y/MO6PV6rVbrbO+2Xbi6uqrydQkhTCaT+l6aRqO5xxWyKy6pBQsKCqRLgjqUqaBACGE0GuX5eLi4uBiNxmIL/uLFi7Nnzz527FhQUNDrr78ufWlbbpadRpRVCVetKXphKY1G4+7ufrcr2fn7+1tOrLt06ZK/v38pc3h7e48fP94y62zXVpPzSnbSvwXyXNLLYDC4uLio7/JhQgidTqfK12U2m81ms/pemoqvZOfm5nbnzh05rmSXnS2kf6ZkeRvvdiW7zMzMXr16nT17Vgixb9++1atX79mzp169euXeEAVfbiX8Dt6rCE9PT71eHxYWNnv27KKF17x588uXLyclJZlMpl9++aVTp07S+KlTp+7cueOQVwAAcBrbt2+X2t1i1apVSoV5wJVQ8D/++GPVqlU/+OCD3377LSEh4aOPPgoNDV25cuVbb721fPly6xvtSXQ63aRJk+bPn//CCy8EBwd36dJFGn/zzTdTUlIckB8A4ESKnltddATyKOEQ/ezZs7/44osnnnhCmu3YsWNwcPBXX321ZcuWhx56aMCAAe+9957NU8LDw+fPn28zuHbtWuvZH3/88f5iAwCcUevWrW1G2rVrp0gSlLAHn5SUFBISYj1Sp04d6dZ11atXv3TpkuOSAQAqnGbNmk2dOtUyGxsba9lFhMxK2IPv0qXLO++8s2zZMunatOnp6dOnT+/UqVNOTs5HH310n+dGAgDU5+WXX37iiSdOnDgRFBQUFhamdJwHVwkFv2DBgpiYmFq1aoWGhgohzp4927Rp0w0bNnz77bdLlizZuHGjLCEBABVJzZo1a9asqXSKB10JBV+tWrW9e/cmJCQcPXq0oKCgUaNG3bt312g0AwYMeOqpp/j1AgAAzqmEghf/97tbvV4vhLBcZ+oe95sBAACKK6Hg09LSevfuffDgweDgYK1Wm5KS8tBDD23atOket4sFAACKK+Es+gkTJuh0uqSkpLNnz54+fTopKUmn002cOFGecAAAoHxK2IPfunXrqlWrgoKCpNnAwMA5c+bExsY6PhgAACi/Evbgi8XtgwAAcHIlFHzXrl3ffPPN1NRUaTY1NfX111+33PYNAAA4pxIKfv78+SaTqU6dOmFhYWFhYXXr1jUajZ988ok84QAAQPmU8B28n5/f3r17d+zYkZiYKIRo2LBhdHT03e4VC8jMaDT++OOPhw4dqlGjxvDhw6tUqaJ0IgBwFsUX/N69e61n3d3dIyIipOk///xTCNG2bVtHJwPuzWw2Dx8+fMuWLdLs0qVLN23a5O/vr2wqAHASxRd8iTf/4Tw7KO6PP/6wtLsQIjU1deHChdOmTVMwEgA4j+IL3mg0ypwDKKvk5GSbkaSkJEWSAIATKv4kO10RZ86c0Wg0llmZUwJF1a9f32akYcOGiiQBACdU2t/Bh4eHZ2ZmOjQKUCatWrUaPHiwZbZ+/fpjx45VMA8AOJWSbzYDOK3PPvvs8ccfP3jwYM2aNR977DGDwaB0IgBwFhQ8KrYuXbp06dJF6RQA4HRKe4j+xx9/9PDwcGgUAABgL6Xdgx8wYIBDcwAAADsqz81mAACAk6PgAQBQIQoeAAAVouABAFAhCh4AABWi4AEAUCEKHgAAFaLgAQBQIQoeAAAVouABAFAhCh4AABWi4AEAUCEKHgAAFaLgAQBQIQoeAAAVouABAFAhCh4AABWi4AEAUCEKHgAAFaLgAQBQIQoeAAAVouABAFAhCh4AABWi4AEAUCEKHgAAFaLgAQBQIQoeAAAV0isdACiPGzdufP311+fPnw8PDx89erSHh4fSiQDAuVDwqHhu3LjRo0eP8+fPS7Pr1q3btGmTm5ubsqkAwKlwiB4Vz/Llyy3tLoQ4evToL7/8omAeAHBCFDwqngsXLtiMWPc9AEBQ8KiIGjdubDPStGlTRZIAgNOi4FHxDB06tEOHDpbZ2NjY6Oho5eIAgDPiJDtUPK6urmvXrt26dWtKSkrjxo2tyx4AIKHgUSFptdru3bsrnQIAnBeH6AEAUCEKHgAAFaLgAQBQIQoeAAAVouABAFAhCh4AABWi4AEAUCEKHgAAFaLgAQBQIQoeAAAVouABAFAhCh4AABWi4AEAUCEKHgAAFaLgAQBQIQoeAAAVouABAFAhCh4AABWi4AEAUCEK/kFx4MCBwYMHt2vXbsSIESdOnFA6DgDAsfRKB4AckpOTe/bsKU2fPXv26NGjmzZt8vf3VzYVAMBx2IN/IMTHx1vPpqambtq0SakwAAAZUPAPhIyMDJuRW7duKZIEACAPCv6BEBkZWeIIAEBNKPgHQvfu3V9++WXL7Ntvv92qVSsF8wAAHI2T7B4UU6dOHTt2bHJycr169SpXrqx0HACAY1HwDxA/Pz8/Pz+lUwAA5MAhegAAVIiCBwBAhSh4AABUiIIHAECFOMlOeSaTafXq1fv3769evfqTTz6pdBwAgBpQ8MobO3bsunXrpOlly5Y9+85yZfMAAFSAQ/QKO3bsmKXdhRAXL148fPiwgnkAAOpAwSssOTnZZoSrxAMA7h8Fr7D69evbjFSpUkWRJAAANaHgFdagQYNnn33WMlunTp0WLVoomAcAoA6cZKe8WbNm9e7de9++fdWrV+/fv//qP64Lkad0KABAxUbBO4WoqKioqCilUwAA1IND9AAAqBAFDwCAClHwAACoEAUPAIAKUfAAAKgQBQ8AgApR8AAAqBAFDwCACnGhGwBwoIyMjC1btmg0mnbt2rm5uSkdBw8QCh4AHGX37t3PPfdcamqqEKJOnTrff/99aGio0qHwoOAQPQA4yrhx46R2F0IkJydPnjxZ2Tx4oFDwAOAQ165dS05Oth45dOiQUmHwAKLgAcAhfH19bUaqVKmiSBI8mCh4AHAIV1fX5557znpk7NixSoXBA4iT7ADAUWbMmNG0adPVq1e7uLjExsY++uijSifCA4SCBwBH0ev1L7zwwtChQ41Go9JZ8MDhED0AACrkpHvw3t7eSkf4B61WK4RwdXWVYVuurq5arVaed0Cn0wnne7ftQq/Xq/J1aTQa2T4ectJoNDqdTvqLpibSK/Lw8DCbzY7eVqHZnC6EwWDwkuXjodfrdTqdDK8L5eakBZ+Zmal0hH+Qrj+Vl5cnw7by8/NNJpM874DBYPDy8nK2d9sufHx8VPm6zGazbB8POel0OoPBkJ2drXQQO9Pr9b6+vjk5OTIcojdlZQkhcnNzzbJ8PDw9PXNzcwsLCx29IS7/V25q+/8yAAAQFDwAAKpEwQMAoEIUPAAAKkTBAwCgQhQ8AAAqRMEDAKBCFDwAACpEwQMAoEIUPAAAKkTBAwCgQhQ8AAAqRMEDAKBCFDwAACpEpRpXmQAAHdVJREFUwQMAoEIUPAAAKkTBAwCgQhQ8AAAqRMEDAKBCFDwAACpEwQMAoEIUPAAAKkTBAwCgQhQ8AAAqRMEDQMWTnp7+xhtvREVFxcTErF+/Xuk4cEZ6pQMAAMrGZDI9+eST+/btk2b37t27ZMmSRzp3VjYVnA178ABQwZw6dcrS7pLly5crFQZOi4IHgAomIyPDZuTWrVuKJIEzo+ABoIJp0qRJrVq1rEciIyOVCgOnRcEDQAXj5eX10UcfWTq+a9eur776qrKR4IQ4yQ4AKp5u3brt3r37xIkTVatWDQkJEUKYMjOVDgXnQsEDQIXk4eERERGhdAo4Lw7RAwCgQhQ8AAAqRMEDAKBCFDwAACpEwUMlcnJysrKylE4BAM6CgkeFd+PGjWHDhgUHB9epU2fQoEFXr15VOhEAKI+CR4X32muvbd68WZretm3bhAkTlM0DAM6AgkfFVlhYuHHjRuuRrVu35uXlKZUHAJwEBY+KTaPRVK1a1WZQq+WDDeBBx7+DqNi0Wm2PHj2sR/r37+/i4qJUHgBwElyqFhXe7NmzdTrdzz//LITo0aPHzJkzlU4EAMqj4FE2ZrN5586dp0+fbtCgQVRUlNJxhBDCy8tr3rx58+bNUzoIKpIzZ87s3r3bx8enR48eHh4eSscB7I+CRxmYTKbhw4dbTlmPiYlZvHgxX3ijwlm2bJnl/qpBQUHr1q0LDAxUNhJgd/zTjDKIj4+3tLsQYuPGjdKBcaACyc7Otr57+vnz52fMmKFgHsBBKHiUwbFjx2xGjhw5okgSoNxOnTplM3L06FFFkgAORcGjDGrVqmUzEhQUpEgSoNyKHo3nYwxVouBRBgMHDgwNDbXMhoWF9e/fX8E8QDn4+fmNGDHCeuTll19WKgzgOJxkhzLw8fHZtGnT119/ffbs2bCwsNGjR3t6esq29evXr8fHx2dnZ0dHRzdv3ly27UJ9Pvzww1atWu3cudPb2/vJJ59s0qTJ3Za8ffv2unXrbty40a5du/bt28sZErhPFDzKpnLlym+88Yb8201MTBwyZMilS5eEEDNnznzvvfdGjx4tfwyog1arHTx48ODBg++92KVLl2JiYlJTU6XZl156adq0aY5PB9gHh+hRMcycOVNqd8nkyZPv3LmjYB48CObOnWtpdyHEp59+ev78eQXzAGVCwaNiOHnypM1IUlKSIknw4Cj6qfv7778VSQKUAwWPiqFu3bo2I8HBwYokwYOjTp06NiPWJ5kCTo6CR8Xw5ptvWs++/vrrXl5eSoXBA8Lm7Pphw4YV/Y8m4LQ4yQ4VQ+vWrffu3btq1aqcnJzo6OiuXbsqnQjqFxoaeuTIkRUrVqSlpXXo0CEmJkbpREAZUPCoMOrWrTt58mSlU+DBUqNGDevr2gIVCIfoAQBQIQoeAAAVouABAFAhCh4AABXiJDs40PHjx0+ePBkaGtqiRQulswBlc/v27V27dgkhIiMjfXx8rB/Kycn59ttvk5OTw8LChg0bZjAYFMoI3AsFD0d57bXXli5dKk0//vjjX331lUajUTYSUEoHDx4cNWrUhQsXhBC1a9detGhRRESE9FBOTk6vXr1OnDghza5YseLnn392c3NTLCtwFxyih0Ns27bN0u5CiDVr1qxbt07BPECZvPbaa1K7CyEuXLhg/Uu5uLg4S7sLIY4cORIfHy93PqAUKHg4xMGDB21GDhw4oEgSoKzy8/OPHDliPXL8+PHc3FxpOjk52Wb5oiOAM6Dg4RABAQE2IzVq1FAkCVBWrq6u/v7+1iP+/v6WL9rDw8Ntlm/YsKFMyYCyoODhEDExMdZX7Q4MDIyNjVUwD1AmY8eOtZ4dM2aMZXrAgAFt2rSxzHbu3LlPnz7yJQNKjZPs4BCVKlXasGHDp59+eurUqdDQ0BdffLFatWpKhwJKa9y4cTVr1tywYYMQom/fvo8//rjlIVdX1/j4+J9++unMmTMNGjR45JFHtFr2lOCMKHg4SvXq1WfOnKl0CqA8NBrNgAEDBgwYUOyjer3+0UcflTkSUFb8xxMAABWi4AEAUCEKHgAAFeI7eDgRs9m8evXqH374wWg09urVa+TIkXo9H1EAKA/+9YQTWbRo0ZQpU6TphISE5OTk2bNnKxsJACooDtHDiSxatMh69uuvv87Pz1cqDABUaBQ8nMjNmzdtRm7duqVIEsgsLy/vzz//PHDggMz/pSsoKDh48OC+ffssV6IFVIOChxOxuatsaGgol8d5ECQmJkZGRkZHR/fs2TM6OjopKUme7aampj788MM9evR45JFHoqKiDh8+LM92AXlQ8HAiH3zwQWhoqDRdu3btTz/9VNk8uB+pqakpKSkmk8lmPD8/f9OmTd99993JkyelkfHjx1tK/fTp09a3bnOoN954w5Lh3LlzL774ojzbBeTBSXZwInXq1ElISNi3b19BQUFERIS3t7fSiVAe169ff+aZZ/bs2SOEaNiw4aL/1969hzVxpX8An9wggchFoDECZgWlQlEB5aJ9QKBdsSoqivVeKkot9bJ20UddcR98qjzWbrdQaZGCa7XaqlxqyyralosULNV9WgEBKZciKshFdLkLJPn9Mb/OphMIVMiEDN/PX2fOnDnnnQzJy0wmc5KSHBwcyFWPHz9eunQpNd3qgQMHQkJCaFO35eXlyeVyHo+n7ThpMxyWl5e3tLSMHz9e2+MCMAMJHkYXAwODF198UddRwLDs27ePzO4EQZSVlYWHh2dmZpKLH3zwgepk6u+8805bWxtt8+eee46B7E4QhFgsbmlpodUwMC4AM3CJHlglPz8/Jibm888/7+joUK3v6ekpKytraGhQ36ShoeHIkSOHDh26desWU2GyXH5+vupiUVERlUeLi4tpjc+fP0+r8fLy0l5sqkJCQlQXN27caGBgwMzQAAzAGTywR2RkZEJCAln+8MMP09PTyXv0srKyIiIi7t+/TxBEUFBQXFwc9Tmelpa2devWvr4+giBiY2MPHDiwY8cOHYXPHtTU6RTqgUU2Nja0VfX19bSaDRs2aCkwmm3btpmamqampvb29r7yyitvvvkmM+MCMANn8MASFRUVVHYnCKKqqiomJoYgiNbWViq7EwTx5ZdfxsXFkeXe3t63336bzO6kfq8Ywx81Y8YMWk1GRgZZCA8P17ytk5PTnDlztBKWGi6XGxIS8vXXX2dkZOzYsQOn78AySPDAEuXl5f3WFBYWUtmdlJubSxYqKys7OztpW1VWVmotxrFiypQptBrqZnUnJ6fr168HBwerbzV16tSQkJALFy4YGhpqPUSAMQCX6IEl/vSnP9FqJk+eTPR32xR1c36/d1QJBIKRD26MoX7rSLGzs6PKU6dO/ec//5mSkkJrk56ebmFhofXgAMYMnMEDSzg7OwcFBanWbN++nax3dnZWrV+9ejVZsLW1Vb+Y7Ofnd+rUKW1Gyn7Lly9Xfc2dnJxop+wikSggIEC1RigUGhkZMRQfwNiABA/scfz48fj4+E2bNu3du7e2tnbSpEkEQQgEgs8//3zlypU2NjYuLi7x8fGLFi2iNklOTl62bBnty9ddu3Y1NjYyHT2LCIXCy5cvR0dHh4aGHj58OCMjQyQS0dp8/PHHqovd3d1RUVHMhQgwBuASPeirzs7OkydP3rlzx97efuPGjaamplwuNzg4mDxZNDExaW1tJVtKpVJaOqGMHz8+MTExMDCwoKBAtf727dv+/v7a3gUWE4lEYWFhGhpQ38pTbt68qc2IAMYcJHjQS93d3QsXLiwpKSEXz507d/XqVVNT02frbcKECbQaqVQ6rPhgMBKJhFZjbW2tk0gA2AqX6EEvpaenU9mdIIiqqqpz5849c29vvPGG6qK/v/+0adOePTgYAplMtnjxYtUa8p4JABgpOIMHvVRbW0uruXv37jP35u7u/s033yQmJra0tHh5eW3ZsoXD4QwvQBhcQkJCYmJiXl6eqanp5s2b582bR3v+IAAMBxI86CUnJydaDe1W+T/K1dV1oO/pQUsMDAy2bt1KzuHGzMPnAcYUXKIHvbRgwQLVm+FffPHFlStX6jAeAIDRBmfwoJc4HM7JkydzcnLu3LkzefLk+fPnc7n4bxUA4H+Q4EFfcTgcPz8/Pz8/XQcy1lVWVu7atSs/P5/L5YpEogULFjQ2Nn7//fc2Njbh4eG0GxgBgDFI8ACDUygUFy5cyMzMNDY2Xrt2rYeHh64jGi2ePn26YcMG8gH+CoWio6MjNTWVXHX//v39+/ebm5vj2xMAnUCCBxjcgQMHPvnkE7J89uzZzz77TCwWZ2VliUSi4OBg8qH3mn377bd5eXlmZmarVq2aOHGiluMdlq6urmPHjl27ds3Y2DgkJET1Xgd1RUVFmqfnuXjxIhI8gE4gwQMMoqOjg8rupH379lEz1B09evTf//63p6enhh6ioqI++ugjshwdHZ2bm+vo6KilaIcvPDz80qVLZDk7OzshIWH58uUDNX769Knm3np7e0cyOAAYMtyXBDCIuro6Wg1t/tno6GgNmzc2NlLZnXT06NGRim3ENTQ0UNmd9K9//UtDexcXF1tbWw0N5s+fPzKRAcAfhDN4gEGoT0RLU1VVRavp7e09fvz46dOn29ra1J/Jqt5e29rb2+Pi4n788UdLS8s33njD3d2drC8uLo6Li7t161ZfX9+UKVP8/f3z8vJo2zY3N2voWSwWJyQkhIaGPnz4UH3tli1bQkNDR2ovAOAPQYIHGIRAIEhKStq8eTO5aGNjQzuDf/7552mb7N69++zZs2T50aNHtLXq7bVKLpevX78+Pz+fXLx48SL5nUJpaanqhDq1tbVZWVnqmw/6iHh3d/fCwsLly5dTQ8hksjNnztjZ2dGm6QMAJiHBAwxu6dKls2bNys/PNzIy8vf3/+KLL/bt20etjYyMVG3c3t5OZXd1EydO3LNnjxZjVVNaWkqlXtKJEyc8PT2HOO39oN+yEwTB5XJTUlKSk5MLCwttbGzWr19vZmb2jOECwAhBggcYEhsbm1WrVpHlzZs3u7m5ZWdnC4XCoKAg2l3x/V7TnjZt2pIlS0xMTIKDgy0sLJiI+DcNDQ391qjX96ulpWUozfh8/po1a9asWfNHwwMALUGCB3gWbm5ubm5u/a6aNGmSVCqtr69XrXzppZd2796t3riuri4lJaWtrc3Hx8fb21sboU6fPp1WQ/6Of9asWbT76fpFfWEPAPoFd9EDjDAulxsbG6t6jXr69OkRERHqLUtKSmbOnPnOO+/ExMQsX75cS3fXSySSmJgYatHd3X3nzp0EQWzZsoX2HEBjY2Pato6OjgcOHNBGVACgbTiDBxh5fn5+N27c+O6772pra+fMmePl5dXvo/KPHDmiuvjee++FhYWZm5uPeDzr1q3z9/e/deuWpaXl7NmzyclwDQwMLly48PPPP1dVVcnlcqlU6unpWVFRcffu3QkTJjx69EgsFnt4ePD5+JQA0Et46wJoxVAe0ar+DLjq6upZs2ZpIx6pVCqVStXrXV1dXV1dqUVnZ+dhTrwLAKMELtED6MzUqVNpNfb29jqJBADYBwkeQGdUf2tHEMSePXvw6zIAGCm4RA+gM46OjsXFxSkpKa2trb6+vnPnztV1RADAHkjwALo0YcKEbdu2UYt9fX2PHj2inm7b09PT2tpqaWmpoYeGhgYLCwvcCgcANNq6RH/9+vV+Z5EqKSnZvn17SEhIUlKSQqHQ0ugA+igmJkYqlTo7O7u5uWVkZERERFhbWzs6Ovr4+BQVFam3z8jIcHFxcXZ2lkqlcXFxzAcMAKOZVhL8gwcPPvzwQ/UEL5fL33///bCwsISEhIqKitzcXG2MDqCPLl26dPjwYbJ8796911577fTp0+RiWVlZaGjovn37PD09y8vLb9++3dfXV1tb+9prrz148IBsc/DgwatXr+omdAAYlUY+wb/77rs7d+7s7OxUX1VYWGhpaTljxgyhUBgYGJiTkzPiowPoqW+//VbD2rt37yYlJVVXV3d3d9+8eXPTpk3q075p7gEAxpqRT/B79uxJTk7udxapxsZGaupoW1vbpqamER8dQE8JBIKhN758+fKTJ0+G0wMAsB6jN+a0tbWJRCKyLBKJWltbqVUtLS3UlFzz589ftGgRk4ENinwMmVAoZGAsQ0NDLpdramrKwFjkfjEzFsN4PJ5+7deaNWs+/fRTatHc3Pzx48ca2js4ONja2t67d4+qWbt2rX7tMg2Px2PfrYLkQwPFYrFSqdT2WHIOp4UgjIyMxIz8GbDyeLEMo4dHLBZTE1h1dXWJxWJqFZfLNTExIcuGhoaj7f478l3KTFTkBwEzYzG5Xwzj8Xj6tV/z5s07efLk4cOHKysrvby8jh49mpOTc/z48bq6Oi8vr4KCAlp7b2/vM2fO7Nq16+bNmw4ODpGRkXPnztWvXVbF4XCUSqX+xj8Q8n9ohULBQIInXz2FQsHMy8jlcpVKJQP7Bc+M0QQvkUioG+vq6uqo3wIRBGFmZqb6XO5+J9zUIUNDQ2JoE2MPX09Pj0KhaGtrY2AsoVAoFouZGYthJiYmerdfixcvXrx4MbXo6OgYHh5Olrdt23b+/Hlq1cGDBw0NDZ2cnC5fvkxV6t3+quLxeEKhsKOjQ9eBjDA+n29mZtbZ2dnX16ftsRTt7QRBdHd3Kxn5SzA2Nu7u7pbL5doeiPz4hWfA0JPsfvnll66urpkzZ9bX11dXVysUiitXrvj4+DAzOoC+i4uL++qrr9avX29paRkUFPTWW2/pOiIAGO0YSvB79uypqanh8Xh79+6NjY196623ZDIZbapKANBg7ty5H3zwgbW1NR5nCwBDoa1L9CkpKaqLX375JVmYNm1abGyslgYFAAAAEiabAQAAYCEkeAAAABZCggcAAGAhJHgAAAAWQoIHAABgISR4AAAAFkKCBwAAYCEkeAAAABZCggcAAGAhJHgAAAAWQoIHAABgISR4AAAAFkKCBwAAYCEkeAAAABZCggcAAGAhJHgAAAAWQoIHAABgISR4AAAAFkKCBwAAYCEkeAAAABZCggcAAGAhvq4D6J+lpaWuQ+jHuHHjGBjF1414XmbFzCtQXFyck5OzdetWLpeF/+qNzr+iYfL19bW1tWXlrhEEIRKJdB3CCHv48OGxY8dWrVr13HPPaXsspck43o4IsbuHIVN/Huw7XizDwo91fec6xXKh5yRmxiovLz916hQzY8GIaGxs7Orq0nUUMFRNTU2nTp1qbm5mYCyOgaHFxjBDuykMjAV6AQkeAACAhZDgAQAAWIijVCp1HQPoTEdHx5MnT6ytrXUdCAxVY2OjQCAwNzfXdSAwJD09PU1NTVZWVgYGBrqOBcYcJHgAAAAWwiV6AAAAFhqlP5MD7SkpKTl+/Hhra6u3t3doaCjtB3IFBQVnz55taWmxt7ffvn27lZWVruIEzUdK81rQCby5YFTBh8LYIpfL33///bCwsISEhIqKitzcXNW1jY2NMTEx27dvP3HihEQiiY+P11WcoPlIaV4LOoE3F4w2SPBjS2FhoaWl5YwZM4RCYWBgYE5Ojura0tLSGTNmODg4CIXCpUuXlpeX6yhMGORIaV4LOoE3F4w2uEQ/tjQ2Ntra2pJlW1vbpqYm1bVeXl6zZ88my1VVVfb29kzHB7/RfKQ0rwWdwJsLRhucwY8tbW1t1NMlRSJRa2ur6lqhUCgWiwmC+P7770+ePLl27VodhAgEQQx2pDSvBZ3AmwtGG5zBs9/Vq1e/+uorgiDCwsLEYnFDQwNZ39XVRX7iqGpra4uNjW1ubj548KBMJmM6VviN5iM16HEE5uHNBaMNEjz7BQQEBAQEkOWffvqJuvenrq5OIpGotuzt7f373/8+ffr0/fv3czgcpgMFFRKJRMOR0rwWdELzQcGbC5iHS/Rjy8yZM+vr66urqxUKxZUrV3x8fMj6X375paur64cffhCJRKGhofgA0jnNR2qgtaBDeHPBaIMn2Y05d+7ciY+Pf/r0qYeHx8aNG8mPm6CgoOjo6B9++OHixYtUSxMTkzNnzugu0rFOw5FydHTsdy3oFt5cMKogwQMAALAQLtEDAACwEBI8AAAACyHBAwAAsBASPAAAAAshwQMAALAQEjwAAAALIcEDEARByOVyDofz448/Dr+rn3/+2cPDw9fX9xnGGjduXGZm5lBGEQgE+fn5zxwkALAeEjzACDt27Ji1tXVycrKuAwGAMQ0JHmCE1dfXu7i4WFlZ6ToQABjTkOAB6B49erRhwwapVDpx4sT169c3NzeT9c3NzStWrBg/fvzs2bPT0tI4HE5HRwdtWz8/vytXrkRFRc2ZM0dDV5TKysoFCxaYmZm5urp+/fXX/cbT1NS0evVqKysre3v7v/3tb3K5nKx/+PDhokWLzMzM7O3tqQsGlZWVy5Ytk0gkJiYmvr6+hYWFZL1AILh48aKzs7ORkdGUKVNSU1M171Rra+ubb74pk8lMTU0DAwPv378/zFcVAJimBAClsq+vjyCIgoIChULh7u7u4eGRnZ2dnZ3t4eHh7u5OtvH09HzllVcKCgrOnTtnYWFBEER7e7t6VwsWLIiKilIqlQN1RY3V0dExceLEl19++dq1a6mpqba2tlwu97vvvlPtTS6Xu7i4BAQE5OfnnzlzRiKR/PWvf1UqlXw+39raOiUlpbS0dNOmTSKR6OnTp0ql0tHR0c/PLzMzMysry8fHhwqebJ+cnHz79u3Vq1cLhcKuri4NO+Xv7+/r63vt2rUbN26sXbvWycnp8ePH2nv9AWDEIcEDKJUqSTc7O5vH4929e5esr6mp4fF4165dy83NNTQ0bG5uJuvffffdQRP8QF1RYyUmJpqbm//3v/8lG5CTkdAS/KVLl4yNjVtaWsjFTz/9NDQ0VKlU8vn86OhosvLXX38lCKKmpkahUPzjH/+orq4m60+fPm1paUmWVduXl5cTBFFZWTnQThUUFAgEAiqj9/X1SSSSpKSkZ399AYBxuEQP8DtlZWWTJ0+eNGkSuSiTyWQyWVlZWVFRkb29PXmOSxCEp6cnWUhNTeX8hkycg3ZFNSgpKfHw8DAxMSEXX375ZfV4iouLnZ2dzc3NycWQkJATJ06QZXd3d7IgEonIAofD2bp1682bNyMjI4ODg//yl7+odjVr1iyyQO3FQDtVVlbW29trZWUlEAgEAoFQKGxoaKirqxvC6wcAowVf1wEAjC5KtfkVuVxuX19fb2+v6pSsXO7//3O8ZMmSJ0+ekOVx48YNpStqkcfjqa41NDSk1RAE0dvbq15JovI6pb293dvbm8/nv/rqq6+//npgYOCuXbtU+1fvvN+dMjU1nTBhQn19fb/jAoBewBk8wO84OjrW1NRQ95Tdu3evpqbmhRdecHJyqqysbGlpIetv3LhBFgQCgelvqASpuSvVBjdu3GhrayMXr1+/Tt1AR3Fycrp9+zbVJjEx0cPDY6Dgs7OzS0tLv/nmm927dy9evJjPH+Q/+IF26oUXXmhoaKAuNjx48MDLy6uoqEhzbwAwqiDBA/yOr6+vi4vLq6++mp+fn5eXt2rVKhcXl3nz5v35z3+ePn3666+//tNPP6WlpcXHxxMEoXr6O/SuqAZr1qwRCoXBwcHXr1+/fPlyWFiYkZERrZMlS5ZIpdJ169b95z//OX/+/MGDB318fAYa0cLCoqenJy0t7d69e2lpafv37+/s7FS/dZ8y0E45ODgEBQUtW7bsypUrWVlZ69ata29vV/3XBABGPyR4gN/hcDgZGRmTJ09esWLFypUr7ezsMjIyyK/Y09PTCYLw9/f/6KOPoqOjuVyu+kXyoXRFNTAyMsrNzSUIYuHChXv37j1y5IidnR2tEz6fn5mZyefzAwIC3n777ZUrVx46dGigEefOnXv48OHIyEgXF5cvvvji6tWrMpls4cKFGiIcaKc+++yzl156KSwsbMWKFebm5pcuXRromwIAGJ046l8TAoC65ubm1NTUDRs2kCfZp06dOnToUEVFha7jGhZW7hQAkHhRUVG6jgFAD3A4nEWLFj158mTmzJm//vrrzp07Q0JCvL29dR3XsLBypwCAhEv0AEMiEonS09Pz8vLs7OyWLVu2ZMmSiIgIXQc1XKzcKQAg4RI9AAAAC+EMHgAAgIWQ4AEAAFgICR4AAICFkOABAABYCAkeAACAhZDgAQAAWAgJHgAAgIX+Dzj1fWFplfWxAAAAAElFTkSuQmCC" /><!-- --></p>
 </div>
 <div id="imputation-of-standard-deviations-for-changes-from-baseline" class="section level2">
 <h2>Imputation of Standard Deviations for Changes from Baseline</h2>
 <p>The function imputeSD can be used to impute standard deviations for changes from baseline adopting the approach of the Cochrane handbook <span class="citation">(Higgins et al. 2019, Section 6.5.2.8)</span>.</p>
-<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb152-1" title="1">SD1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.149</span>, <span class="fl">0.022</span>, <span class="fl">0.036</span>, <span class="fl">0.085</span>, <span class="fl">0.125</span>, <span class="ot">NA</span>, <span class="fl">0.139</span>, <span class="fl">0.124</span>, <span class="fl">0.038</span>)</a>
-<a class="sourceLine" id="cb152-2" title="2">SD2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="fl">0.039</span>, <span class="fl">0.038</span>, <span class="fl">0.087</span>, <span class="fl">0.125</span>, <span class="ot">NA</span>, <span class="fl">0.135</span>, <span class="fl">0.126</span>, <span class="fl">0.038</span>)</a>
-<a class="sourceLine" id="cb152-3" title="3">SDchange &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="fl">0.026</span>, <span class="fl">0.058</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>)</a>
-<a class="sourceLine" id="cb152-4" title="4"><span class="kw">imputeSD</span>(SD1, SD2, SDchange)</a></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb150-1" title="1">SD1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.149</span>, <span class="fl">0.022</span>, <span class="fl">0.036</span>, <span class="fl">0.085</span>, <span class="fl">0.125</span>, <span class="ot">NA</span>, <span class="fl">0.139</span>, <span class="fl">0.124</span>, <span class="fl">0.038</span>)</a>
+<a class="sourceLine" id="cb150-2" title="2">SD2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="fl">0.039</span>, <span class="fl">0.038</span>, <span class="fl">0.087</span>, <span class="fl">0.125</span>, <span class="ot">NA</span>, <span class="fl">0.135</span>, <span class="fl">0.126</span>, <span class="fl">0.038</span>)</a>
+<a class="sourceLine" id="cb150-3" title="3">SDchange &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="fl">0.026</span>, <span class="fl">0.058</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>)</a>
+<a class="sourceLine" id="cb150-4" title="4"><span class="kw">imputeSD</span>(SD1, SD2, SDchange)</a></code></pre></div>
 <pre><code>##     SD1   SD2 SDchange       Cor SDchange.min SDchange.mean SDchange.max
 ## 1 0.149 0.149       NA        NA   0.04491608    0.05829769   0.06913600
 ## 2 0.022 0.039       NA        NA   0.01915642    0.02050235   0.02176520
@@ -1486,8 +1486,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 8 0.124 0.126       NA        NA   0.03773311    0.04894677   0.05803262
 ## 9 0.038 0.038       NA        NA   0.01145511    0.01486787   0.01763200</code></pre>
 <p>Correlations can also be provided via argument corr. This option may particularly be useful, if no complete data is available.</p>
-<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb154-1" title="1">SDchange2 &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="dv">9</span>)</a>
-<a class="sourceLine" id="cb154-2" title="2"><span class="kw">imputeSD</span>(SD1, SD2, SDchange2, <span class="dt">corr =</span> <span class="kw">c</span>(<span class="fl">0.85</span>, <span class="fl">0.9</span>, <span class="fl">0.95</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb152-1" title="1">SDchange2 &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="dv">9</span>)</a>
+<a class="sourceLine" id="cb152-2" title="2"><span class="kw">imputeSD</span>(SD1, SD2, SDchange2, <span class="dt">corr =</span> <span class="kw">c</span>(<span class="fl">0.85</span>, <span class="fl">0.9</span>, <span class="fl">0.95</span>))</a></code></pre></div>
 <pre><code>##     SD1   SD2 SDchange Cor SDchange.min SDchange.mean SDchange.max
 ## 1 0.149 0.149       NA  NA   0.04711794    0.06663483   0.08161066
 ## 2 0.022 0.039       NA  NA   0.01935975    0.02146159   0.02337520
@@ -1502,8 +1502,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="pairwise-comparisons" class="section level2">
 <h2>Pairwise Comparisons</h2>
 <p>Function pairwise.fun enables the application of arbitrary functions for pairwise comparisons.</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb156-1" title="1"><span class="kw">pairwise.wilcox.test</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month, </a>
-<a class="sourceLine" id="cb156-2" title="2">                     <span class="dt">p.adjust.method =</span> <span class="st">&quot;none&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb154-1" title="1"><span class="kw">pairwise.wilcox.test</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month, </a>
+<a class="sourceLine" id="cb154-2" title="2">                     <span class="dt">p.adjust.method =</span> <span class="st">&quot;none&quot;</span>)</a></code></pre></div>
 <pre><code>## Warning in wilcox.test.default(xi, xj, paired = paired, ...): kann bei Bindungen
 ## keinen exakten p-Wert Berechnen
 
@@ -1545,21 +1545,162 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 9 0.11859 0.95887 0.00074 0.00325
 ## 
 ## P value adjustment method: none</code></pre>
-<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb159-1" title="1"><span class="co">## To avoid the warnings</span></a>
-<a class="sourceLine" id="cb159-2" title="2"><span class="kw">library</span>(exactRankTests)</a></code></pre></div>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb157-1" title="1"><span class="co">## To avoid the warnings</span></a>
+<a class="sourceLine" id="cb157-2" title="2"><span class="kw">library</span>(exactRankTests)</a></code></pre></div>
 <pre><code>##  Package &#39;exactRankTests&#39; is no longer under development.
 ##  Please consider using package &#39;coin&#39; instead.</code></pre>
-<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb161-1" title="1"><span class="kw">pairwise.fun</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month, </a>
-<a class="sourceLine" id="cb161-2" title="2">             <span class="dt">fun =</span> <span class="cf">function</span>(x, y) <span class="kw">wilcox.exact</span>(x, y)<span class="op">$</span>p.value)</a></code></pre></div>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb159-1" title="1"><span class="kw">pairwise.fun</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month, </a>
+<a class="sourceLine" id="cb159-2" title="2">             <span class="dt">fun =</span> <span class="cf">function</span>(x, y) <span class="kw">wilcox.exact</span>(x, y)<span class="op">$</span>p.value)</a></code></pre></div>
 <pre><code>##       5 vs 6       5 vs 7       5 vs 8       5 vs 9       6 vs 7       6 vs 8 
 ## 1.897186e-01 1.087205e-05 6.108735e-05 1.171796e-01 1.183753e-02 2.333564e-02 
 ##       6 vs 9       7 vs 8       7 vs 9       8 vs 9 
 ## 9.528659e-01 8.595683e-01 5.281796e-04 2.714694e-03</code></pre>
+<p>The function is also the basis for our functions pairwise.wilcox.exact and pairwise.ext.t.test, which in contrast to the standard functions pairwise.wilcox.test and pairwise.t.test generate a much more detailed output. In addition, pairwise.wilcox.exact is based on wilcox.exact instead of wilcox.test.</p>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb161-1" title="1"><span class="kw">pairwise.wilcox.exact</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise Exact Wilcoxon rank sum tests
+## 
+## data:  airquality$Ozone and airquality$Month
+## alternative hypothesis: true location shift is not equal to 0
+## 
+##    groups     W diff. in location 2.5% 97.5%      p-value adj. p-value
+## 1  5 vs 6 152.0               6.5   -5    18 1.897186e-01 0.5691559000
+## 2  5 vs 7 566.5              37.5   21    51 1.087205e-05 0.0001087205
+## 3  5 vs 8 548.5              31.5   14    53 6.108735e-05 0.0005497862
+## 4  5 vs 9 470.0               5.5   -2    13 1.171796e-01 0.4687184000
+## 5  6 vs 7 182.5              28.5    8    51 1.183753e-02 0.0710251900
+## 6  6 vs 8 176.5              23.5    2    53 2.333564e-02 0.1166782000
+## 7  6 vs 9 128.5              -0.5  -12    10 9.528659e-01 1.0000000000
+## 8  7 vs 8 328.0              -2.5  -21    19 8.595683e-01 1.0000000000
+## 9  7 vs 9 176.5             -30.5  -44   -13 5.281796e-04 0.0042254370
+## 10 8 vs 9 202.0             -23.5  -46    -7 2.714694e-03 0.0190028600</code></pre>
+<p>Furthermore, function pairwise.ext.t.test also enables pairwise Student, Welch, Hsu, bootstrap and permutation t tests.</p>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb163-1" title="1"><span class="kw">pairwise.t.test</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month, <span class="dt">pool.sd =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise comparisons using t tests with non-pooled SD 
+## 
+## data:  airquality$Ozone and airquality$Month 
+## 
+##   5       6       7       8      
+## 6 1.00000 -       -       -      
+## 7 0.00026 0.01527 -       -      
+## 8 0.00195 0.02135 1.00000 -      
+## 9 0.86321 1.00000 0.00589 0.01721
+## 
+## P value adjustment method: holm</code></pre>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb165-1" title="1"><span class="kw">pairwise.ext.t.test</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise Welch Two Sample t-tests
+## 
+## data:  airquality$Ozone and airquality$Month
+## alternative hypothesis: true difference in means is not equal to 0
+## 
+##    groups           t       df diff. in means       SE       2.5%     97.5%
+## 1  5 vs 6  0.78010090 16.93764      5.8290598 7.472187  -9.940299  21.59842
+## 2  5 vs 7  4.68198923 44.84296     35.5000000 7.582247  20.227090  50.77291
+## 3  5 vs 8  4.07487966 39.27916     36.3461538 8.919565  18.308730  54.38358
+## 4  5 vs 9  1.25274697 52.95697      7.8328912 6.252572  -4.708419  20.37420
+## 5  6 vs 7  3.41859846 24.79227     29.6709402 8.679270  11.788050  47.55383
+## 6  6 vs 8  3.09220573 29.98945     30.5170940 9.869037  10.361530  50.67265
+## 7  6 vs 9  0.26556793 17.61281      2.0038314 7.545457 -13.873600  17.88127
+## 8  7 vs 8  0.08501814 47.63564      0.8461538 9.952627 -19.168900  20.86121
+## 9  7 vs 9 -3.61450643 46.58247    -27.6671088 7.654464 -43.069550 -12.26467
+## 10 8 vs 9 -3.17483051 40.37577    -28.5132626 8.981035 -46.659350 -10.36718
+##         p-value adj. p-value
+## 1  4.460968e-01 1.0000000000
+## 2  2.646679e-05 0.0002646679
+## 3  2.168566e-04 0.0019517090
+## 4  2.158016e-01 0.8632062000
+## 5  2.181685e-03 0.0152717900
+## 6  4.269318e-03 0.0213465900
+## 7  7.936555e-01 1.0000000000
+## 8  9.326033e-01 1.0000000000
+## 9  7.361032e-04 0.0058888260
+## 10 2.868290e-03 0.0172097400</code></pre>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb167-1" title="1"><span class="kw">pairwise.ext.t.test</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month,</a>
+<a class="sourceLine" id="cb167-2" title="2">                    <span class="dt">method =</span> <span class="st">&quot;hsu.t.test&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise Hsu Two Sample t-tests
+## 
+## data:  airquality$Ozone and airquality$Month
+## alternative hypothesis: true difference in means is not equal to 0
+## 
+##    groups           t df diff. in means       SE       2.5%     97.5%
+## 1  5 vs 6  0.78010090  8      5.8290598 7.472187 -11.401830  23.05995
+## 2  5 vs 7  4.68198923 25     35.5000000 7.582247  19.884070  51.11593
+## 3  5 vs 8  4.07487966 25     36.3461538 8.919565  17.975970  54.71634
+## 4  5 vs 9  1.25274697 25      7.8328912 6.252572  -5.044523  20.71031
+## 5  6 vs 7  3.41859846  8     29.6709402 8.679270   9.656507  49.68537
+## 6  6 vs 8  3.09220573  8     30.5170940 9.869037   7.759053  53.27514
+## 7  6 vs 9  0.26556793  8      2.0038314 7.545457 -15.396020  19.40369
+## 8  7 vs 8  0.08501814 25      0.8461538 9.952627 -19.651670  21.34397
+## 9  7 vs 9 -3.61450643 25    -27.6671088 7.654464 -43.431770 -11.90245
+## 10 8 vs 9 -3.17483051 25    -28.5132626 8.981035 -47.010050 -10.01648
+##         p-value adj. p-value
+## 1  0.4577885000  1.000000000
+## 2  0.0000849598  0.000849598
+## 3  0.0004086781  0.003678103
+## 4  0.2218896000  0.887558600
+## 5  0.0091067660  0.054640600
+## 6  0.0148398900  0.074199430
+## 7  0.7972873000  1.000000000
+## 8  0.9329242000  1.000000000
+## 9  0.0013234440  0.010587550
+## 10 0.0039521140  0.027664800</code></pre>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb169-1" title="1"><span class="kw">pairwise.ext.t.test</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month, </a>
+<a class="sourceLine" id="cb169-2" title="2">                    <span class="dt">method =</span> <span class="st">&quot;boot.t.test&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise Bootstrap Welch Two Sample t-tests
+## 
+## data:  airquality$Ozone and airquality$Month
+## alternative hypothesis: true difference in means is not equal to 0
+## 
+##    groups diff. in means       SE       2.5%     97.5%    p-value adj. p-value
+## 1  5 vs 6      5.8887363 6.955759  -7.807906  20.27479 0.41824180   1.00000000
+## 2  5 vs 7     35.5503781 7.364936  20.653850  49.92692 0.00000000   0.00000000
+## 3  5 vs 8     36.2165947 8.644354  18.921150  53.19423 0.00000000   0.00000000
+## 4  5 vs 9      7.7751623 6.043571  -4.866512  19.52261 0.23222320   0.92889290
+## 5  6 vs 7     29.6561703 8.227607  12.901500  45.82970 0.00400040   0.02280228
+## 6  6 vs 8     30.4678318 9.450129  12.173930  48.93611 0.00380038   0.02280228
+## 7  6 vs 9      2.0987570 7.044058 -12.905750  15.59425 0.83628360   1.00000000
+## 8  7 vs 8      0.8187165 9.716243 -17.771150  19.88462 0.93569360   1.00000000
+## 9  7 vs 9    -27.6598737 7.461887 -42.283890 -12.99257 0.00120012   0.00840084
+## 10 8 vs 9    -28.6843232 8.742714 -46.125990 -11.72759 0.00100010   0.00800080</code></pre>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb171-1" title="1"><span class="kw">pairwise.ext.t.test</span>(airquality<span class="op">$</span>Ozone, airquality<span class="op">$</span>Month, </a>
+<a class="sourceLine" id="cb171-2" title="2">                    <span class="dt">method =</span> <span class="st">&quot;perm.t.test&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Pairwise Permutation Welch Two Sample t-tests
+## 
+## data:  airquality$Ozone and airquality$Month
+## alternative hypothesis: true difference in means is not equal to 0
+## 
+##    groups diff. in means        SE        2.5%     97.5%    p-value
+## 1  5 vs 6       5.727345  7.842643  -7.4871790  22.87607 0.50675070
+## 2  5 vs 7      35.573465  9.001921  18.3076900  53.30769 0.00000000
+## 3  5 vs 8      36.363152 10.190620  16.2307700  56.31154 0.00010001
+## 4  5 vs 9       7.836545  6.311655  -4.4704910  19.82361 0.22582260
+## 5  6 vs 7      29.713691 12.042870   5.6452990  52.76068 0.00520052
+## 6  6 vs 8      30.709878 14.345440   0.6068376  56.99573 0.01040104
+## 7  6 vs 9       1.881445  8.487179 -16.2298900  16.97280 0.79317930
+## 8  7 vs 8       0.786594  9.853771 -18.0807700  20.31154 0.93069310
+## 9  7 vs 9     -27.797195  8.367606 -43.8126700 -11.49469 0.00100010
+## 10 8 vs 9     -28.583130  9.499669 -46.9602100 -10.34218 0.00270027
+##    adj. p-value
+## 1    1.00000000
+## 2    0.00000000
+## 3    0.00090009
+## 4    0.90329030
+## 5    0.03120312
+## 6    0.05200520
+## 7    1.00000000
+## 8    1.00000000
+## 9    0.00800080
+## 10   0.01890189</code></pre>
 </div>
 <div id="sessioninfo" class="section level2">
 <h2>sessionInfo</h2>
-<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb163-1" title="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
-<pre><code>## R version 4.2.1 Patched (2022-08-19 r82735)
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb173-1" title="1"><span class="kw">sessionInfo</span>()</a></code></pre></div>
+<pre><code>## R version 4.2.2 Patched (2022-11-04 r83277)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Linux Mint 20.3
 ## 
@@ -1579,24 +1720,24 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] exactRankTests_0.8-35 miceadds_3.13-12      mice_3.14.0          
-## [4] Amelia_1.8.0          Rcpp_1.0.9            MKinfer_0.7          
+## [1] exactRankTests_0.8-35 miceadds_3.15-21      mice_3.14.0          
+## [4] Amelia_1.8.0          Rcpp_1.0.9            MKinfer_0.8          
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] tidyselect_1.1.2   xfun_0.31          bslib_0.4.0        mitools_2.4       
-##  [5] purrr_0.3.4        lattice_0.20-45    colorspace_2.0-3   vctrs_0.4.1       
-##  [9] generics_0.1.3     htmltools_0.5.3    yaml_2.3.5         gmp_0.6-5         
-## [13] utf8_1.2.2         rlang_1.0.4        jquerylib_0.1.4    pillar_1.8.0      
-## [17] foreign_0.8-82     glue_1.6.2         withr_2.5.0        DBI_1.1.3         
-## [21] arrangements_1.1.9 lifecycle_1.0.1    stringr_1.4.0      munsell_0.5.0     
-## [25] gtable_0.3.0       evaluate_0.15      labeling_0.4.2     knitr_1.39        
-## [29] fastmap_1.1.0      fansi_1.0.3        highr_0.9          broom_1.0.0       
-## [33] scales_1.2.0       backports_1.4.1    cachem_1.0.6       jsonlite_1.8.0    
-## [37] farver_2.1.1       ggplot2_3.3.6      digest_0.6.29      stringi_1.7.8     
-## [41] dplyr_1.0.9        grid_4.2.1         cli_3.3.0          tools_4.2.1       
-## [45] magrittr_2.0.3     sass_0.4.2         tibble_3.1.8       MKdescr_0.7       
-## [49] tidyr_1.2.0        pkgconfig_2.0.3    assertthat_0.2.1   rmarkdown_2.14    
-## [53] R6_2.5.1           boot_1.3-28        nlme_3.1-158       compiler_4.2.1</code></pre>
+##  [1] tidyselect_1.2.0   xfun_0.34          bslib_0.4.1        purrr_0.3.5       
+##  [5] mitools_2.4        lattice_0.20-45    colorspace_2.0-3   vctrs_0.5.0       
+##  [9] generics_0.1.3     htmltools_0.5.3    yaml_2.3.6         gmp_0.6-7         
+## [13] utf8_1.2.2         rlang_1.0.6        jquerylib_0.1.4    pillar_1.8.1      
+## [17] foreign_0.8-83     glue_1.6.2         withr_2.5.0        DBI_1.1.3         
+## [21] arrangements_1.1.9 lifecycle_1.0.3    stringr_1.4.1      munsell_0.5.0     
+## [25] gtable_0.3.1       evaluate_0.17      labeling_0.4.2     knitr_1.40        
+## [29] fastmap_1.1.0      fansi_1.0.3        highr_0.9          broom_1.0.1       
+## [33] scales_1.2.1       backports_1.4.1    cachem_1.0.6       jsonlite_1.8.3    
+## [37] farver_2.1.1       ggplot2_3.4.0      digest_0.6.30      stringi_1.7.8     
+## [41] dplyr_1.0.10       grid_4.2.2         cli_3.4.1          tools_4.2.2       
+## [45] magrittr_2.0.3     sass_0.4.2         tibble_3.1.8       MKdescr_0.8       
+## [49] tidyr_1.2.1        pkgconfig_2.0.3    rmarkdown_2.17     R6_2.5.1          
+## [53] boot_1.3-28        nlme_3.1-160       compiler_4.2.2</code></pre>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2>References</h2>

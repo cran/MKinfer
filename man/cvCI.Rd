@@ -8,7 +8,7 @@
 \usage{
 cvCI(x, conf.level = 0.95, method = "miller", R = 9999, 
      bootci.type = c("norm", "basic", "perc", "bca"), na.rm = FALSE,
-     alternative = c("two.sided", "less", "greater"))
+     alternative = c("two.sided", "less", "greater"), ...)
 }
 \arguments{
   \item{x}{ numeric vector with positive numbers. }
@@ -21,6 +21,8 @@ cvCI(x, conf.level = 0.95, method = "miller", R = 9999,
   \item{alternative}{ a character string specifying one- or two-sided confidence intervals. 
   Must be one of "two.sided" (default), "greater" or "less" (one-sided intervals). 
   You can specify just the initial letter. }
+  \item{\dots}{ further arguments passed to function \code{\link[boot]{boot}},
+  e.g. for parallel computing. }
 }
 \details{
   For details about the confidence intervals we refer to Gulhar et al (2012) and
@@ -64,5 +66,10 @@ cvCI(x, method = "boot", R = 999) # R = 999 to reduce computation time for R che
 cvCI(x, alternative = "less")
 cvCI(x, alternative = "greater")
 cvCI(x, method = "boot", bootci.type = "bca", alternative = "less", R = 999)
+
+\donttest{
+## parallel computing for bootstrap
+cvCI(x, method = "boot", R = 9999, parallel = "multicore", ncpus = 2)
+}
 }
 \keyword{univar}

@@ -9,10 +9,10 @@
 \usage{
 normDiffCI(x, y, conf.level = 0.95, paired = FALSE, method = "welch", 
            boot = FALSE, R = 9999, bootci.type = "all", na.rm = TRUE, 
-           alternative = c("two.sided", "less", "greater"))
+           alternative = c("two.sided", "less", "greater"), ...)
 meanDiffCI(x, y, conf.level = 0.95, paired = FALSE, method = "welch", 
            boot = FALSE, R = 9999, bootci.type = "all", na.rm = TRUE, 
-           alternative = c("two.sided", "less", "greater"))
+           alternative = c("two.sided", "less", "greater"), ...)
 }
 \arguments{
   \item{x}{ numeric vector of data values of group 1. }
@@ -27,6 +27,8 @@ meanDiffCI(x, y, conf.level = 0.95, paired = FALSE, method = "welch",
   \item{alternative}{ a character string specifying one- or two-sided confidence intervals. 
   Must be one of "two.sided" (default), "greater" or "less" (one-sided intervals). 
   You can specify just the initial letter. }
+  \item{\dots}{ further arguments passed to function \code{\link[boot]{boot}},
+  e.g. for parallel computing. }
 }
 \details{
   The standard confidence intervals for the difference of means are
@@ -87,6 +89,12 @@ normDiffCI(x, y, method = "hsu", boot = TRUE, R = 999)
 ## one-sided
 normDiffCI(x, y, alternative = "less")
 normDiffCI(x, y, boot = TRUE, R = 999, alternative = "greater")
+
+\donttest{
+## parallel computing for bootstrap
+normDiffCI(x, y, method = "welch", boot = TRUE, R = 9999, 
+           parallel = "multicore", ncpus = 2)
+}
 
 \donttest{
 ## Monte-Carlo simulation: coverage probability

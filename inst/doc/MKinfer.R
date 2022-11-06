@@ -96,9 +96,6 @@ medianCI(x = x, method = "asymptotic")
 medianCI(x = x, method = "boot")
 
 ## -----------------------------------------------------------------------------
-medianCI(x = x, minLength = TRUE)
-
-## -----------------------------------------------------------------------------
 ## exact
 madCI(x = x)
 ## aysymptotic
@@ -241,6 +238,19 @@ pairwise.wilcox.test(airquality$Ozone, airquality$Month,
 library(exactRankTests)
 pairwise.fun(airquality$Ozone, airquality$Month, 
              fun = function(x, y) wilcox.exact(x, y)$p.value)
+
+## -----------------------------------------------------------------------------
+pairwise.wilcox.exact(airquality$Ozone, airquality$Month)
+
+## -----------------------------------------------------------------------------
+pairwise.t.test(airquality$Ozone, airquality$Month, pool.sd = FALSE)
+pairwise.ext.t.test(airquality$Ozone, airquality$Month)
+pairwise.ext.t.test(airquality$Ozone, airquality$Month,
+                    method = "hsu.t.test")
+pairwise.ext.t.test(airquality$Ozone, airquality$Month, 
+                    method = "boot.t.test")
+pairwise.ext.t.test(airquality$Ozone, airquality$Month, 
+                    method = "perm.t.test")
 
 ## -----------------------------------------------------------------------------
 sessionInfo()

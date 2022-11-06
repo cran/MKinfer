@@ -10,7 +10,7 @@
 binomDiffCI(a, b, c, d, conf.level = 0.95, paired = FALSE, 
             method = ifelse(paired, "wilson-cc", "wilson"), 
             R = 9999, bootci.type = "all", 
-            alternative = c("two.sided", "less", "greater"))
+            alternative = c("two.sided", "less", "greater"), ...)
 }
 \arguments{
   \item{a}{ independent: number of successes of group 1; 
@@ -29,6 +29,8 @@ binomDiffCI(a, b, c, d, conf.level = 0.95, paired = FALSE,
   \item{alternative}{ a character string specifying one- or two-sided confidence intervals. 
   Must be one of "two.sided" (default), "greater" or "less" (one-sided intervals). 
   You can specify just the initial letter. }
+  \item{\dots}{ further arguments passed to function \code{\link[boot]{boot}},
+  e.g. for parallel computing. }
 }
 \details{
   The Wald intervals (independent and paired) are obtained by applying the normal 
@@ -121,5 +123,10 @@ binomDiffCI(a = 212, b = 144, c = 256, d = 707, paired = TRUE)
 ## bootstrap intervals (R = 999 to reduce computation time for R checks)
 binomDiffCI(a = 212, b = 144, c = 256, d = 707, paired = TRUE, method = "boot",
             bootci.type = c("norm", "basic", "stud", "perc"), R = 999) ## type = "bca" gives error
+
+\donttest{
+binomDiffCI(a = 63, b = 38, c = 30, d = 54, method = "boot", R = 9999, 
+        parallel = "multicore", ncpus = 2)
+}
 }
 \keyword{univar}
