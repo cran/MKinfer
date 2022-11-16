@@ -1,6 +1,6 @@
-90c941a55b5d62fe1a6ba2196e918f1a *DESCRIPTION
+0f10bae3259c3d8f3e8847d713941e9e *DESCRIPTION
 c759cd3ae4b85db8db98376a15d00db2 *NAMESPACE
-0b33493962ee3c5428fffaa00959e8ac *NEWS
+747edc20d4ac6e0d30ae53598eab1de0 *NEWS
 cf585f60ef8cf39c9d08f87b498d3bb6 *R/binomCI.R
 b2e113206159f379272605c4e3596b9e *R/binomDiffCI.R
 42a64b91e9d69e2ad3e4b3e4bcdeba56 *R/boot.t.test.R
@@ -11,8 +11,8 @@ d752542feeb8fb1908c6c1bf39dbb834 *R/mi.t.test.R
 06a830f6e3b6a2a0f76b9aea3f906150 *R/normCI.R
 30bfbc7e8b6f278eb47f34d212fb2810 *R/normDiffCI.R
 8b1ea70544e15a8d9660bad77db71c37 *R/p2ses.R
-5daec84286a5d34a0ce387a3d2b9ff2c *R/pairwise.ext.t.test.R
-8f2ad88990929ed3f3a8ef3848a6a939 *R/pairwise.wilcox.exact.R
+2b10a013bd59753af6e7ab12de5f1e56 *R/pairwise.ext.t.test.R
+aac144c2c4cd93de1b21a7d4ddc608df *R/pairwise.wilcox.exact.R
 5e670d05e9f40cb6182ed062612d9377 *R/pairwiseFun.R
 3454902f832a93af1e48866f7b7c0a85 *R/perm.t.test.R
 a034ae1c68d5ad7faa3a5f4725b1766e *R/quantileCI.R
@@ -22,8 +22,8 @@ ed2a128ec7e3843008ce4dbc33660be9 *R/volcano.R
 1fb4d12fba35d0a9a508af28c09e1464 *inst/CITATION
 473881988589f5f0d2137c439b529aae *inst/doc/MKinfer.R
 a761ca2f6def8ed9c21234bc8aac3250 *inst/doc/MKinfer.Rmd
-12c5f91f69297cb1a68769aeca5ca534 *inst/doc/MKinfer.html
-7740fa85331115ee110fc8d460bc1724 *man/0MKinfer-package.Rd
+d68febd63a972e476a3d5732e5618b22 *inst/doc/MKinfer.html
+953cae3f1ef12c7f202fb5933c347a44 *man/0MKinfer-package.Rd
 b46ed99b9c8fb65b1a50d48070b3c9f8 *man/binomCI.Rd
 0f1e158e0670aa48ade3a83bec5c8d61 *man/binomDiffCI.Rd
 12b7b89ec678762ba4b1d48d8f74c9ad *man/boot.t.test.Rd
