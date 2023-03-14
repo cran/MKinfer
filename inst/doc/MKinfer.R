@@ -221,6 +221,30 @@ volcano(lfcs, p.adjust(pvals, method = "fdr"),
         effect.low = -0.25, effect.high = 0.25, 
         xlab = "log-fold change", ylab = "-log10(adj. p value)")
 
+## ---- fig.width=7, fig.height=7-----------------------------------------------
+data("fingsys")
+baplot(fingsys$fingsys, fingsys$armsys, 
+       title = "Approximative Confidence Intervals", 
+       type = "parametric", ci.type = "approximate")
+baplot(fingsys$fingsys, fingsys$armsys, 
+       title = "Exact Confidence Intervals", 
+       type = "parametric", ci.type = "exact")
+baplot(fingsys$fingsys, fingsys$armsys, 
+       title = "Bootstrap Confidence Intervals", 
+       type = "parametric", ci.type = "boot", R = 999)
+
+## ---- fig.width=7, fig.height=7-----------------------------------------------
+data("fingsys")
+baplot(fingsys$fingsys, fingsys$armsys, 
+       title = "Approximative Confidence Intervals", 
+       type = "nonparametric", ci.type = "approximate")
+baplot(fingsys$fingsys, fingsys$armsys, 
+       title = "Exact Confidence Intervals", 
+       type = "nonparametric", ci.type = "exact")
+baplot(fingsys$fingsys, fingsys$armsys, 
+       title = "Bootstrap Confidence Intervals", 
+       type = "nonparametric", ci.type = "boot", R = 999)
+
 ## -----------------------------------------------------------------------------
 SD1 <- c(0.149, 0.022, 0.036, 0.085, 0.125, NA, 0.139, 0.124, 0.038)
 SD2 <- c(NA, 0.039, 0.038, 0.087, 0.125, NA, 0.135, 0.126, 0.038)

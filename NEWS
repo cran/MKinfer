@@ -3,6 +3,25 @@
 ###############################################################################
 
 ###########################################################
+## Version 1.0
+###########################################################
+- changed depends from R(>= 3.5.0) to R(>= 4.0.0). As detected by GitHub user
+  PaulCristina, functions pairwise.ext.t.test and pairwise.wilcox.exact make
+  use of function deparse1, which was added in R 4.0.0.
+- now uses deparse1 instead of deparse also in hsu.t.test, perm.t.test, 
+  boot.t.test and rm.oneway.test.
+- corrected a minor bug regarding data names in rm.oneway.test.
+- minor modification of quantileCI for exact confidence intervals and small 
+  or high quantiles.
+- added parametric and nonparametric Bland-Altman plots including approximative,
+  exact and bootstrap confidence intervals.
+- added dataset of systolic blood pressure (mm Hg) measurements made using 
+  a standard arm cuff and a finger monitor used in Bland and Altman (1995).
+- switched back to exhaustive search in the case of quantileCI now using 
+  outer instead of a double for loop.
+
+
+###########################################################
 ## Version 0.9
 ###########################################################
 - corrected bug in pairwise.wilcox.exact and pairwise.ext.t.test.
