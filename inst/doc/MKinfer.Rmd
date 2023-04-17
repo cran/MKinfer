@@ -7,7 +7,7 @@ output:
     toc: true
 bibliography: MKinfer.bib
 vignette: >
-  %\VignetteIndexEntry{MKinfer}
+  %\VignetteIndexEntry{Package MKinfer}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{utf8}
 ---
@@ -17,8 +17,9 @@ vignette: >
 Package MKinfer includes a collection of functions for the computation of 
 various confidence intervals [@Altman2000; @Hedderich2018] including bootstrapped 
 versions [@Davison1997] as well as Hsu [@Hedderich2018], permutation [@Janssen1997], 
-bootstrap [@Davison1997] and multiple imputation [@Barnard1999] t-test.
-Graphical visualization by volcano and Bland-Altman plots [@Bland1986; @Shieh2018].
+bootstrap [@Davison1997] and multiple imputation [@Barnard1999] t-test and 
+Wilcoxon tests. Graphical visualization by volcano and Bland-Altman plots 
+[@Bland1986; @Shieh2018].
 
 We first load the package.
 ```{r}
@@ -247,47 +248,78 @@ y <- rnorm(20, mean = -1)
 y[sample(1:20, 4)] <- NA
 pair <- c(rnorm(25, mean = 1), rnorm(20, mean = -1))
 g <- factor(c(rep("yes", 25), rep("no", 20)))
-D <- data.frame(ID = 1:45, variable = c(x, y), pair = pair, group = g)
+D <- data.frame(ID = 1:45, response = c(x, y), pair = pair, group = g)
 
 ## Use Amelia to impute missing values
 library(Amelia)
 res <- amelia(D, m = 10, p2s = 0, idvars = "ID", noms = "group")
 
 ## Per protocol analysis (Welch two-sample t-test)
-t.test(variable ~ group, data = D)
+t.test(response ~ group, data = D)
 ## Intention to treat analysis (Multiple Imputation Welch two-sample t-test)
-mi.t.test(res$imputations, x = "variable", y = "group")
+mi.t.test(res, x = "response", y = "group")
 
 ## Per protocol analysis (Two-sample t-test)
-t.test(variable ~ group, data = D, var.equal = TRUE)
+t.test(response ~ group, data = D, var.equal = TRUE)
 ## Intention to treat analysis (Multiple Imputation two-sample t-test)
-mi.t.test(res$imputations, x = "variable", y = "group", var.equal = TRUE)
+mi.t.test(res, x = "response", y = "group", var.equal = TRUE)
 
 ## Specifying alternatives
-mi.t.test(res$imputations, x = "variable", y = "group", alternative = "less")
-mi.t.test(res$imputations, x = "variable", y = "group", alternative = "greater")
+mi.t.test(res, x = "response", y = "group", alternative = "less")
+mi.t.test(res, x = "response", y = "group", alternative = "greater")
 
 ## One sample test
-t.test(D$variable[D$group == "yes"])
-mi.t.test(res$imputations, x = "variable", subset = D$group == "yes")
-mi.t.test(res$imputations, x = "variable", mu = -1, subset = D$group == "yes",
+t.test(D$response[D$group == "yes"])
+mi.t.test(res, x = "response", subset = D$group == "yes")
+mi.t.test(res, x = "response", mu = -1, subset = D$group == "yes",
           alternative = "less")
-mi.t.test(res$imputations, x = "variable", mu = -1, subset = D$group == "yes",
+mi.t.test(res, x = "response", mu = -1, subset = D$group == "yes",
           alternative = "greater")
 
 ## paired test
-t.test(D$variable, D$pair, paired = TRUE)
-mi.t.test(res$imputations, x = "variable", y = "pair", paired = TRUE)
+t.test(D$response, D$pair, paired = TRUE)
+mi.t.test(res, x = "response", y = "pair", paired = TRUE)
 ```
 
-Function mi.t.test also works with package mice by applying function mids2datlist
-of package miceadds.
+Function mi.t.test also works with package mice.
 ```{r}
 library(mice)
-library(miceadds)
 res.mice <- mice(D, m = 10, print = FALSE)
-res.list <- mids2datlist(res.mice)
-mi.t.test(res.list, x = "variable", y = "group")
+mi.t.test(res.mice, x = "response", y = "group")
+```
+
+
+## Multiple Imputation Wilcoxon Tests
+Function mi.wilcox.test can be used to compute multiple imputation Wilcoxon tests 
+by applying the median p rule (MPR) approach; see Section 13.3 in approach 
+[@Heymans2019].
+```{r}
+## Per protocol analysis (Exact Wilcoxon rank sum test)
+library(exactRankTests)
+wilcox.exact(response ~ group, data = D, conf.int = TRUE)
+## Intention to treat analysis (Multiple Imputation Exact Wilcoxon rank sum test)
+mi.wilcox.test(res, x = "response", y = "group")
+
+## Specifying alternatives
+mi.wilcox.test(res, x = "response", y = "group", alternative = "less")
+mi.wilcox.test(res, x = "response", y = "group", alternative = "greater")
+
+## One sample test
+wilcox.exact(D$response[D$group == "yes"], conf.int = TRUE)
+mi.wilcox.test(res, x = "response", subset = D$group == "yes")
+mi.wilcox.test(res, x = "response", mu = -1, subset = D$group == "yes",
+               alternative = "less")
+mi.wilcox.test(res, x = "response", mu = -1, subset = D$group == "yes",
+               alternative = "greater")
+
+## paired test
+wilcox.exact(D$response, D$pair, paired = TRUE, conf.int = TRUE)
+mi.wilcox.test(res, x = "response", y = "pair", paired = TRUE)
+```
+
+Function mi.wilcox.test also works with package mice.
+```{r}
+mi.wilcox.test(res.mice, x = "response", y = "group")
 ```
 
 
@@ -396,7 +428,6 @@ for pairwise comparisons.
 pairwise.wilcox.test(airquality$Ozone, airquality$Month, 
                      p.adjust.method = "none")
 ## To avoid the warnings
-library(exactRankTests)
 pairwise.fun(airquality$Ozone, airquality$Month, 
              fun = function(x, y) wilcox.exact(x, y)$p.value)
 ```

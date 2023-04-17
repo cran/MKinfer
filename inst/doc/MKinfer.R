@@ -150,44 +150,68 @@ y <- rnorm(20, mean = -1)
 y[sample(1:20, 4)] <- NA
 pair <- c(rnorm(25, mean = 1), rnorm(20, mean = -1))
 g <- factor(c(rep("yes", 25), rep("no", 20)))
-D <- data.frame(ID = 1:45, variable = c(x, y), pair = pair, group = g)
+D <- data.frame(ID = 1:45, response = c(x, y), pair = pair, group = g)
 
 ## Use Amelia to impute missing values
 library(Amelia)
 res <- amelia(D, m = 10, p2s = 0, idvars = "ID", noms = "group")
 
 ## Per protocol analysis (Welch two-sample t-test)
-t.test(variable ~ group, data = D)
+t.test(response ~ group, data = D)
 ## Intention to treat analysis (Multiple Imputation Welch two-sample t-test)
-mi.t.test(res$imputations, x = "variable", y = "group")
+mi.t.test(res, x = "response", y = "group")
 
 ## Per protocol analysis (Two-sample t-test)
-t.test(variable ~ group, data = D, var.equal = TRUE)
+t.test(response ~ group, data = D, var.equal = TRUE)
 ## Intention to treat analysis (Multiple Imputation two-sample t-test)
-mi.t.test(res$imputations, x = "variable", y = "group", var.equal = TRUE)
+mi.t.test(res, x = "response", y = "group", var.equal = TRUE)
 
 ## Specifying alternatives
-mi.t.test(res$imputations, x = "variable", y = "group", alternative = "less")
-mi.t.test(res$imputations, x = "variable", y = "group", alternative = "greater")
+mi.t.test(res, x = "response", y = "group", alternative = "less")
+mi.t.test(res, x = "response", y = "group", alternative = "greater")
 
 ## One sample test
-t.test(D$variable[D$group == "yes"])
-mi.t.test(res$imputations, x = "variable", subset = D$group == "yes")
-mi.t.test(res$imputations, x = "variable", mu = -1, subset = D$group == "yes",
+t.test(D$response[D$group == "yes"])
+mi.t.test(res, x = "response", subset = D$group == "yes")
+mi.t.test(res, x = "response", mu = -1, subset = D$group == "yes",
           alternative = "less")
-mi.t.test(res$imputations, x = "variable", mu = -1, subset = D$group == "yes",
+mi.t.test(res, x = "response", mu = -1, subset = D$group == "yes",
           alternative = "greater")
 
 ## paired test
-t.test(D$variable, D$pair, paired = TRUE)
-mi.t.test(res$imputations, x = "variable", y = "pair", paired = TRUE)
+t.test(D$response, D$pair, paired = TRUE)
+mi.t.test(res, x = "response", y = "pair", paired = TRUE)
 
 ## -----------------------------------------------------------------------------
 library(mice)
-library(miceadds)
 res.mice <- mice(D, m = 10, print = FALSE)
-res.list <- mids2datlist(res.mice)
-mi.t.test(res.list, x = "variable", y = "group")
+mi.t.test(res.mice, x = "response", y = "group")
+
+## -----------------------------------------------------------------------------
+## Per protocol analysis (Exact Wilcoxon rank sum test)
+library(exactRankTests)
+wilcox.exact(response ~ group, data = D, conf.int = TRUE)
+## Intention to treat analysis (Multiple Imputation Exact Wilcoxon rank sum test)
+mi.wilcox.test(res, x = "response", y = "group")
+
+## Specifying alternatives
+mi.wilcox.test(res, x = "response", y = "group", alternative = "less")
+mi.wilcox.test(res, x = "response", y = "group", alternative = "greater")
+
+## One sample test
+wilcox.exact(D$response[D$group == "yes"], conf.int = TRUE)
+mi.wilcox.test(res, x = "response", subset = D$group == "yes")
+mi.wilcox.test(res, x = "response", mu = -1, subset = D$group == "yes",
+               alternative = "less")
+mi.wilcox.test(res, x = "response", mu = -1, subset = D$group == "yes",
+               alternative = "greater")
+
+## paired test
+wilcox.exact(D$response, D$pair, paired = TRUE, conf.int = TRUE)
+mi.wilcox.test(res, x = "response", y = "pair", paired = TRUE)
+
+## -----------------------------------------------------------------------------
+mi.wilcox.test(res.mice, x = "response", y = "group")
 
 ## -----------------------------------------------------------------------------
 set.seed(123)
@@ -259,7 +283,6 @@ imputeSD(SD1, SD2, SDchange2, corr = c(0.85, 0.9, 0.95))
 pairwise.wilcox.test(airquality$Ozone, airquality$Month, 
                      p.adjust.method = "none")
 ## To avoid the warnings
-library(exactRankTests)
 pairwise.fun(airquality$Ozone, airquality$Month, 
              fun = function(x, y) wilcox.exact(x, y)$p.value)
 

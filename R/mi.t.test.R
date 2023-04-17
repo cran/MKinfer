@@ -104,11 +104,13 @@ mi.t.test.default <- function(miData, x, y = NULL, alternative = c("two.sided", 
     est <- c(Q, sqrt(T)*sqrt(length(xi)))
     if(paired){
       method <- "Multiple Imputation Paired t-test"
-      dname <- paste("Variables ", x, "and", y)
+      dname <- paste("Variables ", x, " and ", y, "\n", 
+                     "number of imputations: ", nrImp, sep = "")
       names(est) <- c("mean of difference", "SD of difference")
     }else{
       method <- "Multiple Imputation One Sample t-test"
-      dname <- paste("Variable ", x, sep = "")
+      dname <- paste("Variable ", x, "\n", 
+                     "number of imputations: ", nrImp, sep = "")
       names(est) <- c("mean", "SD")
     }
     rval <- list(statistic = tstat, parameter = df.mod, p.value = pval,
@@ -128,7 +130,8 @@ mi.t.test.default <- function(miData, x, y = NULL, alternative = c("two.sided", 
     else
       method <- "Multiple Imputation Welch Two Sample t-test"
     dname <- paste("Variable ", x, ": ", paste(paste("group", levels(yi)),
-                                               collapse = " vs "), sep = "")
+                                               collapse = " vs "), 
+                   "\n", "number of imputations: ", nrImp, sep = "")
     rval <- list(statistic = tstat, parameter = df.mod, p.value = pval,
                  conf.int = cint, estimate = est, null.value = mu,
                  alternative = alternative, method = method,
@@ -136,4 +139,20 @@ mi.t.test.default <- function(miData, x, y = NULL, alternative = c("two.sided", 
   }
   class(rval) <- "htest"
   rval
+}
+
+mi.t.test.amelia <- function(miData, x, y = NULL, alternative = c("two.sided", "less", "greater"),
+                             mu = 0, paired = FALSE, var.equal = FALSE,
+                             conf.level = 0.95, subset = NULL, ...){
+  mi.t.test(miData$imputations, x = x, y = y, alternative = alternative,
+            mu = mu, paired = paired, var.equal = var.equal, conf.level = conf.level,
+            subset = subset, ...)
+}
+
+mi.t.test.mids <- function(miData, x, y = NULL, alternative = c("two.sided", "less", "greater"),
+                           mu = 0, paired = FALSE, var.equal = FALSE,
+                           conf.level = 0.95, subset = NULL, ...){
+  mi.t.test(mids2datlist(miData), x = x, y = y, alternative = alternative,
+            mu = mu, paired = paired, var.equal = var.equal, conf.level = conf.level,
+            subset = subset, ...)
 }
