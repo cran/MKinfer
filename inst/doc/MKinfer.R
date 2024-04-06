@@ -142,6 +142,22 @@ res
 p2ses(res$p.value)
 
 ## -----------------------------------------------------------------------------
+library(mvtnorm)
+## effect size
+delta <- c(0.25, 0.5)
+## covariance matrix
+Sigma <- matrix(c(1, 0.75, 0.75, 1), ncol = 2)
+## sample size
+n <- 50
+## generate random data from multivariate normal distributions
+X <- rmvnorm(n=n, mean = delta, sigma = Sigma)
+Y <- rmvnorm(n=n, mean = rep(0, length(delta)), sigma = Sigma)
+## perform multivariate z-test
+mpe.z.test(X = X, Y = Y, Sigma = Sigma)
+## perform multivariate t-test
+mpe.t.test(X = X, Y = Y)
+
+## -----------------------------------------------------------------------------
 ## Generate some data
 set.seed(123)
 x <- rnorm(25, mean = 1)
@@ -223,7 +239,7 @@ rm.oneway.test(outcome, timepoints, patients, method = "lme")
 rm.oneway.test(outcome, timepoints, patients, method = "friedman")
 rm.oneway.test(outcome, timepoints, patients, method = "quade")
 
-## ---- fig.width=7, fig.height=7-----------------------------------------------
+## ----fig.width=7, fig.height=7------------------------------------------------
 ## Generate some data
 x <- matrix(rnorm(1000, mean = 10), nrow = 10)
 g1 <- rep("control", 10)
@@ -245,7 +261,7 @@ volcano(lfcs, p.adjust(pvals, method = "fdr"),
         effect.low = -0.25, effect.high = 0.25, 
         xlab = "log-fold change", ylab = "-log10(adj. p value)")
 
-## ---- fig.width=7, fig.height=7-----------------------------------------------
+## ----fig.width=7, fig.height=7------------------------------------------------
 data("fingsys")
 baplot(fingsys$fingsys, fingsys$armsys, 
        title = "Approximative Confidence Intervals", 
@@ -257,7 +273,7 @@ baplot(fingsys$fingsys, fingsys$armsys,
        title = "Bootstrap Confidence Intervals", 
        type = "parametric", ci.type = "boot", R = 999)
 
-## ---- fig.width=7, fig.height=7-----------------------------------------------
+## ----fig.width=7, fig.height=7------------------------------------------------
 data("fingsys")
 baplot(fingsys$fingsys, fingsys$armsys, 
        title = "Approximative Confidence Intervals", 
