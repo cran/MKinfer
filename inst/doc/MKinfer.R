@@ -118,6 +118,10 @@ with(sleep, hsu.t.test(extra[group == 1], extra[group == 2]))
 t.test(extra ~ group, data = sleep)
 hsu.t.test(extra ~ group, data = sleep)
 
+## ----fig.width=7, fig.height=7------------------------------------------------
+h0plot(t.test(extra ~ group, data = sleep))
+h0plot(hsu.t.test(extra ~ group, data = sleep))
+
 ## -----------------------------------------------------------------------------
 boot.t.test(1:10, y = c(7:20)) # without bootstrap: P = .00001855
 boot.t.test(1:10, y = c(7:20, 200)) # without bootstrap: P = .1245
@@ -126,6 +130,9 @@ boot.t.test(1:10, y = c(7:20, 200)) # without bootstrap: P = .1245
 with(sleep, boot.t.test(extra[group == 1], extra[group == 2]))
 ## Formula interface
 boot.t.test(extra ~ group, data = sleep)
+
+## ----fig.width=7, fig.height=7------------------------------------------------
+h0plot(boot.t.test(extra ~ group, data = sleep, bootStat = TRUE))
 
 ## -----------------------------------------------------------------------------
 perm.t.test(1:10, y = c(7:20)) # without permutation: P = .00001855
@@ -138,7 +145,11 @@ with(sleep, perm.t.test(extra[group == 1], extra[group == 2]))
 res <- perm.t.test(extra ~ group, data = sleep)
 res
 
+## ----fig.width=7, fig.height=7------------------------------------------------
+h0plot(perm.t.test(extra ~ group, data = sleep, permStat = TRUE))
+
 ## -----------------------------------------------------------------------------
+res <- perm.t.test(extra ~ group, data = sleep)
 p2ses(res$p.value)
 
 ## -----------------------------------------------------------------------------
@@ -229,6 +240,66 @@ mi.wilcox.test(res, x = "response", y = "pair", paired = TRUE)
 ## -----------------------------------------------------------------------------
 mi.wilcox.test(res.mice, x = "response", y = "group")
 
+## ----fig.width=7, fig.height=7------------------------------------------------
+## small effect size
+mdplot(delta = 0.2)
+## medium effect size
+mdplot(delta = 0.5)
+## large effect size
+mdplot(delta = 0.8)
+## z-factor = 0  (z-factor = 1 - 3*2*sd/delta)
+mdplot(delta = 6)
+## z-factor = 0.5  (z-factor = 1 - 3*2*sd/delta)
+mdplot(delta = 12)
+
+## unequal variances
+mdplot(delta = 0.8, sd1 = 1, sd2 = 2)
+mdplot(delta = 0.8, sd1 = 2, sd2 = 1)
+
+## ----fig.width=7, fig.height=7------------------------------------------------
+library(ggplot2)
+## (standardized) mean difference to sensitivity/specificity
+## equal variances
+delta <- seq(from = 0.0, to = 6, by = 0.05)
+res <- sapply(delta, md2sens)
+DF <- data.frame(SMD = delta, sensitivity = res[1,], 
+                 specificity = res[2,])
+ggplot(DF, aes(x = SMD, y = sensitivity)) +
+  geom_line() + ylim(0.5, 1.0) + xlab("(standardized) mean difference") +
+  ylab("sensitivity = specificity") + ggtitle("SD1 = SD2 = 1")
+
+## unequal variances
+delta <- seq(from = 0.0, to = 6, by = 0.05)
+res <- sapply(delta, md2sens, sd1 = 1, sd2 = 2)
+DF <- data.frame(MD = delta, performance = c(res[1,], res[2,]),
+                 measure = c(rep("sensitivity", length(delta)),
+                             rep("specificity", length(delta))))
+ggplot(DF, aes(x = MD, y = performance, color = measure)) +
+  geom_line() + ylim(0, 1.0) + xlab("mean difference") +
+  scale_color_manual(values = c("darkblue", "darkred")) +
+  ggtitle("SD1 = 1, SD2 = 2")
+
+## ----fig.width=7, fig.height=7------------------------------------------------
+## (standardized) mean difference to sensitivity/specificity
+## equal variances
+library(ggplot2)
+delta <- seq(from = 2, to = 18, by = 0.05)
+res <- sapply(delta, md2zfactor)
+DF <- data.frame(SMD = delta, zfactor = res)
+ggplot(DF, aes(x = SMD, y = zfactor)) +
+  geom_line() + xlab("(standardized) mean difference") +
+  ylab("z-factor") + ggtitle("SD1 = SD2 = 1") + 
+  geom_hline(yintercept = 1, linetype = "dotted")
+
+## unequal variances
+delta <- seq(from = 2.5, to = 20, by = 0.05)
+res <- sapply(delta, md2zfactor, sd1 = 1, sd2 = 2)
+DF <- data.frame(MD = delta, zfactor = res)
+ggplot(DF, aes(x = MD, y = zfactor)) +
+  geom_line() + xlab("mean difference") +
+  ylab("z-factor") + ggtitle("SD1 = 1, SD2 = 2") +
+  geom_hline(yintercept = 1, linetype = "dotted")
+
 ## -----------------------------------------------------------------------------
 set.seed(123)
 outcome <- c(rnorm(10), rnorm(10, mean = 1.5), rnorm(10, mean = 1))
@@ -236,8 +307,15 @@ timepoints <- factor(rep(1:3, each = 10))
 patients <- factor(rep(1:10, times = 3))
 rm.oneway.test(outcome, timepoints, patients)
 rm.oneway.test(outcome, timepoints, patients, method = "lme")
-rm.oneway.test(outcome, timepoints, patients, method = "friedman")
 rm.oneway.test(outcome, timepoints, patients, method = "quade")
+rm.oneway.test(outcome, timepoints, patients, method = "friedman")
+
+## ----fig.width=7, fig.height=7------------------------------------------------
+h0plot(rm.oneway.test(outcome, timepoints, patients))
+h0plot(rm.oneway.test(outcome, timepoints, patients, method = "lme"))
+h0plot(rm.oneway.test(outcome, timepoints, patients, method = "quade"))
+h0plot(rm.oneway.test(outcome, timepoints, patients, method = "friedman"),
+       qtail = 1e-4)
 
 ## ----fig.width=7, fig.height=7------------------------------------------------
 ## Generate some data

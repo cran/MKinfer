@@ -12,7 +12,8 @@ boot.t.test(x, \dots)
 \method{boot.t.test}{default}(x, y = NULL,
        alternative = c("two.sided", "less", "greater"),
        mu = 0, paired = FALSE, var.equal = FALSE,
-       conf.level = 0.95, R = 9999, symmetric = FALSE, \dots)
+       conf.level = 0.95, R = 9999, symmetric = FALSE, 
+       bootStat = FALSE, \dots)
 
 \method{boot.t.test}{formula}(formula, data, subset, na.action, \dots)
 }
@@ -48,6 +49,9 @@ boot.t.test(x, \dots)
   \item{na.action}{a function which indicates what should happen when
     the data contain \code{NA}s.  Defaults to
     \code{getOption("na.action")}.}
+  \item{bootStat}{ logical; should the bootstrap results for the test statistic 
+    be returned. If \code{TRUE}, function \code{h0plot} can be used to plot the 
+    distribution of the results. }
   \item{\dots}{further arguments to be passed to or from methods.}
 }
 \details{

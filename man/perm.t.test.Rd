@@ -12,7 +12,8 @@ perm.t.test(x, \dots)
 \method{perm.t.test}{default}(x, y = NULL,
        alternative = c("two.sided", "less", "greater"),
        mu = 0, paired = FALSE, var.equal = FALSE,
-       conf.level = 0.95, R = 9999, symmetric = TRUE, \dots)
+       conf.level = 0.95, R = 9999, symmetric = TRUE, 
+       permStat = FALSE, \dots)
 
 \method{perm.t.test}{formula}(formula, data, subset, na.action, \dots)
 }
@@ -48,6 +49,9 @@ perm.t.test(x, \dots)
   \item{na.action}{a function which indicates what should happen when
     the data contain \code{NA}s.  Defaults to
     \code{getOption("na.action")}.}
+  \item{permStat}{ logical; should the permutation results for the test statistic 
+    be returned. If \code{TRUE}, function \code{h0plot} can be used to plot the 
+    distribution of the results. }
   \item{\dots}{further arguments to be passed to or from methods.}
 }
 \details{

@@ -14,23 +14,30 @@ vignette: >
 
 
 ## Introduction  
+
 Package MKinfer includes a collection of functions for the computation of 
 various confidence intervals [@Altman2000; @Hedderich2018] including bootstrapped 
 versions [@Davison1997] as well as Hsu [@Hedderich2018], permutation [@Janssen1997], 
-bootstrap [@Davison1997] and multiple imputation [@Barnard1999] t-test and 
-Wilcoxon tests. Graphical visualization by volcano and Bland-Altman plots 
-[@Bland1986; @Shieh2018].
+bootstrap [@Davison1997], intersection-union [@Sozu2015] and multiple imputation 
+[@Barnard1999] t-test; furthermore, computation of intersection-union z-test 
+as well as multiple imputation Wilcoxon tests. Graphical visualizations: volcano plot, 
+Bland-Altman plots [@Bland1986; @Shieh2018], mean difference plot [@Boehning2008], 
+plot of test statistic for permutation and bootstrap tests as well as objects 
+of class htest.
 
 We first load the package.
+
 ```{r}
 library(MKinfer)
 ```
 
 
 ## Confidence Intervals
+
 ### Binomial Proportion
 There are several functions for computing confidence intervals. We can compute
 12 different confidence intervals for binomial proportions [@DasGupta2001]; e.g.
+
 ```{r}
 ## default: "wilson"
 binomCI(x = 12, n = 50)
@@ -49,6 +56,7 @@ as well as one-sided intervals.
 There are several functions for computing confidence intervals. We can compute
 different confidence intervals for the difference of two binomial proportions
 (independent [@Newcombe1998a] and paired case [@Newcombe1998b]); e.g.
+
 ```{r}
 ## default: wilson 
 binomDiffCI(a = 5, b = 0, c = 51, d = 29)
@@ -63,6 +71,7 @@ boot [@Davison1997]  as well as one-sided intervals.
 
 ### Mean and SD
 We can compute confidence intervals for mean and SD [@Altman2000, @Davison1997].
+
 ```{r}
 x <- rnorm(50, mean = 2, sd = 3)
 ## mean and SD unknown
@@ -81,6 +90,7 @@ meanCI(x, boot = TRUE)
 ### Difference in Means
 We can compute confidence interval for the difference of means [@Altman2000; 
 @Hedderich2018; @Davison1997].
+
 ```{r}
 x <- rnorm(20)
 y <- rnorm(20, sd = 2)
@@ -105,10 +115,10 @@ normDiffCI(x, y, method = "classical", boot = TRUE, bootci.type = "bca")
 normDiffCI(x, y, method = "welch", boot = TRUE, bootci.type = "bca")
 ```
 
-
 In case of unequal variances and unequal sample sizes per group the classical
 confidence interval may have a bad coverage (too long or too short), as is 
 indicated by the small Monte-Carlo simulation study below.
+
 ```{r}
 M <- 100
 CIhsu <- CIwelch <- CIclass <- matrix(NA, nrow = M, ncol = 2)
@@ -132,6 +142,7 @@ sum(CIhsu[,1] < 0 & 0 < CIhsu[,2])/M
 ### Coefficient of Variation
 We provide 12 different confidence intervals for the (classical) coefficient 
 of variation [@Gulhar2012; @Davison1997]; e.g.
+
 ```{r}
 x <- rnorm(100, mean = 10, sd = 2) # CV = 0.2
 ## default: "miller"
@@ -147,6 +158,7 @@ For all intervals implemented see the help page of function cvCI.
 
 ### Quantiles, Median and MAD
 We start with the computation of confidence intervals for quantiles [@Hedderich2018; @Davison1997].
+
 ```{r}
 x <- rexp(100, rate = 0.5)
 ## exact
@@ -158,6 +170,7 @@ quantileCI(x = x, prob = 0.95, method = "boot")
 ```
 
 Next, we consider the median.
+
 ```{r}
 ## exact
 medianCI(x = x)
@@ -169,6 +182,7 @@ medianCI(x = x, method = "boot")
 
 Finally, we take a look at MAD (median absolute deviation) where by default 
 the standardized MAD is used (see function mad).
+
 ```{r}
 ## exact
 madCI(x = x)
@@ -186,6 +200,7 @@ The Hsu two-sample t-test is an alternative to the Welch two-sample t-test using
 a different formula for computing the degrees of freedom of the respective 
 t-distribution [@Hedderich2018]. The following code is taken and adapted from 
 the help page of the t.test function.
+
 ```{r}
 t.test(1:10, y = c(7:20))      # P = .00001855
 t.test(1:10, y = c(7:20, 200)) # P = .1245    -- NOT significant anymore
@@ -200,9 +215,18 @@ t.test(extra ~ group, data = sleep)
 hsu.t.test(extra ~ group, data = sleep)
 ```
 
+We compare the result of the Welch t-test and Hsu t-test using function h0plot.
+
+```{r, fig.width=7, fig.height=7}
+h0plot(t.test(extra ~ group, data = sleep))
+h0plot(hsu.t.test(extra ~ group, data = sleep))
+```
+
+
 ## Bootstrap t-Test
 One and two sample bootstrap t-tests with equal or unequal variances in the
 two sample case [@Efron1993].
+
 ```{r}
 boot.t.test(1:10, y = c(7:20)) # without bootstrap: P = .00001855
 boot.t.test(1:10, y = c(7:20, 200)) # without bootstrap: P = .1245
@@ -213,9 +237,18 @@ with(sleep, boot.t.test(extra[group == 1], extra[group == 2]))
 boot.t.test(extra ~ group, data = sleep)
 ```
 
+Using function h0plot the distribution of the bootstrap results of the test
+statistic can be plotted.
+
+```{r, fig.width=7, fig.height=7}
+h0plot(boot.t.test(extra ~ group, data = sleep, bootStat = TRUE))
+```
+
+
 ## Permutation t-Test
 One and two sample permutation t-tests with equal [@Efron1993] or unequal 
 variances [@Janssen1997] in the two sample case.
+
 ```{r}
 perm.t.test(1:10, y = c(7:20)) # without permutation: P = .00001855
 ## permutation confidence interval sensitive to outlier!
@@ -228,11 +261,21 @@ res <- perm.t.test(extra ~ group, data = sleep)
 res
 ```
 
+Using function h0plot the distribution of the permutation results of the test
+statistic can be plotted.
+
+```{r, fig.width=7, fig.height=7}
+h0plot(perm.t.test(extra ~ group, data = sleep, permStat = TRUE))
+```
+
 In case of skewed distributions, one may use function p2ses to compute an
 alternative standardized effect size (SES) as proposed by Botta-Dukat [@BottaDukat2018].
+
 ```{r}
+res <- perm.t.test(extra ~ group, data = sleep)
 p2ses(res$p.value)
 ```
+
 
 ## Intersection-Union z- and t-Test
 We compute the multivariate intersection-union z- and t-test.
@@ -259,6 +302,7 @@ mpe.t.test(X = X, Y = Y)
 Function mi.t.test can be used to compute a multiple imputation t-test by applying
 the approch of Rubin [@Rubin1987] in combination with the adjustment of 
 Barnard and Rubin [@Barnard1999].
+
 ```{r}
 ## Generate some data
 set.seed(123)
@@ -302,6 +346,7 @@ mi.t.test(res, x = "response", y = "pair", paired = TRUE)
 ```
 
 Function mi.t.test also works with package mice.
+
 ```{r}
 library(mice)
 res.mice <- mice(D, m = 10, print = FALSE)
@@ -312,6 +357,7 @@ mi.t.test(res.mice, x = "response", y = "group")
 ## Multiple Imputation Wilcoxon Tests
 Function mi.wilcox.test can be used to compute multiple imputation Wilcoxon tests 
 by applying the median p rule (MPR) approach; see Section 13.3 in [@Heymans2019].
+
 ```{r}
 ## Per protocol analysis (Exact Wilcoxon rank sum test)
 library(exactRankTests)
@@ -337,15 +383,94 @@ mi.wilcox.test(res, x = "response", y = "pair", paired = TRUE)
 ```
 
 Function mi.wilcox.test also works with package mice.
+
 ```{r}
 mi.wilcox.test(res.mice, x = "response", y = "group")
 ```
+
+
+## Visualization of Mean Difference
+The function mdplot can be used to visualize the mean difference (MD) 
+of two groups, assuming two normal distributions. In addition, the sensitivity 
+and specificity based on the optimal cutoff (Youden's J statistic) can be
+added [@Boehning2008].
+
+```{r, fig.width=7, fig.height=7}
+## small effect size
+mdplot(delta = 0.2)
+## medium effect size
+mdplot(delta = 0.5)
+## large effect size
+mdplot(delta = 0.8)
+## z-factor = 0  (z-factor = 1 - 3*2*sd/delta)
+mdplot(delta = 6)
+## z-factor = 0.5  (z-factor = 1 - 3*2*sd/delta)
+mdplot(delta = 12)
+
+## unequal variances
+mdplot(delta = 0.8, sd1 = 1, sd2 = 2)
+mdplot(delta = 0.8, sd1 = 2, sd2 = 1)
+```
+
+Function md2sens can be used to compute sensitivity and specificity for given
+MD and SDs.
+
+```{r, fig.width=7, fig.height=7}
+library(ggplot2)
+## (standardized) mean difference to sensitivity/specificity
+## equal variances
+delta <- seq(from = 0.0, to = 6, by = 0.05)
+res <- sapply(delta, md2sens)
+DF <- data.frame(SMD = delta, sensitivity = res[1,], 
+                 specificity = res[2,])
+ggplot(DF, aes(x = SMD, y = sensitivity)) +
+  geom_line() + ylim(0.5, 1.0) + xlab("(standardized) mean difference") +
+  ylab("sensitivity = specificity") + ggtitle("SD1 = SD2 = 1")
+
+## unequal variances
+delta <- seq(from = 0.0, to = 6, by = 0.05)
+res <- sapply(delta, md2sens, sd1 = 1, sd2 = 2)
+DF <- data.frame(MD = delta, performance = c(res[1,], res[2,]),
+                 measure = c(rep("sensitivity", length(delta)),
+                             rep("specificity", length(delta))))
+ggplot(DF, aes(x = MD, y = performance, color = measure)) +
+  geom_line() + ylim(0, 1.0) + xlab("mean difference") +
+  scale_color_manual(values = c("darkblue", "darkred")) +
+  ggtitle("SD1 = 1, SD2 = 2")
+```
+
+Function md2zfactor can be used to compute the z-factor [@Zhang1999] for given 
+MD and SDs.
+
+```{r, fig.width=7, fig.height=7}
+## (standardized) mean difference to sensitivity/specificity
+## equal variances
+library(ggplot2)
+delta <- seq(from = 2, to = 18, by = 0.05)
+res <- sapply(delta, md2zfactor)
+DF <- data.frame(SMD = delta, zfactor = res)
+ggplot(DF, aes(x = SMD, y = zfactor)) +
+  geom_line() + xlab("(standardized) mean difference") +
+  ylab("z-factor") + ggtitle("SD1 = SD2 = 1") + 
+  geom_hline(yintercept = 1, linetype = "dotted")
+
+## unequal variances
+delta <- seq(from = 2.5, to = 20, by = 0.05)
+res <- sapply(delta, md2zfactor, sd1 = 1, sd2 = 2)
+DF <- data.frame(MD = delta, zfactor = res)
+ggplot(DF, aes(x = MD, y = zfactor)) +
+  geom_line() + xlab("mean difference") +
+  ylab("z-factor") + ggtitle("SD1 = 1, SD2 = 2") +
+  geom_hline(yintercept = 1, linetype = "dotted")
+```
+
 
 
 ## Repeated Measures One-Way ANOVA
 We provide a simple wrapper function that allows to compute a classical
 repeated measures one-way ANOVA as well as a respective mixed effects model.
 In addition, the non-parametric Friedman and Quade tests can be computed.
+
 ```{r}
 set.seed(123)
 outcome <- c(rnorm(10), rnorm(10, mean = 1.5), rnorm(10, mean = 1))
@@ -353,8 +478,18 @@ timepoints <- factor(rep(1:3, each = 10))
 patients <- factor(rep(1:10, times = 3))
 rm.oneway.test(outcome, timepoints, patients)
 rm.oneway.test(outcome, timepoints, patients, method = "lme")
-rm.oneway.test(outcome, timepoints, patients, method = "friedman")
 rm.oneway.test(outcome, timepoints, patients, method = "quade")
+rm.oneway.test(outcome, timepoints, patients, method = "friedman")
+```
+
+We visualize the results using function h0plot.
+
+```{r, fig.width=7, fig.height=7}
+h0plot(rm.oneway.test(outcome, timepoints, patients))
+h0plot(rm.oneway.test(outcome, timepoints, patients, method = "lme"))
+h0plot(rm.oneway.test(outcome, timepoints, patients, method = "quade"))
+h0plot(rm.oneway.test(outcome, timepoints, patients, method = "friedman"),
+       qtail = 1e-4)
 ```
 
 
@@ -362,6 +497,7 @@ rm.oneway.test(outcome, timepoints, patients, method = "quade")
 Volcano plots can be used to visualize the results when many tests have been
 applied. They show a measure of effect size in combination with (adjusted)
 p values.
+
 ```{r, fig.width=7, fig.height=7}
 ## Generate some data
 x <- matrix(rnorm(1000, mean = 10), nrow = 10)
@@ -425,6 +561,7 @@ baplot(fingsys$fingsys, fingsys$armsys,
 The function imputeSD can be used to impute standard deviations for changes
 from baseline adopting the approach of the Cochrane handbook 
 [@Cochrane2019, Section 6.5.2.8].
+
 ```{r}
 SD1 <- c(0.149, 0.022, 0.036, 0.085, 0.125, NA, 0.139, 0.124, 0.038)
 SD2 <- c(NA, 0.039, 0.038, 0.087, 0.125, NA, 0.135, 0.126, 0.038)
@@ -434,6 +571,7 @@ imputeSD(SD1, SD2, SDchange)
 
 Correlations can also be provided via argument corr. This option may particularly 
 be useful, if no complete data is available.
+
 ```{r}
 SDchange2 <- rep(NA, 9)
 imputeSD(SD1, SD2, SDchange2, corr = c(0.85, 0.9, 0.95))
@@ -443,6 +581,7 @@ imputeSD(SD1, SD2, SDchange2, corr = c(0.85, 0.9, 0.95))
 ## Pairwise Comparisons
 Function pairwise.fun enables the application of arbitrary functions
 for pairwise comparisons.
+
 ```{r}
 pairwise.wilcox.test(airquality$Ozone, airquality$Month, 
                      p.adjust.method = "none")
