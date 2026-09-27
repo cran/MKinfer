@@ -1,23 +1,31 @@
-sample.perm <- function(x, k = NULL, R = 1000, replace = FALSE){
+sample.perm <- function(x, k, nx = NULL, R, replace = FALSE, useCombn = FALSE){
   if(is.null(k)) k <- length(x)
-  max.R <- try(npermutations(x, k = k, replace = replace), silent = TRUE)
+  
+  if(useCombn){
+    max.R <- choose(k, nx)
+  }else{
+    max.R <- try(npermutations(x, k = k, replace = replace), silent = TRUE)
+  }
   if(inherits(max.R, "try-error")) max.R <- Inf
   if(max.R < R){
-    warning("The requested number of permutations (", R, ") is larger than ",
-            "the total number of possible permutations (", max.R, ").\n",
-            "Hence all possible permutations are computed.")
-    res <- permutations(x, k = k, replace = replace)
-  }else{
-    res <- NULL
-    iter <- R
-    repeat{
-      res <- rbind(res, 
-                   t(replicate(iter, sample(x, size = k, 
-                                            replace = replace))))
-      if(all(!duplicated(res))) break
-      iter <- R - sum(!duplicated(res))
-      res <- res[!duplicated(res),]
+    if(useCombn){
+      message("The requested number of combinations (", R, ") is larger than ",
+              "the total number of possible combinations (", max.R, ").\n",
+              "Hence all possible combinations are computed.")
+    }else{
+      message("The requested number of permutations (", R, ") is larger than ",
+              "the total number of possible permutations (", max.R, ").\n",
+              "Hence all possible permutations are computed.")
     }
+    if(useCombn){
+      res1 <- combinations(x, k = nx, replace = replace)
+      res2 <- combinations(x, k = k-nx, replace = replace)
+      res <- cbind(res1, res2[nrow(res2):1,])
+    }else{
+      res <- permutations(x, k = k, replace = replace)
+    }
+  }else{
+    res <- permutations(x, k = k, replace = replace, nsample = R)
   }
   res
 }
@@ -26,11 +34,14 @@ perm.t.test <- function (x, ...){
 }
 perm.t.test.default <- function(x, y = NULL, alternative = c("two.sided", "less", "greater"), 
                         mu = 0, paired = FALSE, var.equal = FALSE, 
-                        conf.level = 0.95, R = 9999, symmetric = TRUE, 
-                        permStat = FALSE, ...){
+                        conf.type = "pivot", conf.level = 0.95, R = 9999, 
+                        symmetric = TRUE, permStat = FALSE, useCombn = FALSE, ...){
   alternative <- match.arg(alternative)
   if(!missing(mu) && (length(mu) != 1 || is.na(mu))) 
     stop("'mu' must be a single number")
+  if(conf.type %notin% c("pivot", "exact", "stud", "perc", "all")){
+    stop("'conf.type' must be one of 'pivot', 'exact', 'stud', 'perc', 'all'")
+  }
   if(!missing(conf.level) && (length(conf.level) != 1 || !is.finite(conf.level) || 
                                conf.level < 0 || conf.level > 1)) 
     stop("'conf.level' must be a single number between 0 and 1")
@@ -63,11 +74,13 @@ perm.t.test.default <- function(x, y = NULL, alternative = c("two.sided", "less"
       stop("not enough 'x' observations")
     df <- nx - 1
     stderr <- sqrt(vx/nx)
+    stddev <- sqrt(vx)
     if (stderr < 10 * .Machine$double.eps * abs(mx)) 
       stop("data are essentially constant")
     tstat <- (mx - mu)/stderr
     method <- if (paired) "Permutation Paired t-test" else "Permutation One Sample t-test"
     estimate <- setNames(mx, if (paired) "mean of the differences" else "mean of x")
+    eff <- mx
     x.cent <- x - mx
     X <- abs(x.cent)*sample.perm(c(-1,1), k = nx, R = R, replace = TRUE)
     R.true <- nrow(X)
@@ -95,9 +108,12 @@ perm.t.test.default <- function(x, y = NULL, alternative = c("two.sided", "less"
     vy <- var(y)
     method <- paste("Permutation", paste(if (!var.equal) "Welch", "Two Sample t-test"))
     estimate <- c(mx, my)
+    eff <- mx-my
     names(estimate) <- c("mean of x", "mean of y")
     z <- c(x, y)
-    Z <- sample.perm(z, k = nx+ny, R = R)
+    Z.perm <- sample.perm(seq_along(z), k = nx+ny, nx = nx, R = R, useCombn = useCombn)
+    R.true <- nrow(Z.perm)
+    Z <- matrix(z[Z.perm], nrow = R.true, ncol = nx + ny)
     R.true <- nrow(Z)
     X <- Z[,1:nx]
     Y <- Z[,(nx+1):(nx+ny)]
@@ -124,6 +140,7 @@ perm.t.test.default <- function(x, y = NULL, alternative = c("two.sided", "less"
       VY <- rowSums((Y-MY)^2)/(ny-1)
       STDERR <- sqrt(VX/nx + VY/ny)
     }
+    stddev <- sqrt(vx + vy)
     perm.stderr <- mean(STDERR)
     perm.estimate <- mean(EFF) 
     names(perm.estimate) <- "permutation difference of means"
@@ -132,26 +149,216 @@ perm.t.test.default <- function(x, y = NULL, alternative = c("two.sided", "less"
     tstat <- (mx - my - mu)/stderr
     TSTAT <- (MX - MY)/STDERR
   }
+  ## pivot inversion
+  get.p.pivot <- function(mu.cand, target.type) {
+    t.obs.s <- (eff - mu.cand) / stderr
+    if (target.type == "less") {
+      return((sum(TSTAT <= t.obs.s) + 1) / (R.true + 1))
+    } else if (target.type == "greater") {
+      return((sum(TSTAT >= t.obs.s) + 1) / (R.true + 1))
+    } else {
+      return((sum(abs(TSTAT) >= abs(t.obs.s)) + 1) / (R.true + 1))
+    }
+  }
+  get.p.exact <- function(mu.cand, target.type) {
+    if (is.null(y)) {
+      t.obs.s <- (eff - mu.cand) / stderr
+      t.perm.s <- (MX + (mx - mu.cand)) / STDERR
+    } else {
+      t.obs.s <- (eff - mu.cand) / stderr
+      z.s <- c(x, y + mu.cand)
+      Z.s <- matrix(z.s[Z.perm], nrow = R.true, ncol = nx + ny)
+      X.s <- Z.s[, 1:nx]
+      Y.s <- Z.s[, (nx+1):(nx+ny)]
+      MX.s <- rowMeans(X.s)
+      MY.s <- rowMeans(Y.s)
+      
+      if (var.equal) {
+        V.s <- (rowSums((X.s - MX.s)^2) + rowSums((Y.s - MY.s)^2)) / df
+        STDERR.s <- sqrt(V.s * (1/nx + 1/ny))
+      } else {
+        VX.s <- rowSums((X.s - MX.s)^2) / (nx - 1)
+        VY.s <- rowSums((Y.s - MY.s)^2) / (ny - 1)
+        STDERR.s <- sqrt(VX.s/nx + VY.s/ny)
+      }
+      t.perm.s <- (MX.s - MY.s) / STDERR.s
+    }
+    
+    if (target.type == "less") {
+      return((sum(t.perm.s <= t.obs.s) + 1) / (R.true + 1))
+    } else if (target.type == "greater") {
+      return((sum(t.perm.s >= t.obs.s) + 1) / (R.true + 1))
+    } else {
+      return((sum(abs(t.perm.s) >= abs(t.obs.s)) + 1) / (R.true + 1))
+    }
+  }
+  ## robust inversion with grid search and bisection
+  find.pinv.bound <- function(target.type, target.p, p.func, side = c("lower", "upper"), tol = 1e-8) {
+    side <- match.arg(side)
+    
+    mult <- 15
+    repeat {
+      grid.vals <- seq(eff - mult * stderr, eff + mult * stderr, length.out = 150)
+      p.vals <- sapply(grid.vals, function(m) p.func(m, target.type))
+      in.ci <- grid.vals[p.vals > target.p]
+      
+      if (length(in.ci) > 0 || mult > 500) break
+      mult <- mult * 3
+    }
+    
+    if (length(in.ci) == 0) return(if(side == "lower") -Inf else Inf)
+    
+    if (side == "lower") {
+      cand <- min(in.ci)
+      step <- (grid.vals[2] - grid.vals[1])
+      a <- cand - step
+      b <- cand + step
+    } else {
+      cand <- max(in.ci)
+      step <- (grid.vals[2] - grid.vals[1])
+      a <- cand - step
+      b <- cand + step
+    }
+    
+    mid <- (a + b) / 2
+    p.mid <- p.func(mid, target.type)
+    while ((b - a) > tol && abs(p.mid - target.p) > 1/R.true) {
+      if (side == "lower") {
+        if (p.mid <= target.p) a <- mid else b <- mid
+      } else {
+        if (p.mid > target.p) a <- mid else b <- mid
+      }
+      mid <- (a + b) / 2
+      p.mid <- p.func(mid, target.type)
+    }
+    return((a + b) / 2)
+  }
   if (alternative == "less") {
     pval <- pt(tstat, df)
-    perm.pval <- max(mean(TSTAT < tstat), 1/R.true)
+    perm.pval <- max(mean(TSTAT <= tstat), 1/R.true)
     cint <- c(-Inf, tstat + qt(conf.level, df))
-    perm.cint <- c(-Inf, quantile(EFF, conf.level))
+    ## confidence interval
+    if(conf.type == "pivot"){
+      ## pivot inversion
+      u.bound <- find.pinv.bound("less", 1 - conf.level, get.p.pivot, side = "upper")
+      perm.cint <- c(-Inf, u.bound)
+    }
+    if(conf.type == "exact"){
+      ## exact inversion
+      u.bound.exact <- find.pinv.bound("less", 1 - conf.level, get.p.exact, 
+                                       side = "upper")
+      perm.cint <- c(-Inf, u.bound.exact)
+    }
+    if(conf.type == "stud"){
+      ## studentized
+      perm.cint <- c(-Inf, eff - quantile(TSTAT, 1-conf.level)*stderr)
+    }
+    if(conf.type == "perc"){
+      ## percentile
+      perm.cint <- c(-Inf, quantile(EFF, conf.level))
+    }
+    if(conf.type == "all"){
+      ## pivot inversion
+      u.bound <- find.pinv.bound("less", 1 - conf.level, get.p.pivot, side = "upper")
+      perm.cint.pivot <- c(-Inf, u.bound)
+      u.bound.exact <- find.pinv.bound("less", 1 - conf.level, get.p.exact, 
+                                       side = "upper")
+      perm.cint.exact <- c(-Inf, u.bound.exact)
+      ## studentized
+      perm.cint.stud <- c(-Inf, eff - quantile(TSTAT, 1-conf.level)*stderr)
+      ## percentile
+      perm.cint.perc <- c(-Inf, quantile(EFF, conf.level))
+      perm.cint <- rbind(perm.cint.pivot, perm.cint.exact, 
+                         perm.cint.stud, perm.cint.perc)
+      rownames(perm.cint) <- c("pivot", "exact", "stud", "perc")
+    }
   }else if(alternative == "greater") {
-    perm.pval <- max(mean(TSTAT > tstat), 1/R.true)
+    perm.pval <- max(mean(TSTAT >= tstat), 1/R.true)
     pval <- pt(tstat, df, lower.tail = FALSE)
     cint <- c(tstat - qt(conf.level, df), Inf)
-    perm.cint <- c(quantile(EFF, 1-conf.level), Inf)
+    ## confidence interval
+    if(conf.type == "pivot"){
+      ## pivot inversion
+      l.bound <- find.pinv.bound("greater", 1 - conf.level, get.p.pivot, side = "lower")
+      perm.cint <- c(l.bound, Inf)
+    }
+    if(conf.type == "exact"){
+      ## exact inversion
+      l.bound.exact <- find.pinv.bound("greater", 1 - conf.level, get.p.exact, 
+                                       side = "lower")
+      perm.cint <- c(l.bound.exact, Inf)
+    }
+    if(conf.type == "stud"){
+      ## studentized
+      perm.cint <- c(eff - quantile(TSTAT, conf.level)*stderr, Inf)
+    }
+    if(conf.type == "perc"){
+      ## percentile
+      perm.cint <- c(quantile(EFF, 1-conf.level), Inf)
+    }
+    if(conf.type == "all"){
+      ## pivot inversion
+      l.bound <- find.pinv.bound("greater", 1 - conf.level, get.p.pivot, side = "lower")
+      perm.cint.pivot <- c(l.bound, Inf)
+      ## exact inversion
+      l.bound.exact <- find.pinv.bound("greater", 1 - conf.level, get.p.exact, 
+                                       side = "lower")
+      perm.cint.exact <- c(l.bound.exact, Inf)
+      ## studentized
+      perm.cint.stud <- c(eff - quantile(TSTAT, conf.level)*stderr, Inf)
+      ## percentile
+      perm.cint.perc <- c(quantile(EFF, 1-conf.level), Inf)
+      perm.cint <- rbind(perm.cint.pivot, perm.cint.exact, 
+                         perm.cint.stud, perm.cint.perc)
+      rownames(perm.cint) <- c("pivot", "exact", "stud", "perc")
+    }
   }else{
     pval <- 2 * pt(-abs(tstat), df)
     if(symmetric)
-      perm.pval <- max(mean(abs(TSTAT) > abs(tstat)), 1/R.true)
+      perm.pval <- max(mean(abs(TSTAT) >= abs(tstat)), 1/R.true)
     else
       perm.pval <- max(2*min(mean(TSTAT <= tstat), mean(TSTAT > tstat)), 1/R.true)
     alpha <- 1 - conf.level
     cint <- qt(1 - alpha/2, df)
     cint <- tstat + c(-cint, cint)
-    perm.cint <- quantile(EFF, c(alpha/2, 1-alpha/2))
+    ## confidence interval
+    if(conf.type == "pivot"){
+      ## pivot inversion
+      l.bound <- find.pinv.bound("two.sided", alpha, get.p.pivot, side = "lower")
+      u.bound <- find.pinv.bound("two.sided", alpha, get.p.pivot, side = "upper")
+      perm.cint <- c(l.bound, u.bound)
+    }
+    if(conf.type == "exact"){
+      ## exact inversion
+      l.bound.exact <- find.pinv.bound("two.sided", alpha, get.p.exact, side = "lower")
+      u.bound.exact <- find.pinv.bound("two.sided", alpha, get.p.exact, side = "upper")
+      perm.cint <- c(l.bound.exact, u.bound.exact)
+    }
+    if(conf.type == "stud"){
+      ## studentized
+      perm.cint <- eff - quantile(TSTAT, c(1-alpha/2, alpha/2))*stderr
+    }
+    if(conf.type == "perc"){
+      ## percentile
+      perm.cint <- quantile(EFF, c(alpha/2, 1-alpha/2))
+    }
+    if(conf.type == "all"){
+      ## pivot inversion
+      l.bound <- find.pinv.bound("two.sided", alpha, get.p.pivot, side = "lower")
+      u.bound <- find.pinv.bound("two.sided", alpha, get.p.pivot, side = "upper")
+      perm.cint.pivot <- c(l.bound, u.bound)
+      ## exact inversion
+      l.bound.exact <- find.pinv.bound("two.sided", alpha, get.p.exact, side = "lower")
+      u.bound.exact <- find.pinv.bound("two.sided", alpha, get.p.exact, side = "upper")
+      perm.cint.exact <- c(l.bound.exact, u.bound.exact)
+      ## studentized
+      perm.cint.stud <- eff - quantile(TSTAT, c(1-alpha/2, alpha/2))*stderr
+      ## percentile
+      perm.cint.perc <- quantile(EFF, c(alpha/2, 1-alpha/2))
+      perm.cint <- rbind(perm.cint.pivot, perm.cint.exact, 
+                         perm.cint.stud, perm.cint.perc)
+      rownames(perm.cint) <- c("pivot", "exact", "stud", "perc")
+    }
   }
   cint <- mu + cint * stderr
   names(tstat) <- "t"
@@ -167,7 +374,7 @@ perm.t.test.default <- function(x, y = NULL, alternative = c("two.sided", "less"
   rval <- list(statistic = tstat, parameter = df, p.value = pval, 
                perm.p.value = perm.pval, R = R, R.true = R.true, 
                p.min = perm.pval == 1/R.true,
-               conf.int = cint, perm.conf.int = perm.cint,
+               conf.int = cint, conf.type = conf.type, perm.conf.int = perm.cint,
                estimate = estimate, perm.estimate = perm.estimate, 
                null.value = mu, stderr = stderr, perm.stderr = perm.stderr,
                alternative = alternative, method = method, data.name = dname,
@@ -229,15 +436,41 @@ print.perm.htest <- function (x, digits = getOption("digits"), prefix = "\t", ..
   }
   if (!is.null(x$perm.conf.int)) {
     if(x$R.true < x$R){
-      cat(format(100 * attr(x$perm.conf.int, "conf.level")), 
-          " percent (exact) permutation percentile confidence interval:\n", 
-          " ", paste(format(x$perm.conf.int[1:2], digits = digits), 
-                     collapse = " "), "\n", sep = "")
+      if(x$conf.type == "all"){
+        cat(format(100 * attr(x$perm.conf.int, "conf.level")), 
+            " percent (exact) permutation confidence interval:\n", 
+            "pivot:\t", paste(format(x$perm.conf.int[1,1:2], digits = digits), 
+                                      collapse = " "), "\n", 
+            "exact:\t", paste(format(x$perm.conf.int[2,1:2], digits = digits), 
+                              collapse = " "), "\n", 
+            "stud:\t", paste(format(x$perm.conf.int[3,1:2], digits = digits), 
+                              collapse = " "), "\n", 
+            "perc:\t", paste(format(x$perm.conf.int[4, 1:2], digits = digits), 
+                             collapse = " "), "\n", sep = "")
+      }else{
+        cat(format(100 * attr(x$perm.conf.int, "conf.level")), 
+            " percent (exact) permutation confidence interval:\n", 
+            x$conf.type, ":\t", paste(format(x$perm.conf.int[1:2], digits = digits), 
+                                      collapse = " "), "\n", sep = "")
+      }
     }else{
-      cat(format(100 * attr(x$perm.conf.int, "conf.level")), 
-          " percent (Monte-Carlo) permutation percentile confidence interval:\n", 
-          " ", paste(format(x$perm.conf.int[1:2], digits = digits), 
-                     collapse = " "), "\n", sep = "")
+      if(x$conf.type == "all"){
+        cat(format(100 * attr(x$perm.conf.int, "conf.level")), 
+            " percent (Monte-Carlo) permutation confidence interval:\n", 
+            "pivot:\t", paste(format(x$perm.conf.int[1,1:2], digits = digits), 
+                              collapse = " "), "\n", 
+            "exact:\t", paste(format(x$perm.conf.int[2,1:2], digits = digits), 
+                              collapse = " "), "\n", 
+            "stud:\t", paste(format(x$perm.conf.int[3,1:2], digits = digits), 
+                             collapse = " "), "\n", 
+            "perc:\t", paste(format(x$perm.conf.int[4, 1:2], digits = digits), 
+                             collapse = " "), "\n", sep = "")
+      }else{
+        cat(format(100 * attr(x$perm.conf.int, "conf.level")), 
+            " percent (Monte-Carlo) permutation confidence interval:\n", 
+            x$conf.type, ":\t", paste(format(x$perm.conf.int[1:2], digits = digits), 
+                                      collapse = " "), "\n", sep = "")
+      }
     }
   }
   cat("\nResults without permutation:\n")

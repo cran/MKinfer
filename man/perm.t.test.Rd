@@ -12,8 +12,8 @@ perm.t.test(x, \dots)
 \method{perm.t.test}{default}(x, y = NULL,
        alternative = c("two.sided", "less", "greater"),
        mu = 0, paired = FALSE, var.equal = FALSE,
-       conf.level = 0.95, R = 9999, symmetric = TRUE, 
-       permStat = FALSE, \dots)
+       conf.type = "pivot", conf.level = 0.95, R = 9999, symmetric = TRUE, 
+       permStat = FALSE, useCombn = FALSE, \dots)
 
 \method{perm.t.test}{formula}(formula, data, subset, na.action, \dots)
 }
@@ -32,6 +32,8 @@ perm.t.test(x, \dots)
     two variances as being equal. If \code{TRUE} then the pooled
     variance is used to estimate the variance otherwise the Welch
     (or Satterthwaite) approximation to the degrees of freedom is used.}
+  \item{conf.type}{ a character string specifying which type of confidence 
+    interval to compute; see details below.}
   \item{conf.level}{confidence level of the interval.}
   \item{R}{ number of (Monte-Carlo) permutations. }
   \item{symmetric}{a logical variable indicating whether to assume symmetry
@@ -52,6 +54,8 @@ perm.t.test(x, \dots)
   \item{permStat}{ logical; should the permutation results for the test statistic 
     be returned. If \code{TRUE}, function \code{h0plot} can be used to plot the 
     distribution of the results. }
+  \item{useCombn}{ logical; use all combinations instead of permutations in the
+    case of the two-sample t-test; see Details. }
   \item{\dots}{further arguments to be passed to or from methods.}
 }
 \details{
@@ -59,8 +63,39 @@ perm.t.test(x, \dots)
   Efron and Tibshirani (1993) for equal variances as well as Janssen (1997)
   respectively Chung and Romano (2013) for unequal variances.
   
+  Janssen and Pauls (2003) state in Example 5 (c) about Bootstrap two-sample tests:
+  "From the previous comments it is clear that permutation tests should always be 
+  preferred for two-sample problems."
+  
   The function returns permutation p values and confidence intervals
   as well as the results ot the t-test without permutations.
+  If \code{useCombn} is \code{TRUE} in the two-sample case, then all combinations
+  instead of all permutations are used. This option only has an effect for 
+  small sample sizes when the number of all combinations/permutations is smaller
+  than \code{R}. In principle, the results should be identical in this case.
+  However, the difference in the number of permutations/combinations can have a 
+  minor effect on p values, confidence intervals as well as the distribution of 
+  the test statistic.
+  
+  The function computes four types of permutation confidence intervals:
+  \describe{
+    \item{\code{pivot}}{Pivot-Inverted Test Confidence Interval (Garthwaite (1996), Good (2005)). 
+      Constructed by inverting the studentized permutation test while treating the sample 
+      permutation distribution as fixed (pivotal). It provides a fast, 
+      stable, and smooth approximation of test inversion.}
+    \item{\code{exact}}{Exact Inverted Test Confidence Interval (Chung and Romano (2013)). 
+      Obtained by exact test inversion where the permutation standard error is 
+      dynamically re-computed under each null hypothesis shift. It guarantees 
+      exact coverage under the i.i.d. assumption and asymptotic validity under 
+      heteroscedasticity, though extreme outliers may result in conservative (wide) bounds.}
+    \item{\code{stud}}{Studentized (Bootstrap-t) Permutation Confidence Interval (Hall (1988), Janssen (1997)). 
+      Uses the quantiles of the studentized permutation distribution centered 
+      at 0 and scales them by the observed standard error.}
+    \item{\code{perc}}{Percentile Permutation Confidence Interval (Efron (1981), Efron and Tibshirani (1993)). 
+      Derived directly from the empirical quantiles of the unstudentized permutation 
+      distribution of the effect size.}
+    \item{\code{all}}{All types of confidence intervals are computed.}
+  }
 
   The formula interface is only applicable for the 2-sample tests.
 
@@ -103,14 +138,30 @@ perm.t.test(x, \dots)
   \item{method}{a character string indicating what type of t-test was
     performed.}
   \item{data.name}{a character string giving the name(s) of the data.}
+  \item{perm.statistic}{ \code{NULL} or numeric vector with permutation results.}
 }
 \references{
+  B. Efron (1981). Nonparametric standard errors and confidence intervals. 
+  \emph{The Canadian Journal of Statistics}, \bold{9}(2), 139-158.
+  
   B. Efron, R.J. Tibshirani. \emph{An Introduction to the Bootstrap}.
   Chapman and Hall/CRC 1993.
+  
+  P.H. Garthwaite (1996). Confidence intervals from randomization tests. 
+  \emph{Biometrics}, \bold{52}(4), 1387-1393.
+  
+  P. Good (2005). \emph{Permutation, Parametric, and Bootstrap Tests of Hypotheses} 
+  (3rd ed.). Springer.
+  
+  P. Hall (1986). On the bootstrap and confidence intervals. 
+  \emph{The Annals of Statistics}, \bold{14}(4), 1431-1452.
   
   A. Janssen (1997). Studentized permutation tests for non-i.i.d, hypotheses 
   and the generalized Behrens-Fisher problem. 
   \emph{Statistics and Probability Letters}, \bold{36}, 9-21.
+  
+  A. Janssen, T. Pauls. How do bootstrap and permutation tests work?. 
+  \emph{Ann. Statist.}, \bold{31}(3), 768-806.
   
   E. Chung, J.P. Romano (2013). Exact and asymptotically robust permutation
   tests. \emph{The Annals of Statistics}, \bold{41}(2), 484-507.
@@ -127,19 +178,25 @@ perm.t.test(x, \dots)
 require(graphics)
 
 t.test(1:10, y = c(7:20))      # P = .00001855
-perm.t.test(1:10, y = c(7:20))
+perm.t.test(1:10, y = c(7:20), conf.type = "all")
 
 t.test(1:10, y = c(7:20, 200)) # P = .1245    -- NOT significant anymore
-perm.t.test(1:10, y = c(7:20, 200)) # perm.conf.int affected by outlier!
+perm.t.test(1:10, y = c(7:20, 200), conf.type = "pivot") 
+perm.t.test(1:10, y = c(7:20, 200), conf.type = "exact") 
+perm.t.test(1:10, y = c(7:20, 200), conf.type = "stud") 
+perm.t.test(1:10, y = c(7:20, 200), conf.type = "perc") # p < 1e-04, but CI covers 0
 
 
-## Classical example: Student's sleep data
-plot(extra ~ group, data = sleep)
 ## Traditional interface
-with(sleep, t.test(extra[group == 1], extra[group == 2]))
-with(sleep, perm.t.test(extra[group == 1], extra[group == 2]))
+with(mtcars, t.test(mpg[am == 0], mpg[am == 1]))
+with(mtcars, perm.t.test(mpg[am == 0], mpg[am == 1]))
 ## Formula interface
-t.test(extra ~ group, data = sleep)
-perm.t.test(extra ~ group, data = sleep)
+t.test(mpg ~ am, data = mtcars)
+perm.t.test(mpg ~ am, data = mtcars)
+
+
+## all permutations vs combinations
+perm.t.test(1:3, y = 2:5, useCombn = TRUE)
+perm.t.test(1:3, y = 2:5, useCombn = FALSE)
 }
 \keyword{htest}

@@ -1,21 +1,26 @@
 import("stats")
+importFrom("utils", "getFromNamespace")
 importFrom("MKdescr", "CV", "scale_y_neglog10")
 importFrom("rlang", ".data")
+importFrom("hypergeo", "hypergeo")
 importFrom("boot", "boot", "boot.ci")
-importFrom("arrangements", "permutations", "npermutations")
+importFrom("arrangements", "permutations", "npermutations", "combinations")
 importFrom("nlme", "lme", "anova.lme")
 importFrom("ggplot2", "ggplot", "aes", "geom_point", "geom_vline", "geom_hline",
-           "geom_area", "geom_histogram", "geom_density", "stat_function", 
-           "after_stat", "labs", "ggtitle", "scale_x_continuous", 
-           "scale_y_continuous", "scale_color_manual", "xlab", "ylab", 
-           "xlim", "ylim", "annotate")
+                      "geom_area", "geom_histogram", "geom_density", "stat_function", 
+                      "after_stat", "labs", "ggtitle", "scale_x_continuous", 
+                      "scale_y_continuous", "scale_color_manual", "xlab", "ylab", 
+                      "xlim", "ylim", "annotate")
 importFrom("exactRankTests", "wilcox.exact")
 importFrom("miceadds", "mids2datlist")
+importFrom("parallel", "detectCores", "makePSOCKcluster", "clusterExport", 
+                       "parRapply", "stopCluster")
 export(binomCI,
        binomDiffCI,
        boot.t.test,
        cvCI,
        hsu.t.test,
+       xiao.t.test,
        imputeSD,
        madCI,
        medianCI,
@@ -40,10 +45,15 @@ export(binomCI,
        mdplot,
        md2sens,
        md2zfactor,
-       h0plot)
+       h0plot,
+       dgt,
+       pgt,
+       qgt)
 
 S3method(hsu.t.test, default)
 S3method(hsu.t.test, formula)
+S3method(xiao.t.test, default)
+S3method(xiao.t.test, formula)
 S3method(boot.t.test, default)
 S3method(boot.t.test, formula)
 S3method(mi.t.test, default)

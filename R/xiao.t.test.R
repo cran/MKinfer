@@ -1,7 +1,7 @@
-hsu.t.test <- function(x, ...){
-    UseMethod("hsu.t.test")
+xiao.t.test <- function(x, ...){
+    UseMethod("xiao.t.test")
 }
-hsu.t.test.default <- function (x, y, alternative = c("two.sided", "less", "greater"),
+xiao.t.test.default <- function (x, y, alternative = c("two.sided", "less", "greater"),
                                 mu = 0, conf.level = 0.95, ...){
   alternative <- match.arg(alternative)
   if (!missing(mu) && (length(mu) != 1 || is.na(mu)))
@@ -25,43 +25,47 @@ hsu.t.test.default <- function (x, y, alternative = c("two.sided", "less", "grea
   vy <- var(y)
   estimate <- c(mx, my, sqrt(vx), sqrt(vy))
   names(estimate) <- c("mean of x", "mean of y", "SD of x", "SD of y")
-  if(nx < 6 || ny < 6)
-    warning("For Hsu t-test the sample size per group should be > 5.")
   se <- sqrt(vx/nx + vy/ny)
-  df <- min(nx, ny) - 1
+  if(nx*(nx-1)/vx <= ny*(ny-1)/vy){
+    df <- (ny-1)*(1 + ny/nx*vx/vy)
+  }else{
+    df <- (nx-1)*(1 + nx/ny*vy/vx) 
+  }
   if(se < 10 * .Machine$double.eps * max(abs(mx), abs(my)))
       stop("data are essentially constant")
   tstat <- (mx - my - mu)/se
 
   if(alternative == "less") {
-    pval <- pt(tstat, df)
-    cint <- c(-Inf, tstat + qt(conf.level, df))
+    pval <- pgt(tstat, n1 = nx, n2 = ny, v1tov2 = vx/vy)
+    cint <- c(-Inf, tstat + qgt(conf.level, n1 = nx, n2 = ny, v1tov2 = vx/vy))
   }
   else if(alternative == "greater") {
-    pval <- pt(tstat, df, lower.tail = FALSE)
-    cint <- c(tstat - qt(conf.level, df), Inf)
+    pval <- pgt(tstat, n1 = nx, n2 = ny, v1tov2 = vx/vy, lower.tail = FALSE)
+    cint <- c(tstat - qgt(conf.level, n1 = nx, n2 = ny, v1tov2 = vx/vy), Inf)
   }
   else{
-    pval <- 2 * pt(-abs(tstat), df)
+    pval <- 2 * pgt(-abs(tstat), n1 = nx, n2 = ny, v1tov2 = vx/vy)
     alpha <- 1 - conf.level
-    cint <- qt(1 - alpha/2, df)
+    cint <- qgt(1 - alpha/2, n1 = nx, n2 = ny, v1tov2 = vx/vy)
     cint <- tstat + c(-cint, cint)
   }
   cint <- mu + cint * se
-  names(tstat) <- "t"
+  names(tstat) <- "gt"
   names(df) <- "df"
   names(mu) <- "difference in means"
+  n <- c(nx, ny)
+  names(n) <- c("n of x", "n of y")
   attr(cint, "conf.level") <- conf.level
   rval <- list(statistic = tstat, parameter = df, p.value = pval,
                conf.int = cint, estimate = estimate, null.value = mu,
-               stderr = se, alternative = alternative,
-               method = "Hsu Two Sample t-test",
+               stderr = se, alternative = alternative, n = n,
+               method = "Xiao Two Sample t-test",
                data.name = dname)
   class(rval) <- "htest"
   rval
 }
 
-hsu.t.test.formula <- function (formula, data, subset, na.action, ...){
+xiao.t.test.formula <- function (formula, data, subset, na.action, ...){
   if (missing(formula) || (length(formula) != 3L) || (length(attr(terms(formula[-2L]),
                                                                   "term.labels")) != 1L))
     stop("'formula' missing or incorrect")
@@ -78,7 +82,7 @@ hsu.t.test.formula <- function (formula, data, subset, na.action, ...){
   if (nlevels(g) != 2L)
     stop("grouping factor must have exactly 2 levels")
   DATA <- setNames(split(mf[[response]], g), c("x", "y"))
-  y <- do.call("hsu.t.test", c(DATA, list(...)))
+  y <- do.call("xiao.t.test", c(DATA, list(...)))
   y$data.name <- DNAME
   if (length(y$estimate) == 2L)
     names(y$estimate) <- paste("mean in group", levels(g))

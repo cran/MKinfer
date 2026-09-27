@@ -46,6 +46,8 @@ normDiffCI(x, y, method = "classical")
 normDiffCI(x, y, method = "welch")
 ## Hsu
 normDiffCI(x, y, method = "hsu")
+## Xiao
+normDiffCI(x, y, method = "xiao")
 ## bootstrap: assuming equal variances
 normDiffCI(x, y, method = "classical", boot = TRUE, bootci.type = "bca")
 ## bootstrap: assuming unequal variances
@@ -53,13 +55,14 @@ normDiffCI(x, y, method = "welch", boot = TRUE, bootci.type = "bca")
 
 ## -----------------------------------------------------------------------------
 M <- 100
-CIhsu <- CIwelch <- CIclass <- matrix(NA, nrow = M, ncol = 2)
+CIxiao <- CIhsu <- CIwelch <- CIclass <- matrix(NA, nrow = M, ncol = 2)
 for(i in 1:M){
   x <- rnorm(10)
   y <- rnorm(30, sd = 0.1)
   CIclass[i,] <- normDiffCI(x, y, method = "classical")$conf.int
   CIwelch[i,] <- normDiffCI(x, y, method = "welch")$conf.int
   CIhsu[i,] <- normDiffCI(x, y, method = "hsu")$conf.int
+  CIxiao[i,] <- normDiffCI(x, y, method = "xiao")$conf.int
 }
 ## coverage probabilies
 ## classical
@@ -68,6 +71,8 @@ sum(CIclass[,1] < 0 & 0 < CIclass[,2])/M
 sum(CIwelch[,1] < 0 & 0 < CIwelch[,2])/M
 ## Hsu
 sum(CIhsu[,1] < 0 & 0 < CIhsu[,2])/M
+## Xiao
+sum(CIxiao[,1] < 0 & 0 < CIxiao[,2])/M
 
 ## -----------------------------------------------------------------------------
 x <- rnorm(100, mean = 10, sd = 2) # CV = 0.2
@@ -112,41 +117,111 @@ hsu.t.test(1:10, y = c(7:20))
 hsu.t.test(1:10, y = c(7:20, 200))
 
 ## Traditional interface
-with(sleep, t.test(extra[group == 1], extra[group == 2]))
-with(sleep, hsu.t.test(extra[group == 1], extra[group == 2]))
+with(mtcars, t.test(mpg[am == 0], mpg[am == 1]))
+with(mtcars, hsu.t.test(mpg[am == 0], mpg[am == 1]))
 ## Formula interface
-t.test(extra ~ group, data = sleep)
-hsu.t.test(extra ~ group, data = sleep)
+t.test(mpg ~ am, data = mtcars)
+hsu.t.test(mpg ~ am, data = mtcars)
 
 ## ----fig.width=7, fig.height=7------------------------------------------------
-h0plot(t.test(extra ~ group, data = sleep))
-h0plot(hsu.t.test(extra ~ group, data = sleep))
+h0plot(t.test(mpg ~ am, data = mtcars))
+h0plot(hsu.t.test(mpg ~ am, data = mtcars))
+
+## ----fig.height = 7, fig.width = 7--------------------------------------------
+## equal variances
+dgt(0, n1 = 5, n2 = 10, v1tov2 = 1)
+dt(0, df = 5+10-2)
+
+pgt(2, n1 = 5, n2 = 10, v1tov2 = 1)
+pt(2, df = 5+10-2)
+
+qgt(0.975, n1 = 5, n2 = 10, v1tov2 = 1)
+qt(0.975, df = 5+10-2)
+
+library(ggplot2)
+ggplot(data = data.frame(x = c(-4, 4)), aes(x)) +
+  stat_function(fun = function(x) dgt(x, n1 = 5, n2 = 10, v1tov2 = 1), 
+                n = 101, col = "darkblue", lwd = 1) + 
+  stat_function(fun = function(x) dt(x, df = 5+10-2), 
+                n = 101, col = "darkgreen", lwd = 1) + ylab("density") +
+  ggtitle("Generalized Central (blue) t vs. Student t Distribution (green)")
+
+## unequal variances
+nu <- (1^2/5+5^2/10)^2/(1^4/(5^2*(5-1)) + 5^4/(10^2*(10-1)))
+dgt(0, n1 = 5, n2 = 10, v1tov2 = 1^2/5^2)
+dt(0, df = nu)
+
+pgt(2, n1 = 5, n2 = 10, v1tov2 = 1^2/5^2)
+pt(2, df = nu)
+
+qgt(0.975, n1 = 5, n2 = 10, v1tov2 = 1^2/5^2)
+qt(0.975, df = nu)
+
+ggplot(data = data.frame(x = c(-4, 4)), aes(x)) +
+  stat_function(fun = function(x) dgt(x, n1 = 5, n2 = 10, v1tov2 = 1^2/5^2), 
+                n = 101, col = "darkblue", lwd = 1) + 
+  stat_function(fun = function(x) dt(x, df = nu), 
+                n = 101, col = "darkred", linetype = "dashed", lwd = 1) + 
+  ylab("density") +
+  ggtitle("Generalized Central t (blue) vs. Welch t Distribution (red)")
+
+## -----------------------------------------------------------------------------
+## Examples taken and adapted from function t.test
+t.test(1:10, y = c(7:20))      # P = .00001855
+t.test(1:10, y = c(7:20, 200)) # P = .1245    -- NOT significant anymore
+xiao.t.test(1:10, y = c(7:20))
+xiao.t.test(1:10, y = c(7:20, 200))
+
+## Traditional interface
+with(mtcars, t.test(mpg[am == 0], mpg[am == 1]))
+with(mtcars, xiao.t.test(mpg[am == 0], mpg[am == 1]))
+## Formula interface
+t.test(mpg ~ am, data = mtcars)
+xiao.t.test(mpg ~ am, data = mtcars)
+
+## Example 6.1 in Xiao (2018)
+x <- c(134, 146, 104, 119, 124, 161, 107, 83, 113, 129, 97, 123)
+y <- c(70, 118, 101, 85, 107, 132, 94)
+xiao.t.test(x, y, alternative = "greater")
+t.test(x, y, var.equal = TRUE, alternative = "greater")
+t.test(x, y, alternative = "greater")
+
+## ----fig.width=7, fig.height=7------------------------------------------------
+h0plot(t.test(mpg ~ am, data = mtcars))
+h0plot(xiao.t.test(mpg ~ am, data = mtcars))
 
 ## -----------------------------------------------------------------------------
 boot.t.test(1:10, y = c(7:20)) # without bootstrap: P = .00001855
 boot.t.test(1:10, y = c(7:20, 200)) # without bootstrap: P = .1245
 
 ## Traditional interface
-with(sleep, boot.t.test(extra[group == 1], extra[group == 2]))
+with(mtcars, boot.t.test(mpg[am == 0], mpg[am == 1]))
 ## Formula interface
-boot.t.test(extra ~ group, data = sleep)
+boot.t.test(mpg ~ am, data = mtcars)
 
 ## ----fig.width=7, fig.height=7------------------------------------------------
-h0plot(boot.t.test(extra ~ group, data = sleep, bootStat = TRUE))
+h0plot(boot.t.test(mpg ~ am, data = mtcars, bootStat = TRUE))
 
 ## -----------------------------------------------------------------------------
-perm.t.test(1:10, y = c(7:20)) # without permutation: P = .00001855
-## permutation confidence interval sensitive to outlier!
-perm.t.test(1:10, y = c(7:20, 200)) # without permutation: P = .1245
+perm.t.test(1:10, y = c(7:20), conf.type = "all") 
+perm.t.test(1:10, y = c(7:20, 200), conf.type = "pivot") 
+perm.t.test(1:10, y = c(7:20, 200), conf.type = "exact") 
+perm.t.test(1:10, y = c(7:20, 200), conf.type = "stud") 
+## contradiction between p value and confidence interval!
+perm.t.test(1:10, y = c(7:20, 200), conf.type = "perc") 
 
 ## Traditional interface
-with(sleep, perm.t.test(extra[group == 1], extra[group == 2]))
+with(mtcars, perm.t.test(mpg[am == 0], mpg[am == 1]))
 ## Formula interface
-res <- perm.t.test(extra ~ group, data = sleep)
-res
+perm.t.test(mpg ~ am, data = mtcars)
 
 ## ----fig.width=7, fig.height=7------------------------------------------------
-h0plot(perm.t.test(extra ~ group, data = sleep, permStat = TRUE))
+h0plot(perm.t.test(mpg ~ am, data = mtcars, permStat = TRUE))
+
+## -----------------------------------------------------------------------------
+## all permutations vs combinations
+perm.t.test(1:3, y = 2:5, useCombn = TRUE)
+perm.t.test(1:3, y = 2:5, useCombn = FALSE)
 
 ## -----------------------------------------------------------------------------
 res <- perm.t.test(extra ~ group, data = sleep)
@@ -326,8 +401,8 @@ y2 <- matrix(rnorm(500, mean = 9.75, sd = 3), nrow = 10)
 g2 <- rep("treatment", 10)
 group <- factor(c(g1, g2))
 Data <- rbind(x, cbind(y1, y2))
-## compute Hsu t-test
-pvals <- apply(Data, 2, function(x, group) hsu.t.test(x ~ group)$p.value,
+## compute Xiao t-test
+pvals <- apply(Data, 2, function(x, group) xiao.t.test(x ~ group)$p.value,
                group = group)
 ## compute log-fold change
 logfc <- function(x, group){
@@ -388,6 +463,8 @@ pairwise.t.test(airquality$Ozone, airquality$Month, pool.sd = FALSE)
 pairwise.ext.t.test(airquality$Ozone, airquality$Month)
 pairwise.ext.t.test(airquality$Ozone, airquality$Month,
                     method = "hsu.t.test")
+pairwise.ext.t.test(airquality$Ozone, airquality$Month,
+                    method = "xiao.t.test")
 pairwise.ext.t.test(airquality$Ozone, airquality$Month, 
                     method = "boot.t.test")
 pairwise.ext.t.test(airquality$Ozone, airquality$Month, 

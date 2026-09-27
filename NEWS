@@ -3,6 +3,25 @@
 ###############################################################################
 
 ###########################################################
+## Version 1.4
+###########################################################
+- added name of p adjust method to print method of class pw.htest
+- added functions to compute the generalized central t-distribution 
+  defined in Section 5.3 of Xiao (2018).
+- added function xiao.t.test to compute the Xiao t-test derived from the 
+  solution to a generalized Behrens-Fisher problem
+- added Xiao method to normDiffCI
+- added xiao.t.test to pairwise.ext.t.test
+- changed selection of random permutations leading to a 3 to 4 fold speed-up
+- corrected documentation of mi.wilcox.test as reported by yunfeixing
+- now use <= and >= instead of < and > in perm.t.test for computing permutation 
+  p values, which makes the tests a little bit more conservative
+- perm.t.test can use combinations instead of permutations
+- perm.t.test now in addition computes confidence intervals by inverting the 
+  permutation test as requested by Adrian Olszewski and by studentization
+
+
+###########################################################
 ## Version 1.3
 ###########################################################
 - added function mdplot to plot mean difference of two groups assuming normal 

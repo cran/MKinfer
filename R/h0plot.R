@@ -93,6 +93,29 @@ h0plot.htest <- function(x, sig.level = 0.05, hist.alpha = 0.2,
     MAX <- max(abs(x$statistic), qt(1-qtail, df = x$parameter))
     xlim <- c(MIN, MAX)
   }
+  if(names(x$statistic) == "gt"){
+    dfun <- function(x){ }
+    body(dfun) <- substitute({ dgt(x, n1, n2, v1tov2) },
+                             list(n1 = x$n[1], n2 = x$n[2], 
+                                  v1tov2 = x$estimate[3]^2/x$estimate[4]^2))
+    if(x$alternative == "two.sided"){
+      cval <- c(qgt(p = sig.level/2, n1 = x$n[1], n2 = x$n[2], 
+                    v1tov2 = x$estimate[3]^2/x$estimate[4]^2), 
+                qgt(p = 1-sig.level/2, n1 = x$n[1], n2 = x$n[2], 
+                    v1tov2 = x$estimate[3]^2/x$estimate[4]^2))
+    }else if(x$alternative == "less"){
+      cval <- qgt(p = sig.level, n1 = x$n[1], n2 = x$n[2], 
+                  v1tov2 = x$estimate[3]^2/x$estimate[4]^2)
+    }else{
+      cval <- qgt(p = 1-sig.level, n1 = x$n[1], n2 = x$n[2], 
+                  v1tov2 = x$estimate[3]^2/x$estimate[4]^2)
+    }
+    MIN <- min(-abs(x$statistic), qgt(qtail, n1 = x$n[1], n2 = x$n[2], 
+                                      v1tov2 = x$estimate[3]^2/x$estimate[4]^2))
+    MAX <- max(abs(x$statistic), qgt(1-qtail, n1 = x$n[1], n2 = x$n[2], 
+                                     v1tov2 = x$estimate[3]^2/x$estimate[4]^2))
+    xlim <- c(MIN, MAX)
+  }
   if(names(x$statistic) == "F"){
     dfun <- function(x){ }
     body(dfun) <- substitute({ df(x, df1 = para1, df2 = para2) },
@@ -137,7 +160,7 @@ h0plot.htest <- function(x, sig.level = 0.05, hist.alpha = 0.2,
     MAX <- max(abs(x$statistic), qchisq(1-qtail, df = x$parameter))
     xlim <- c(MIN, MAX)
   }
-  if(!names(x$statistic) %in% c("t", "F", "X-squared")){
+  if(!names(x$statistic) %in% c("t", "gt", "F", "X-squared")){
     stop("Not yet implemented!")
   }
   gg <- ggplot(data = data.frame(x = xlim), aes(x)) +
